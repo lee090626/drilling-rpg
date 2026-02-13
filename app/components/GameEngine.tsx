@@ -218,7 +218,7 @@ export default function GameEngine() {
 
     // Function to load base layout
     const loadBaseLayout = () => {
-      fetch(`/baseLayout.json?t=${Date.now()}`)
+      fetch(`baseLayout.json?t=${Date.now()}`)
         .then((res) => res.json())
         .then((data) => {
           baseLayoutRef.current = data.tiles;
@@ -227,7 +227,7 @@ export default function GameEngine() {
     };
 
     const loadEntities = () => {
-      fetch(`/entities.json?t=${Date.now()}`)
+      fetch(`entities.json?t=${Date.now()}`)
         .then((res) => res.json())
         .then((data) => {
           console.log('Entities Loaded:', data.entities.length);
@@ -240,7 +240,12 @@ export default function GameEngine() {
               !entityImagesRef.current[entity.imagePath]
             ) {
               const img = new Image();
-              img.src = entity.imagePath;
+              // Handle potential leading slash in JSON image paths for GH Pages
+              const cleanPath = entity.imagePath.startsWith('/')
+                ? entity.imagePath.substring(1)
+                : entity.imagePath;
+              img.src = cleanPath;
+
               img.onload = () => {
                 entityImagesRef.current[entity.imagePath!] = img;
               };
@@ -276,7 +281,7 @@ export default function GameEngine() {
     };
 
     const loadQuests = () => {
-      fetch(`/quests.json?t=${Date.now()}`)
+      fetch(`quests.json?t=${Date.now()}`)
         .then((res) => res.json())
         .then((data) => {
           availableQuestsRef.current = data.quests;
@@ -363,14 +368,16 @@ export default function GameEngine() {
 
     // Load player image
     const playerImg = new Image();
-    playerImg.src = '/Player.png';
+    playerImg.src = 'Player.png';
+
     playerImg.onload = () => {
       playerImgRef.current = playerImg;
     };
 
     // Load tileset
     const img = new Image();
-    img.src = '/NewTileset.png'; // Updated tileset
+    img.src = 'NewTileset.png'; // Updated tileset
+
     img.onload = () => {
       console.log('Tileset Loaded:', img.width, img.height);
       tilesetRef.current = img;
@@ -379,7 +386,8 @@ export default function GameEngine() {
 
     // Load Base Tileset
     const baseImg = new Image();
-    baseImg.src = '/BaseTileset.png';
+    baseImg.src = 'BaseTileset.png';
+
     baseImg.onload = () => {
       console.log('Base Tileset Loaded:', baseImg.width, baseImg.height);
       baseTilesetRef.current = baseImg;
