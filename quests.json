@@ -1,0 +1,18 @@
+{
+  "quests": [
+    {
+      "id": "q1_first_mining",
+      "title": "Halbert's Urgent Request",
+      "description": "Hey there, you! Can you show me your drilling skills? We're running low on fuel at the base camp. If you can get me 10 units of Coal, I'll make sure you're well rewarded.",
+      "requirement": {
+        "type": "coal",
+        "target": 10,
+        "current": 0
+      },
+      "reward": {
+        "fuel": 50
+      },
+      "status": "available"
+    }
+  ]
+}
