@@ -1,0 +1,26 @@
+{
+  "entities": [
+    {
+      "id": "merchant_1",
+      "type": "npc",
+      "name": "Merchant",
+      "x": 10,
+      "y": 7,
+      "imagePath": "/Merchant.png",
+      "width": 3,
+      "height": 3,
+      "interactionType": "shop"
+    },
+    {
+      "id": "forgemaster_1",
+      "type": "npc",
+      "name": "Forgemaster",
+      "x": 30,
+      "y": 7,
+      "imagePath": "/Mechanic.png",
+      "width": 3,
+      "height": 3,
+      "interactionType": "crafting"
+    }
+  ]
+}
