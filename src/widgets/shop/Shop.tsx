@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { PlayerStats, Quest } from '../types/game';
+import { PlayerStats, Quest } from '../../shared/types/game';
+import { MINERALS } from '../../shared/config/mineralData';
 
 interface ShopProps {
   stats: PlayerStats;
@@ -49,19 +50,10 @@ export default function Shop({
     },
   ];
 
-  const resourcePrices: { [key: string]: number } = {
-    dirt: 2,
-    stone: 8,
-    coal: 22,
-    iron: 60,
-    gold: 220,
-    diamond: 1000,
-    emerald: 2500,
-    ruby: 5000,
-    sapphire: 10000,
-    uranium: 20000,
-    obsidian: 40000,
-  };
+  const resourcePrices = MINERALS.reduce((acc, mineral) => {
+    acc[mineral.key] = mineral.basePrice;
+    return acc;
+  }, {} as Record<string, number>);
 
   return (
     <div className="flex flex-col h-full text-[#d1d5db] font-sans p-8 bg-[#1a1a1b] border-l-[6px] border-[#eab308] shadow-2xl relative overflow-hidden">

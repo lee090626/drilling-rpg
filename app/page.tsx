@@ -1,4 +1,4 @@
-import GameEngine from './components/GameEngine';
+import GameEngine from '@/src/app/game/GameEngine';
 
 export default function Home() {
   return (

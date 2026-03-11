@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PlayerStats } from '../types/game';
-import { DRILLS } from '../lib/DrillData';
+import { PlayerStats } from '../../shared/types/game';
+import { DRILLS } from '../../shared/config/drillData';
 
 interface CraftingProps {
   stats: PlayerStats;

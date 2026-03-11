@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { PlayerStats } from '../types/game';
-import { DRILLS } from '../lib/DrillData';
+import { PlayerStats, TileType } from '../../shared/types/game';
+import { DRILLS } from '../../shared/config/drillData';
 
 interface InventoryProps {
   stats: PlayerStats;
@@ -10,115 +10,16 @@ interface InventoryProps {
   onEquip?: (drillId: string) => void;
 }
 
-type MineralKey =
-  | 'dirt'
-  | 'stone'
-  | 'coal'
-  | 'iron'
-  | 'gold'
-  | 'diamond'
-  | 'emerald'
-  | 'ruby'
-  | 'sapphire'
-  | 'uranium'
-  | 'obsidian';
-
-interface MineralDefinition {
-  key: MineralKey;
-  name: string;
-  icon: string;
-  rarity: string;
-  description: string;
-}
-
-const mineralDefinitions: MineralDefinition[] = [
-  {
-    key: 'dirt',
-    name: 'Dirt',
-    icon: '🟤',
-    rarity: 'Common',
-    description: 'Standard topsoil. Minimal mineral value.',
-  },
-  {
-    key: 'stone',
-    name: 'Stone',
-    icon: '🪨',
-    rarity: 'Common',
-    description: 'Hardened aggregate. Decent structural material.',
-  },
-  {
-    key: 'coal',
-    name: 'Coal',
-    icon: '⬛',
-    rarity: 'Common',
-    description: 'Carbon-rich material. Can be sold for a good price.',
-  },
-  {
-    key: 'iron',
-    name: 'Iron',
-    icon: '🥈',
-    rarity: 'Uncommon',
-    description: 'High-density industrial isotope.',
-  },
-  {
-    key: 'gold',
-    name: 'Gold',
-    icon: '🟡',
-    rarity: 'Rare',
-    description: 'High-conductivity precious alloy.',
-  },
-  {
-    key: 'diamond',
-    name: 'Diamond',
-    icon: '💎',
-    rarity: 'Exotic',
-    description: 'Pure carbon lattice. Extremely durable.',
-  },
-  {
-    key: 'emerald',
-    name: 'Emerald',
-    icon: '🟩',
-    rarity: 'Rare',
-    description: 'Precision crystalline lens material.',
-  },
-  {
-    key: 'ruby',
-    name: 'Ruby',
-    icon: '🟥',
-    rarity: 'Rare',
-    description: 'Thermal-resistant gemstone for lasers.',
-  },
-  {
-    key: 'sapphire',
-    name: 'Sapphire',
-    icon: '🟦',
-    rarity: 'Exotic',
-    description: 'Ultra-hard sensor array component.',
-  },
-  {
-    key: 'uranium',
-    name: 'Uranium',
-    icon: '☢️',
-    rarity: 'Exotic',
-    description: 'Highly unstable nuclear core component.',
-  },
-  {
-    key: 'obsidian',
-    name: 'Obsidian',
-    icon: '🌑',
-    rarity: 'Exotic',
-    description: 'Volcanic glass with atomic-level edge.',
-  },
-];
+import { MINERALS } from '../../shared/config/mineralData';
 
 export default function Inventory({ stats, onClose, onEquip }: InventoryProps) {
-  const [selectedKey, setSelectedKey] = useState<MineralKey | null>(null);
+  const [selectedKey, setSelectedKey] = useState<TileType | null>(null);
   const [activeTab, setActiveTab] = useState<'ingredients' | 'equipment'>(
     'ingredients',
   );
 
   const selectedMineral = useMemo(
-    () => mineralDefinitions.find((m) => m.key === selectedKey),
+    () => MINERALS.find((m) => m.key === selectedKey),
     [selectedKey],
   );
   const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
@@ -161,7 +62,7 @@ export default function Inventory({ stats, onClose, onEquip }: InventoryProps) {
           <>
             <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-10">
-                {mineralDefinitions.map((m) => {
+                {MINERALS.map((m) => {
                   const count = (stats.inventory as any)[m.key] || 0;
                   const isSelected = selectedKey === m.key;
                   const hasNone = count === 0;
@@ -169,15 +70,19 @@ export default function Inventory({ stats, onClose, onEquip }: InventoryProps) {
                   return (
                     <button
                       key={m.key}
-                      onClick={() => setSelectedKey(m.key)}
+                      onClick={() => setSelectedKey(m.key as any)}
                       className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden ${
                         isSelected
-                          ? 'bg-[#252526] border-[#eab308] shadow-2xl scale-[1.02]'
+                          ? 'bg-[#252526] shadow-2xl scale-[1.02]'
                           : hasNone
                             ? 'bg-[#1a1a1b] border-zinc-900 opacity-20 grayscale'
                             : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
                       }`}
+                      style={{ borderColor: isSelected ? m.color : undefined }}
                     >
+                      {isSelected && (
+                         <div className="absolute inset-0 opacity-10" style={{ backgroundColor: m.color }} />
+                      )}
                       <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
                         {m.icon}
                       </div>
@@ -201,7 +106,11 @@ export default function Inventory({ stats, onClose, onEquip }: InventoryProps) {
               {selectedMineral ? (
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="flex justify-start mb-6">
-                    <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest bg-zinc-950 px-3 py-1.5 rounded-lg border border-zinc-800">
+                    <span className="text-[9px] font-black px-3 py-1.5 rounded-lg border uppercase tracking-widest" style={{ 
+                      backgroundColor: `${selectedMineral.color}20`,
+                      borderColor: selectedMineral.color,
+                      color: selectedMineral.color
+                    }}>
                       {selectedMineral.rarity}
                     </span>
                   </div>
@@ -271,24 +180,25 @@ export default function Inventory({ stats, onClose, onEquip }: InventoryProps) {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3 mb-8">
-                      {[
-                        ['POWER', drill.basePower],
-                        ['SPEED', `${drill.cooldownMs}ms`],
-                      ].map(([l, v]) => (
-                        <div
-                          key={l as string}
-                          className="bg-zinc-950 p-3 rounded-xl text-center border border-zinc-900"
-                        >
-                          <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest uppercase">
-                            {l}
-                          </div>
-                          <div className="text-xs font-black text-white">
-                            {v}
-                          </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+                          {[
+                            ['POWER', drill.basePower],
+                            ['SPEED', `${drill.cooldownMs}ms`],
+                            ['MOBILITY', drill.moveSpeedMult && drill.moveSpeedMult > 1 ? `+${Math.round((drill.moveSpeedMult - 1) * 100)}%` : 'BASIC'],
+                          ].map(([l, v]) => (
+                            <div
+                              key={l as string}
+                              className="bg-zinc-950 p-3 rounded-xl text-center border border-zinc-900"
+                            >
+                              <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest uppercase">
+                                {l}
+                              </div>
+                              <div className="text-xs font-black text-white">
+                                {v}
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
 
                     <div className="mt-auto">
                       {!isEquipped && (
