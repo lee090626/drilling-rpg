@@ -1,268 +1,245 @@
 import { Tile, TileType } from '../../shared/types/game';
 import { getMineralStats } from '../../shared/lib/tileUtils';
-import { MAP_WIDTH, BASE_DEPTH } from '../../shared/config/constants';
+import { BASE_DEPTH } from '../../shared/config/constants';
+import { getDimensionConfig } from '../../shared/config/dimensionData';
 
-export const MAP_HEIGHT = 1011;
+/** 맵의 최대 높이 (타일 단위) */
+export const MAP_HEIGHT = 1550;
+/** 맵의 가로 너비 (중심 0 기준 좌우 150칸) */
+export const MAP_WIDTH = 300;
+export const HALF_WIDTH = 150;
 
+/**
+ * 게임 월드의 타일 데이터를 생성, 관리 및 수정하는 클래스입니다.
+ * 시드 기반 절차적 생성을 사용하여 무한한 지하 세계를 구현합니다.
+ */
 export class TileMap {
-  grid: Tile[][];
+  /** 플레이어에 의해 수정된 타일 정보를 저장하는 맵 (`x,y` 키 사용) */
+  modifiedTiles: Map<string, Tile>;
+  /** 월드 생성을 위한 랜덤 시드 */
   seed: number;
+  /** 현재 월드의 차원(Dimension) 번호 */
   dimension: number;
-  private rng: number;
 
   constructor(seed: number = 12345, dimension: number = 0) {
     this.seed = seed;
     this.dimension = dimension;
-    this.rng = seed;
-    this.grid = this.generateMap();
+    this.modifiedTiles = new Map();
   }
 
-  // Seeded Random Helper (LCG)
-  private seededRandom(): number {
-    this.rng = (1664525 * this.rng + 1013904223) % 4294967296;
-    return this.rng / 4294967296;
+  /**
+   * 좌표와 시드를 조합하여 결정론적인 해시 값을 생성합니다.
+   * 동일한 좌표에서는 항상 같은 결과가 나옵니다.
+   * 
+   * @param x - 타일의 X 좌표
+   * @param y - 타일의 Y 좌표
+   * @returns 0에서 1 사이의 난수
+   */
+  private hash(x: number, y: number): number {
+    const h = (Math.sin(x * 12.9898 + y * 78.233 + this.seed) * 43758.5453) % 1;
+    return h < 0 ? h + 1 : h;
   }
 
-  generateMap(): Tile[][] {
-    this.rng = this.seed; // Reset RNG for deterministic generation
-    const grid: Tile[][] = [];
-    for (let y = 0; y < MAP_HEIGHT; y++) {
-      const row: Tile[] = [];
-      for (let x = 0; x < MAP_WIDTH; x++) {
-        row.push(this.generateTile(x, y));
-      }
-      grid.push(row);
-    }
-    return grid;
+  /**
+   * 보간된 2D 노이즈 값을 생성합니다. (군집화용)
+   */
+  private noise2D(x: number, y: number): number {
+    const x1 = Math.floor(x);
+    const y1 = Math.floor(y);
+    const x2 = x1 + 1;
+    const y2 = y1 + 1;
+
+    const h11 = this.hash(x1, y1);
+    const h21 = this.hash(x2, y1);
+    const h12 = this.hash(x1, y2);
+    const h22 = this.hash(x2, y2);
+
+    const tx = x - x1;
+    const ty = y - y1;
+
+    // Smoothstep interpolation
+    const sx = tx * tx * (3 - 2 * tx);
+    const sy = ty * ty * (3 - 2 * ty);
+
+    const a = h11 + sx * (h21 - h11);
+    const b = h12 + sx * (h22 - h12);
+    return a + sy * (b - a);
   }
 
+  /**
+   * 지정된 좌표의 타일을 규칙에 따라 생성합니다.
+   * 
+   * @param x - 생성할 타일의 X 좌표
+   * @param y - 생성할 타일의 Y 좌표
+   * @returns 생성된 Tile 객체
+   */
   generateTile(x: number, y: number): Tile {
-    // Top layers are air/surface
+    // 가로 범위 제한 (경계선은 파괴 불가능한 벽)
+    if (Math.abs(x) > HALF_WIDTH) {
+      return { type: 'wall', health: 1000000, maxHealth: 1000000 };
+    }
+
+    // 지상 섹션 (공기/표면)은 항상 비어있음
     if (y < BASE_DEPTH) {
       return { type: 'empty', health: 0, maxHealth: 0 };
     }
 
-    // Procedural generation based on depth
-    const rand = this.seededRandom();
-    const stats = getMineralStats('dirt');
+    const config = getDimensionConfig(this.dimension);
     let type: TileType = 'dirt';
-    let health = stats.health;
+    
+    // 차원별 광물 분포 규칙 적용 (노이즈 기반 군집화)
+    for (const rule of config.minerals) {
+      if (!rule.minDepth || y > rule.minDepth) {
+        // 설정된 스케일 사용 (기본값 6)
+        const scale = rule.scale || 6;
 
-    if (y < 20) {
-      if (rand < 0.05) {
-        type = 'coal';
-        const s = getMineralStats('coal');
-        health = s.health;
-      }
-    } else if (y < 50) {
-      if (rand < 0.1) {
-        type = 'stone';
-        const s = getMineralStats('stone');
-        health = s.health;
-      } else if (rand < 0.15) {
-        type = 'coal';
-        const s = getMineralStats('coal');
-        health = s.health;
-      } else if (rand < 0.17) {
-        type = 'iron';
-        const s = getMineralStats('iron');
-        health = s.health;
-      }
-    } else {
-      // 50+ Depth
-      if (rand < 0.2) {
-        type = 'stone';
-        const s = getMineralStats('stone');
-        health = s.health;
-      } else if (rand < 0.25) {
-        type = 'iron';
-        const s = getMineralStats('iron');
-        health = s.health;
-      } else if (rand < 0.27) {
-        type = 'gold';
-        const s = getMineralStats('gold');
-        health = s.health;
-      } else if (rand < 0.29 && y > 50) {
-        type = 'diamond';
-        const s = getMineralStats('diamond');
-        health = s.health;
-      } else if (rand < 0.31 && y > 100) {
-        type = 'emerald';
-        const s = getMineralStats('emerald');
-        health = s.health;
-      } else if (rand < 0.33 && y > 150) {
-        type = 'ruby';
-        const s = getMineralStats('ruby');
-        health = s.health;
-      } else if (rand < 0.345 && y > 200) {
-        type = 'sapphire';
-        const s = getMineralStats('sapphire');
-        health = s.health;
-      } else if (rand < 0.355 && y > 300) {
-        type = 'uranium';
-        const s = getMineralStats('uranium');
-        health = s.health;
-      } else if (rand < 0.36 && y > 500) {
-        type = 'obsidian';
-        const s = getMineralStats('obsidian');
-        health = s.health;
-      }
+        const noiseVal = this.noise2D(x / scale, y / (scale * 0.7));
+        let currentThreshold = rule.threshold * 1.2; // 노이즈 기반 밀도 보합 계수 조정
 
-      // Boss Core 5x5 Logic at 1000m
-      const bossCenterY = 1010;
-      const bossCenterX = Math.floor(MAP_WIDTH / 2);
+        // 심도 기반 보정 (가장 많이 나오는 깊이 전후로 확률 감쇄)
+        if (rule.peakDepth && rule.range) {
+          const dist = Math.abs(y - rule.peakDepth);
+          const depthFactor = Math.max(0, 1 - dist / rule.range);
+          currentThreshold *= depthFactor;
+        }
 
-      if (
-        Math.abs(x - bossCenterX) <= 2 &&
-        Math.abs(y - bossCenterY) <= 2
-      ) {
-        type = 'boss_core'; 
-        health = 20000;
-      } 
-      else if (
-        this.dimension > 0 &&
-        y === bossCenterY &&
-        (x === bossCenterX - 3 || x === bossCenterX + 3)
-      ) {
-        type = 'monster_nest';
-        health = 200 + this.dimension * 200;
+        // 노이즈 값이 임계값을 넘으면 해당 광물 할당
+        if (noiseVal < currentThreshold) {
+          type = rule.type;
+          break;
+        }
       }
     }
 
+    // 보스 구역 및 특수 구조물 배치 로직
+    const targetHeight = config.bossHeight;
+    const bossCenterY = targetHeight - 1;
+    const bossCenterX = 15;
+
+    // 보스 코어 영역 (3x3 또는 지정된 범위)
+    if (Math.abs(x - bossCenterX) <= 2 && Math.abs(y - bossCenterY) <= 2) {
+      type = 'boss_core';
+    } 
+    // 몬스터 네스트 등 특수 타일 배치
+    else if (
+      config.hasMonsterNest &&
+      y === bossCenterY &&
+      (x === bossCenterX - 3 || x === bossCenterX + 3)
+    ) {
+      type = 'monster_nest';
+    }
+
+    const stats = getMineralStats(type);
+    // 보스 코어는 특별히 높은 체력을 가짐
+    const health = type === 'boss_core' ? 20000 : stats.health;
+    
     return { type, health, maxHealth: health };
   }
 
+  /**
+   * 특정 좌표의 타일 정보를 가져옵니다. 수정된 데이터가 있으면 우선적으로 반환합니다.
+   * 
+   * @param x - 타일의 X 좌표
+   * @param y - 타일의 Y 좌표
+   * @returns 해당 위치의 Tile 객체 또는 범위를 벗어난 경우 null
+   */
   getTile(x: number, y: number): Tile | null {
-    const ix = Math.floor(x);
-    const iy = Math.floor(y);
-    if (iy < 0 || iy >= MAP_HEIGHT || ix < 0 || ix >= MAP_WIDTH) return null;
-    return this.grid[iy][ix];
+    if (y < 0 || y >= MAP_HEIGHT) return null;
+    
+    const key = `${x},${y}`;
+    if (this.modifiedTiles.has(key)) {
+      return this.modifiedTiles.get(key)!;
+    }
+    
+    return this.generateTile(x, y);
   }
 
+  /**
+   * 타일에 데미지를 가하고, 파괴 여부를 저장합니다.
+   * 
+   * @param x - 타일의 X 좌표
+   * @param y - 타일의 Y 좌표
+   * @param amount - 가할 데미지 양
+   * @returns 타일이 파괴되었으면 true, 아니면 false
+   */
   damageTile(x: number, y: number, amount: number): boolean {
     const tile = this.getTile(x, y);
     if (!tile || tile.type === 'empty' || tile.type === 'wall') return false;
 
     tile.health -= amount;
+    
+    const key = `${x},${y}`;
     if (tile.health <= 0) {
       tile.type = 'empty';
       tile.health = 0;
-      return true;
     }
-    return false;
+    // 수정된 상태를 맵에 저장하여 영속성 유지
+    this.modifiedTiles.set(key, tile);
+    
+    return tile.health <= 0;
   }
 
+  /**
+   * 저장용 데이터를 생성합니다. 원본과 다른(수정된) 타일만 추출합니다.
+   * 
+   * @returns `{좌표키: [타일ID, 현재체력]}` 형태의 객체
+   */
   serialize(): Record<string, [number, number]> {
-    const originalMap = new TileMap(this.seed, this.dimension);
     const modified: Record<string, [number, number]> = {};
-
-    for (let y = 0; y < MAP_HEIGHT; y++) {
-      for (let x = 0; x < MAP_WIDTH; x++) {
-        const current = this.grid[y][x];
-        const original = originalMap.grid[y][x];
-
-        if (current.type !== original.type || current.health !== original.health) {
-          const typeIdx = TILE_TYPE_TO_ID[current.type] ?? 0;
-          modified[`${x},${y}`] = [typeIdx, current.health];
-        }
+    
+    this.modifiedTiles.forEach((tile, key) => {
+      const [x, y] = key.split(',').map(Number);
+      const original = this.generateTile(x, y);
+      
+      // 원본 생생값과 다른 경우에만 저장 공간 절약을 위해 포함
+      if (tile.type !== original.type || tile.health !== original.health) {
+        const typeIdx = TILE_TYPE_TO_ID[tile.type] ?? 0;
+        modified[key] = [typeIdx, tile.health];
       }
-    }
+    });
+    
     return modified;
   }
 
+  /**
+   * 저장된 데이터를 기반으로 타일 맵 상태를 복원합니다.
+   * 
+   * @param data - 불러온 타일 데이터 객체
+   * @param seed - 월드 시드 (선택 사항)
+   * @param dimension - 차원 번호 (선택 사항)
+   */
   deserialize(data: any, seed?: number, dimension?: number): void {
-    if (seed !== undefined) {
-      this.seed = seed;
-      this.rng = seed;
-    }
-    if (dimension !== undefined) {
-      this.dimension = dimension;
-    }
+    if (seed !== undefined) this.seed = seed;
+    if (dimension !== undefined) this.dimension = dimension;
     
-    this.grid = this.generateMap();
-
+    this.modifiedTiles.clear();
     if (!data) return;
 
-    if (Array.isArray(data)) {
-      for (let y = 0; y < Math.min(data.length, MAP_HEIGHT); y++) {
-        for (let x = 0; x < Math.min(data[y]?.length || 0, MAP_WIDTH); x++) {
-          const [typeIdx, health] = data[y][x];
-          const type = ID_TO_TILE_TYPE[typeIdx] || 'dirt';
-          const stats = getMineralStats(type);
-
-          this.grid[y][x] = {
-            type,
-            health: health,
-            maxHealth: stats.health,
-          };
-        }
+    for (const [key, tileData] of Object.entries(data as Record<string, [number, number]>)) {
+      let x, y;
+      if (key.includes(',')) {
+        [x, y] = key.split(',').map(Number);
+      } else {
+        // 기존 인덱스 기반 데이터 호환성을 위한 처리
+        const index = Number(key);
+        x = index % 31;
+        y = Math.floor(index / 31);
       }
-      return;
-    }
-
-    for (const [coord, tileData] of Object.entries(data as Record<string, [number, number]>)) {
-      const [x, y] = coord.split(',').map(Number);
-      if (y < 0 || y >= MAP_HEIGHT || x < 0 || x >= MAP_WIDTH) continue;
 
       const [typeIdx, health] = tileData;
       const type = ID_TO_TILE_TYPE[typeIdx] || 'dirt';
       const stats = getMineralStats(type);
 
-      this.grid[y][x] = {
+      this.modifiedTiles.set(`${x},${y}`, {
         type,
         health: health,
         maxHealth: stats.health,
-      };
-    }
-  }
-
-  regenerateAllResources(playerX: number, playerY: number): void {
-    const SAFE_RADIUS = 5;
-    for (let y = BASE_DEPTH; y < MAP_HEIGHT; y++) {
-      for (let x = 0; x < MAP_WIDTH; x++) {
-        const tile = this.grid[y][x];
-        if (tile.type !== 'empty') continue;
-
-        const dx = x - playerX;
-        const dy = y - playerY;
-        if (dx * dx + dy * dy < SAFE_RADIUS * SAFE_RADIUS) continue;
-
-        const rand = Math.random();
-        let newType: TileType = 'dirt';
-
-        if (y < 20) {
-          if (rand < 0.1) newType = 'coal';
-          else newType = 'dirt';
-        } else if (y < 50) {
-          if (rand < 0.1) newType = 'stone';
-          else if (rand < 0.2) newType = 'coal';
-          else if (rand < 0.25) newType = 'iron';
-          else newType = 'dirt';
-        } else {
-          if (rand < 0.2) newType = 'stone';
-          else if (rand < 0.3) newType = 'iron';
-          else if (rand < 0.35) newType = 'gold';
-          else if (rand < 0.39) newType = 'diamond';
-          else if (rand < 0.43 && y > 100) newType = 'emerald';
-          else if (rand < 0.46 && y > 150) newType = 'ruby';
-          else if (rand < 0.49 && y > 200) newType = 'sapphire';
-          else if (rand < 0.51 && y > 300) newType = 'uranium';
-          else if (rand < 0.52 && y > 500) newType = 'obsidian';
-          else newType = 'dirt';
-        }
-
-        const stats = getMineralStats(newType);
-
-        this.grid[y][x] = {
-          type: newType,
-          health: stats.health,
-          maxHealth: stats.health,
-        };
-      }
+      });
     }
   }
 }
 
+/** 타일 타입을 숫자 ID로 매핑 (저장 효율성 위함) */
 const TILE_TYPE_TO_ID: Record<TileType, number> = {
   empty: -1,
   dirt: 0,
@@ -283,8 +260,12 @@ const TILE_TYPE_TO_ID: Record<TileType, number> = {
   wall: 4,
   portal: 10,
   boss_skin: 33,
+  iron_ingot: 50,
+  gold_ingot: 51,
+  polished_diamond: 52,
 };
 
+/** 숫자 ID를 타일 타입으로 역매핑 */
 const ID_TO_TILE_TYPE: Record<number, TileType> = Object.entries(TILE_TYPE_TO_ID).reduce((acc, [key, value]) => {
   acc[value as number] = key as TileType;
   return acc;

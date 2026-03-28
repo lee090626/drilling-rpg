@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:gh": "BASE_PATH=/drilling-rpg next build",
-    "build:itch": "BASE_PATH='' next build",
+    "build:gh": "NEXT_PUBLIC_BASE_PATH=/drilling-rpg BASE_PATH=/drilling-rpg next build",
+    "build:itch": "NEXT_PUBLIC_BASE_PATH='' BASE_PATH='' next build",
+    "build:cf": "CF_PAGES=1 next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "npm run build:gh && touch out/.nojekyll && gh-pages -t -d out"
+    "deploy": "npm run build:gh && touch out/.nojekyll && gh-pages -t -d out",
+    "deploy:cf": "CF_PAGES=1 opennextjs-cloudflare build && CF_PAGES=1 opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "next": "16.1.6",
@@ -18,6 +20,7 @@
     "tailwind-scrollbar-hide": "^4.0.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.18.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -26,6 +29,7 @@
     "eslint-config-next": "16.1.6",
     "gh-pages": "^6.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.78.0"
   }
 }

@@ -1,10 +1,15 @@
 import { GameWorld } from '../../entities/world/model';
-import { MAP_WIDTH } from '../../shared/config/constants';
+import { Entity } from '../../shared/types/game';
 
+/**
+ * 플레이어와 NPC(엔티티) 또는 포탈 간의 상호작용을 관리하는 시스템입니다.
+ * 
+ * @param world - 게임 월드 상태 객체
+ */
 export const interactionSystem = (world: GameWorld) => {
   const { player, entities, tileMap, intent } = world;
 
-  // 1. Check for nearby entities (NPCs) to show/hide prompt
+  // 1. 주변 엔티티(NPC 등) 확인 및 상호작용 프롬프트 표시 제어
   const INTERACTION_DISTANCE = 1.5;
   let nearbyEntity = null;
 
@@ -12,7 +17,7 @@ export const interactionSystem = (world: GameWorld) => {
     const entW = entity.width || 1;
     const entH = entity.height || 1;
     
-    // Distance check based on entity center (approx)
+    // 엔티티의 중심 좌표 기준 거리 체크
     const centerX = entity.x;
     const centerY = entity.y - entH / 2;
 
@@ -20,7 +25,7 @@ export const interactionSystem = (world: GameWorld) => {
     const dy = centerY - player.pos.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Dynamic distance based on entity size
+    // 엔티티 크기에 따른 유동적인 상호작용 거리 계산
     const interactionDist = Math.max(2.5, Math.max(entW, entH) / 1.5);
 
     if (dist < interactionDist) {
@@ -33,7 +38,7 @@ export const interactionSystem = (world: GameWorld) => {
     world.ui.showInteractionPrompt = true;
     world.ui.activeInteractionType = nearbyEntity.interactionType;
 
-    // Handle interaction intent (Space key)
+    // 상호작용 의도(스페이스 키) 처리
     if (intent.action === 'interact') {
       handleEntityInteraction(world, nearbyEntity);
     }
@@ -42,7 +47,7 @@ export const interactionSystem = (world: GameWorld) => {
     world.ui.activeInteractionType = null;
   }
 
-  // 2. Check for portal interaction (standing on a portal)
+  // 2. 포탈 상호작용 확인 (포탈 위에 서 있는 경우)
   const currentTileX = Math.floor(player.pos.x + 0.5);
   const currentTileY = Math.floor(player.pos.y + 0.5);
   const currentTile = tileMap.getTile(currentTileX, currentTileY);
@@ -51,23 +56,48 @@ export const interactionSystem = (world: GameWorld) => {
   }
 };
 
-const handleEntityInteraction = (world: GameWorld, entity: any) => {
+/**
+ * 엔티티 종류에 따른 상호작용(상점 열기, 대화 등)을 처리합니다.
+ */
+const handleEntityInteraction = (world: GameWorld, entity: Entity) => {
   if (entity.interactionType === 'shop') {
     world.ui.isShopOpen = true;
   } else if (entity.interactionType === 'dialog') {
-    // For now, dialog might just log something or open a small window
-    console.log(`Talking to ${entity.name}`);
-  } else if (entity.interactionType === 'quest') {
-    // Handle quest giving NPC
-    world.ui.isShopOpen = true; // Quests are often in the shop UI in this game
+    // 현재 대화 시스템은 로그 출력만 수행
+    console.log(`${entity.name}와(과) 대화 중...`);
   } else if (entity.interactionType === 'crafting') {
     world.ui.isCraftingOpen = true;
+  } else if (entity.interactionType === 'refinery') {
+    world.ui.isRefineryOpen = true;
   }
 };
 
+/**
+ * 포탈 상호작용을 처리하여 다음 차원으로 이동시킵니다.
+ */
 const handlePortalInteraction = (world: GameWorld) => {
-  // This usually requires a confirmed prompt which is handled by the Orchestrator (React component)
-  // because window.confirm is blocking and side-effect heavy for a System.
-  // We can set a state to trigger the Orchestrator to show the confirm.
-  // For now, we'll let the Orchestrator handle the heavy lifting of dimension switching.
+  const { player, tileMap } = world;
+  
+  // 상호작용 시스템은 매 프레임 실행되므로 의도 체크 및 쿨다운/확인창이 필요함
+  if (world.intent.action === 'interact') {
+    const nextDim = player.stats.dimension + 1;
+    if (confirm(`Dimension ${nextDim}으로 이동하시겠습니까?\n새로운 세계에서 모험이 시작됩니다!`)) {
+      player.stats.dimension = nextDim;
+      tileMap.dimension = nextDim;
+      
+      // 위치 초기화 (지상 베이스캠프 근처)
+      player.pos.x = 15;
+      player.pos.y = 5; 
+      player.visualPos.x = 15;
+      player.visualPos.y = 5;
+      
+      // 수정된 타일 정보 초기화
+      tileMap.modifiedTiles.clear(); 
+      player.stats.depth = 0;
+      
+      alert(`Dimension ${nextDim}에 도착했습니다!`);
+    }
+    // 즉시 재발생 방지를 위해 의도 초기화
+    world.intent.action = 'none';
+  }
 };
