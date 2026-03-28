@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[4515,["/drilling-rpg/_next/static/chunks/0eff3ec5751e9eb3.js"],"default"]
-3:I[97367,["/drilling-rpg/_next/static/chunks/2f236954d6a65e12.js"],"OutletBoundary"]
+2:I[72697,["/drilling-rpg/_next/static/chunks/b563b9e4d026344d.js","/drilling-rpg/_next/static/chunks/147378e00d4f5964.js"],"default"]
+3:I[97367,["/drilling-rpg/_next/static/chunks/ff1a16fafef87110.js","/drilling-rpg/_next/static/chunks/d2be314c3ece3fbe.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"buildId":"CxAo6meP4SlYKyjJvcyUv","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"flex min-h-screen flex-col items-center justify-center bg-gray-950","children":["$","$L2",null,{}]}],[["$","script","script-0",{"src":"/drilling-rpg/_next/static/chunks/0eff3ec5751e9eb3.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"MFeIhUQ5zUEzdV1dKRmCr","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"fixed inset-0 bg-black overflow-hidden select-none","children":["$","$L2",null,{}]}],[["$","script","script-0",{"src":"/drilling-rpg/_next/static/chunks/b563b9e4d026344d.js","async":true}],["$","script","script-1",{"src":"/drilling-rpg/_next/static/chunks/147378e00d4f5964.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
 5:null

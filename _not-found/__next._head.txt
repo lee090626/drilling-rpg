@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[97367,["/drilling-rpg/_next/static/chunks/2f236954d6a65e12.js"],"ViewportBoundary"]
-3:I[97367,["/drilling-rpg/_next/static/chunks/2f236954d6a65e12.js"],"MetadataBoundary"]
+2:I[97367,["/drilling-rpg/_next/static/chunks/ff1a16fafef87110.js","/drilling-rpg/_next/static/chunks/d2be314c3ece3fbe.js"],"ViewportBoundary"]
+3:I[97367,["/drilling-rpg/_next/static/chunks/ff1a16fafef87110.js","/drilling-rpg/_next/static/chunks/d2be314c3ece3fbe.js"],"MetadataBoundary"]
 4:"$Sreact.suspense"
-5:I[27201,["/drilling-rpg/_next/static/chunks/2f236954d6a65e12.js"],"IconMark"]
-0:{"buildId":"CxAo6meP4SlYKyjJvcyUv","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Drilling RPG"}],["$","meta","1",{"name":"description","content":"Deep drilling adventure"}],["$","link","2",{"rel":"icon","href":"favicon.ico"}],["$","$L5","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
+5:I[27201,["/drilling-rpg/_next/static/chunks/ff1a16fafef87110.js","/drilling-rpg/_next/static/chunks/d2be314c3ece3fbe.js"],"IconMark"]
+0:{"buildId":"MFeIhUQ5zUEzdV1dKRmCr","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Drilling RPG - 심해 드릴 어드벤처"}],["$","meta","1",{"name":"description","content":"지하 깊은 곳을 탐험하는 드릴링 RPG 게임입니다."}],["$","link","2",{"rel":"icon","href":"favicon.ico"}],["$","$L5","3",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

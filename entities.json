@@ -15,13 +15,23 @@
       "id": "forgemaster_1",
       "type": "npc",
       "name": "Forgemaster",
-      "x": 30,
-      "y": 7,
+      "x": 20,
+      "y": 9,
       "imagePath": "Mechanic.png",
-
-      "width": 3,
-      "height": 3,
+      "width": 6,
+      "height": 6,
       "interactionType": "crafting"
+    },
+    {
+      "id": "refinery_1",
+      "type": "object",
+      "name": "Refinery",
+      "x": 26,
+      "y": 9,
+      "imagePath": "",
+      "width": 3,
+      "height": 4,
+      "interactionType": "refinery"
     }
   ]
 }
