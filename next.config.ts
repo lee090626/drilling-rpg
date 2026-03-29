@@ -1,10 +1,9 @@
 import type { NextConfig } from 'next';
 
-const isProd = process.env.NODE_ENV === 'production';
-const isCloudflare = 
-  process.env.NEXT_CF_DEPLOY === 'true' || 
-  process.env.CF_PAGES === '1' || 
-  process.env.OPEN_NEXT === 'true';
+const isExport = process.env.IS_EXPORT === 'true';
+const isCloudflare = !isExport;
+
+console.log(`[NextConfig] Build Mode: ${isExport ? 'EXPORT' : 'STANDALONE'} (isExport: ${isExport})`);
 
 const basePath = process.env.BASE_PATH || '';
 
