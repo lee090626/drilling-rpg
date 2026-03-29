@@ -7,7 +7,7 @@
     "build": "next build",
     "build:gh": "IS_EXPORT=true NEXT_PUBLIC_BASE_PATH=/drilling-rpg BASE_PATH=/drilling-rpg next build",
     "build:itch": "IS_EXPORT=true NEXT_PUBLIC_BASE_PATH='' BASE_PATH='' next build",
-    "build:cf": "next build",
+    "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "deploy": "npm run build:gh && touch out/.nojekyll && gh-pages -t -d out",
