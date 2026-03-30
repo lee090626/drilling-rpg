@@ -36,6 +36,7 @@ export const createInitialPlayer = (seed: number): Player => ({
     hp: 200,
     maxHp: 200,
     attackPower: 10,
+    moveSpeed: 100,
     inventory: {
       dirt: 0, stone: 0, coal: 0, iron: 0, gold: 0, diamond: 0,
       emerald: 0, ruby: 0, sapphire: 0, uranium: 0, obsidian: 0,

@@ -1,6 +1,6 @@
 import { TileMap } from '../tile/TileMap';
 import { Player } from '../player/model';
-import { Entity, GameAssets, Particle, FloatingText, DroppedItem } from '../../shared/types/game';
+import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType } from '../../shared/types/game';
 
 /**
  * 게임의 모든 상태를 포함하는 최상위 월드 객체 인터페이스입니다.
@@ -54,7 +54,7 @@ export interface GameWorld {
   /** 각종 UI 모달창의 열림/닫힘 상태를 관리하는 객체 */
   ui: {
     showInteractionPrompt: boolean;
-    activeInteractionType: 'shop' | 'dialog' | 'crafting' | 'elevator' | 'refinery' | null;
+    activeInteractionType: InteractionType | null;
     isShopOpen: boolean;
     isInventoryOpen: boolean;
     isSettingsOpen: boolean;
