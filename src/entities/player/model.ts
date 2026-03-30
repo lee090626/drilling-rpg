@@ -16,6 +16,8 @@ export interface Player {
   isDrilling: boolean;
   /** 타격 흔들림 효과를 위해 마지막으로 타격이 발생한 시간 (밀리초) */
   lastHitTime: number;
+  /** 마지막 공격 시간 */
+  lastAttackTime: number;
 }
 
 /**
@@ -57,4 +59,5 @@ export const createInitialPlayer = (seed: number): Player => ({
   visualPos: { x: 15, y: 8 },
   isDrilling: false,
   lastHitTime: 0,
+  lastAttackTime: 0,
 });

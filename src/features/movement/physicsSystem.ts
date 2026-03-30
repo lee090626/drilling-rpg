@@ -7,6 +7,7 @@ import {
 import { DRILLS } from '../../shared/config/drillData';
 import { createInitialEquipmentState } from '../../shared/lib/masteryUtils';
 import { getTotalRuneStat } from '../../shared/lib/runeUtils';
+import { getResearchBonuses } from '../../shared/lib/researchUtils';
 
 /**
  * 플레이어의 이동, 충돌 체크, 그리드 기반 위치 보간을 담당하는 시스템입니다.
@@ -18,15 +19,21 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   
   // 1. 부드러운 그리드 기반 이동 및 채굴 전환 로직
   const drill = DRILLS[player.stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const equipmentState = player.stats.equipmentStates[player.stats.equippedDrillId] || createInitialEquipmentState(player.stats.equippedDrillId);
+  const researchBonuses = getResearchBonuses(player.stats);
   
   // 룬 시스템에 의한 이동 속도 보너스 합산 (백분율 값으로 치환)
-  // 예: runeSpeedMult가 20이면 0.2 증가 (1.2배 속도)
   const runeSpeedMult = getTotalRuneStat(player.stats, 'moveSpeed') * 0.01;
 
-  // 최종 이동 딜레이 계산 (장비 마이너스 속도 보정, 그리고 룬 보너스 추가)
+  // 최종 이동 딜레이 계산 (기본 속도 스탯 * 장비 배율 * 연구 보너스 + 룬 보너스)
+  const baseSpeedStat = player.stats.moveSpeed || 100;
+  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed;
   const drillSpeedMult = drill.moveSpeedMult || 1;
-  const MOVEMENT_DELAY = MOVEMENT_DELAY_MS / (drillSpeedMult + runeSpeedMult); 
+  const divisor = (baseSpeedMult * drillSpeedMult + runeSpeedMult) || 1;
+  const MOVEMENT_DELAY = MOVEMENT_DELAY_MS / divisor; 
+  
+  // 시각적 보간 속도 설정: 이동 속도가 빠를수록 보간도 빠르게 처리하여 밀림 방지
+  // 딜레이가 NaN이 되거나 0이 되는 상황을 방지하기 위한 안전장치 추가
+  const lerpFactor = isFinite(50 / MOVEMENT_DELAY) ? Math.min(0.95, 50 / MOVEMENT_DELAY) : 0.25;
   
   // 논리적 위치 업데이트 (그리드 이동)
   if (now - world.timestamp.lastMove >= MOVEMENT_DELAY) {
@@ -82,8 +89,7 @@ export const physicsSystem = (world: GameWorld, now: number) => {
     player.stats.maxDepthReached = player.stats.depth;
   }
 
-  // 선형 보간(LERP)을 이용한 부드러운 이동 효과 (그리드를 따라 부드럽게 미끄러지는 느낌)
-  const lerpFactor = 0.25;
+  // 선형 보간(LERP)을 이용한 부드러운 이동 효과
   player.visualPos.x += (player.pos.x - player.visualPos.x) * lerpFactor;
   player.visualPos.y += (player.pos.y - player.visualPos.y) * lerpFactor;
 

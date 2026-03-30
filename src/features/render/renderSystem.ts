@@ -3,6 +3,7 @@ import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '../../shared/config/constan
 import { getTileIndex, getTileColor } from '../../shared/lib/tileUtils';
 import { MINERALS } from '../../shared/config/mineralData';
 import { DRONES } from '../../shared/config/droneData';
+import { renderEntities } from './entityRenderer';
 
 /**
  * 캔버스 API를 사용하여 게임의 모든 시각적 요소를 화면에 그리는 시스템입니다.
@@ -146,62 +147,8 @@ export const renderSystem = (world: GameWorld, canvas: HTMLCanvasElement) => {
     }
   }
 
-  // 2. 엔티티(NPC, 오브젝트 등) 그리기
-  entities.forEach(entity => {
-    const entW = (entity.width || 1) * TILE_SIZE;
-    const entH = (entity.height || 1) * TILE_SIZE;
-    const drawX = entity.x * TILE_SIZE - entW / 2;
-    const drawY = entity.y * TILE_SIZE - entH;
-
-    const img = assets.entities[entity.imagePath || ''];
-    if (img) {
-      ctx.drawImage(img, drawX, drawY, entW, entH);
-    } else {
-      ctx.fillStyle = '#eab308'; // 이미지 없을 시 노란색 박스로 표시
-      ctx.fillRect(drawX, drawY, entW, entH);
-    }
-  });
-
-  // 3. 펫 드론 및 보조 채굴 레이저 렌더링
-  if (world.activeDrone) {
-    const drone = world.activeDrone;
-    const droneConfig = DRONES[drone.id];
-    
-    ctx.save();
-    // 레이저 타겟팅 이펙트 렌더링
-    if (drone.targetX !== null && drone.targetY !== null) {
-      ctx.beginPath();
-      ctx.moveTo(drone.x, drone.y);
-      ctx.lineTo(drone.targetX, drone.targetY);
-      ctx.strokeStyle = 'rgba(34, 211, 238, 0.6)'; // 시안색 아우라
-      ctx.lineWidth = 4;
-      ctx.stroke();
-      
-      ctx.beginPath();
-      ctx.moveTo(drone.x, drone.y);
-      ctx.lineTo(drone.targetX, drone.targetY);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; // 하얀색 코어 빔
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-    
-    // 드론 본체 렌더링
-    ctx.translate(drone.x, drone.y);
-    // 사인파를 이용해 위아래로 둥둥 떠다니는 호버링 이펙트
-    const hoverY = Math.sin(Date.now() / 200) * 4; 
-    ctx.translate(0, hoverY);
-    
-    ctx.font = '28px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'cyan';
-    ctx.shadowBlur = 15;
-    
-    const icon = droneConfig ? droneConfig.icon : '🤖';
-    ctx.fillText(icon, 0, 0); 
-    
-    ctx.restore();
-  }
+  // 2. 엔티티(NPC, 몬스터, 보스, 드론 등) 그리기 (분리된 렌더러 사용)
+  renderEntities(world, ctx);
 
   // 4. 플레이어 캐릭터 그리기
   if (assets.player) {

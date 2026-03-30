@@ -46,6 +46,7 @@ export interface GameWorld {
   /** 각종 동작의 마지막 실행 시간을 관리하는 타임스탬프 객체 */
   timestamp: {
     lastMove: number;
+    lastMiningTime: number; // 채굴 전용 타임스탬프 추가
     lastUiUpdate: number;
     lastGlobalRegen: number;
     lastLoop: number;
@@ -73,6 +74,8 @@ export interface GameWorld {
   };
   /** 현재 화면 흔들림 강도 (0: 흔들림 없음) */
   shake: number;
+  /** 이미 몬스터 생성이 확인된 타일 좌표 세트 ("x,y") */
+  spawnedCoords: Set<string>;
 }
 
 /**
@@ -99,6 +102,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         hp: 200,
         maxHp: 200,
         attackPower: 10,
+        moveSpeed: 100,
         inventory: {
           dirt: 0, stone: 0, coal: 0, iron: 0, gold: 0, diamond: 0,
           emerald: 0, ruby: 0, sapphire: 0, uranium: 0, obsidian: 0,
@@ -118,6 +122,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
       visualPos: { x: 15, y: 8 },
       isDrilling: false,
       lastHitTime: 0,
+      lastAttackTime: 0,
     },
     entities: [],
     particles: [],
@@ -142,6 +147,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
     },
     timestamp: {
       lastMove: 0,
+      lastMiningTime: 0,
       lastUiUpdate: 0,
       lastGlobalRegen: Date.now(),
       lastLoop: 0,
@@ -166,5 +172,6 @@ export const createInitialWorld = (seed: number): GameWorld => {
       active: false,
     },
     shake: 0,
+    spawnedCoords: new Set(),
   };
 };

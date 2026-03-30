@@ -1,0 +1,72 @@
+import { PlayerStats } from '../../shared/types/game';
+import { DRILLS } from '../../shared/config/drillData';
+import { MINERALS } from '../../shared/config/mineralData';
+import { getMasteryMultiplier, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
+import { getTotalRuneStat } from '../../shared/lib/runeUtils';
+import { getResearchBonuses } from '../../shared/lib/researchUtils';
+
+/**
+ * 채굴 대미지 계산 결과 인터페이스
+ */
+export interface DamageResult {
+  finalDamage: number;
+  totalPower: number;
+  isCrit: boolean;
+  attackInterval: number;
+}
+
+/**
+ * 플레이어의 현재 스탯과 장비를 기반으로 채굴 대미지를 계산합니다.
+ */
+export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string): DamageResult => {
+  const currentDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
+  const researchBonuses = getResearchBonuses(stats);
+  
+  // 1. 공격 속도 계산
+  const attackInterval = currentDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed));
+
+  // 2. 숙련도 배율 계산
+  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
+  const masteryMult = getMasteryMultiplier(equipmentState.level);
+  
+  // 3. 룬 보너스 및 치명타 계산
+  const runeAttackBonus = getTotalRuneStat(stats, 'attack');
+  const critRate = getTotalRuneStat(stats, 'critRate');
+  const critDamage = getTotalRuneStat(stats, 'critDmg');
+
+  const drillPower = currentDrill.basePower;
+  const masteryBonus = Math.round(drillPower * (masteryMult - 1));
+  
+  let totalPower = stats.attackPower + drillPower + masteryBonus + Math.floor(runeAttackBonus);
+  
+  let isCrit = false;
+  if (Math.random() < critRate) {
+    totalPower = Math.floor(totalPower * critDamage);
+    isCrit = true;
+  }
+
+  // 4. 방어력 적용 및 최종 대미지 (지수 공식)
+  const mineralDef = MINERALS.find(m => m.key === targetTileType);
+  const defense = mineralDef ? mineralDef.defense : 0;
+  
+  const netPower = Math.max(0, totalPower - defense);
+  const exponent = 1.15;
+  const finalDamage = Math.floor(Math.pow(netPower, exponent));
+
+  return {
+    finalDamage,
+    totalPower,
+    isCrit,
+    attackInterval,
+  };
+};
+
+/**
+ * 드론의 채굴 대미지를 계산합니다.
+ */
+export const calculateDroneDamage = (dronePower: number, targetTileType: string): number => {
+  const mineralDef = MINERALS.find(m => m.key === targetTileType);
+  const defense = mineralDef ? mineralDef.defense : 0;
+  const netPower = Math.max(0, dronePower - defense);
+  return Math.floor(Math.pow(netPower, 1.15));
+};

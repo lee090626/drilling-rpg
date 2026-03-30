@@ -11,6 +11,9 @@ import { effectSystem } from '../../features/effects/effectSystem';
 import { refinerySystem } from '../../features/refinery/refinerySystem';
 import { fetchBaseLayout, fetchEntities } from '../../shared/lib/dataLoader';
 import { saveManager, SaveData } from '../../shared/lib/saveManager';
+import { monsterAiSystem } from '../../features/combat/monsterAiSystem';
+import { combatSystem } from '../../features/combat/combatSystem';
+import { spawnSystem } from '../../features/combat/spawnSystem';
 
 // Widgets
 import Hud from '../../widgets/hud/ui/Hud';
@@ -154,6 +157,7 @@ export default function GameEngine() {
       if (!saved.stats.activeSmeltingJobs) saved.stats.activeSmeltingJobs = [];
       if (!saved.stats.refinerySlots) saved.stats.refinerySlots = 1;
       if (!saved.stats.equippedDroneId) saved.stats.equippedDroneId = null;
+      if (saved.stats.moveSpeed === undefined) saved.stats.moveSpeed = 100;
 
       world.player.stats = saved.stats;
       world.player.pos = saved.position;
@@ -239,25 +243,34 @@ export default function GameEngine() {
       const world = worldRef.current;
       const canvas = canvasRef.current;
 
-      // ECS 시스템 실행 단계
+      // ECS 시스템 실행 단계 (Pipeline)
       try {
         const deltaTime = now - (world.timestamp.lastLoop || now);
         world.timestamp.lastLoop = now;
 
-        // 조작, 물리, 채굴, 상호작용, 이펙트 시스템 실행
+        // 1. Input & Physics Phase
         inputSystem(world);
         physicsSystem(world, now);
+
+        // 2. Gameplay & Logic Phase
         miningSystem(world, now);
         interactionSystem(world);
-        effectSystem(world, deltaTime);
         refinerySystem(world, now);
         
-        // 렌더링 시스템
+        // 3. Combat & World Phase
+        spawnSystem(world);
+        monsterAiSystem(world);
+        combatSystem(world, deltaTime);
+        
+        // 4. Effects & Cleanup Phase
+        effectSystem(world, deltaTime);
+        
+        // 5. Render Phase
         if (canvas) {
           renderSystem(world, canvas);
         }
 
-        // UI 동기화 (성능과 반응성 사이의 균형을 위해 주기적으로 실행)
+        // UI 동기화
         if (now - world.timestamp.lastUiUpdate > 500) {
           world.timestamp.lastUiUpdate = now;
           updateUi();

@@ -23,6 +23,7 @@ export type TileType =
   | 'boss_core'       // 보스 코어
   | 'boss_skin'       // 보스 외피
   | 'monster_nest'    // 몬스터 둥지
+  | 'monster'         // 몬스터 (표기용)
   | 'empty'           // 빈 공간
   | 'wall'            // 파괴 불가능한 벽
   | 'portal'          // 차원 관문
@@ -47,7 +48,7 @@ export interface Tile {
  * 광물 종류별로 수량을 저장합니다.
  */
 export type Inventory = {
-  [K in Exclude<TileType, 'empty' | 'wall' | 'portal' | 'boss_core' | 'boss_skin' | 'monster_nest' | 'lava' | 'dungeon_bricks'>]: number;
+  [K in Exclude<TileType, 'empty' | 'wall' | 'portal' | 'boss_core' | 'boss_skin' | 'monster_nest' | 'monster' | 'lava' | 'dungeon_bricks'>]: number;
 } & {
   [key: string]: number;
 };
@@ -239,6 +240,8 @@ export interface PlayerStats {
   maxHp: number;
   /** 기본 채굴 위력 (장비 위력과 합산됨) */
   attackPower: number;
+  /** 캐릭터 기본 이동 속도 (기본 100) */
+  moveSpeed: number;
 
   /** 자원 및 아이템 */
   /** 광물 인벤토리 */
@@ -279,7 +282,7 @@ export interface Entity {
   /** 엔티티 고유 ID */
   id: string;
   /** 엔티티 종류 */
-  type: 'npc' | 'object';
+  type: 'npc' | 'object' | 'monster' | 'boss';
   /** 표시될 이름 */
   name: string;
   /** 가로 좌표 (타일 단위) */
@@ -295,7 +298,19 @@ export interface Entity {
   /** 엔티티 높이 (타일 단위) */
   height?: number;
   /** 상호작용 시 발생할 행동 종류 */
-  interactionType: 'shop' | 'dialog' | 'crafting' | 'elevator' | 'refinery';
+  interactionType: 'shop' | 'dialog' | 'crafting' | 'elevator' | 'refinery' | 'none';
+  /** 엔티티 스탯 (전투용) */
+  stats?: {
+    hp: number;
+    maxHp: number;
+    attack: number;
+    speed: number;
+    defense: number;
+  };
+  /** 마지막 공격 시간 */
+  lastAttackTime?: number;
+  /** 현재 상태 (추적, 대기 등) */
+  state?: 'idle' | 'chase' | 'attack';
 }
 
 /**

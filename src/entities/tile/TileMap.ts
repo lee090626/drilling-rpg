@@ -1,7 +1,9 @@
-import { Tile, TileType } from '../../shared/types/game';
+import { Tile, TileType, Entity } from '../../shared/types/game';
 import { getMineralStats } from '../../shared/lib/tileUtils';
 import { BASE_DEPTH } from '../../shared/config/constants';
-import { getDimensionConfig } from '../../shared/config/dimensionData';
+import { getDimensionConfig, MonsterSpawnRule } from '../../shared/config/dimensionData';
+import { MONSTERS } from '../../shared/config/monsterData';
+import { BOSSES } from '../../shared/config/bossData';
 
 /** 맵의 최대 높이 (타일 단위) */
 export const MAP_HEIGHT = 1550;
@@ -137,6 +139,73 @@ export class TileMap {
   }
 
   /**
+   * 특정 좌표에서 초기 몬스터 배치를 결정합니다.
+   */
+  getInitialMonster(x: number, y: number): Entity | null {
+    if (y < BASE_DEPTH + 10) return null; // 지상 근처에는 몬스터 없음
+
+    const config = getDimensionConfig(this.dimension);
+    
+    // 1. 보스 체크
+    const bossHeight = config.bossHeight;
+    const bossCenterX = 15;
+    if (y === bossHeight - 1 && x === bossCenterX) {
+      const bossDef = BOSSES[0]; // 현재는 첫 번째 보스만 사용
+      return {
+        id: `boss_${this.dimension}_${bossDef.id}`,
+        type: 'boss',
+        name: bossDef.name,
+        x, y,
+        interactionType: 'none',
+        stats: {
+          hp: bossDef.stats.hp,
+          maxHp: bossDef.stats.hp,
+          attack: bossDef.stats.attack,
+          speed: 0.01,
+          defense: 100,
+        },
+        state: 'idle',
+      };
+    }
+
+    // 2. 일반 몬스터 체크 (데이터 기반)
+    const available = config.monsters.filter(m => y >= m.minDepth && (!m.maxDepth || y <= m.maxDepth));
+    if (available.length === 0) return null;
+
+    // 타일 생성과는 다른 해시를 사용하거나 더 낮은 확률 적용
+    const mobHash = this.hash(x + 100, y + 100);
+    
+    // 해당 좌표에서 몬스터가 생성될지 결정 (가장 높은 확률 기준 혹은 첫 번째 매칭)
+    // 여기서는 단순화하여 사용 가능한 몬스터 중 첫 번째로 확률에 맞는 것 선택
+    for (const rule of available) {
+      if (mobHash < rule.chance) {
+        const mob = MONSTERS.find(m => m.id === rule.monsterId);
+        if (!mob) continue;
+
+        return {
+          id: `mob_${x}_${y}_${mob.id}`,
+          type: 'monster',
+          name: mob.name,
+          x: x, // 그리드 정렬
+          y: y,
+          interactionType: 'none',
+          imagePath: mob.icon,
+          stats: {
+            hp: mob.stats.hp,
+            maxHp: mob.stats.hp,
+            attack: mob.stats.attack,
+            speed: mob.stats.speed,
+            defense: mob.stats.defense,
+          },
+          state: 'idle',
+        };
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * 특정 좌표의 타일 정보를 가져옵니다. 수정된 데이터가 있으면 우선적으로 반환합니다.
    * 
    * @param x - 타일의 X 좌표
@@ -257,6 +326,7 @@ const TILE_TYPE_TO_ID: Record<TileType, number> = {
   dungeon_bricks: 9,
   boss_core: 32,
   monster_nest: 31,
+  monster: 34,
   wall: 4,
   portal: 10,
   boss_skin: 33,

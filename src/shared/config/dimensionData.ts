@@ -15,11 +15,25 @@ export interface MineralRule {
   scale?: number;
 }
 
+export interface MonsterSpawnRule {
+  /** 몬스터 종류 ID (monsterData.ts 참조) */
+  monsterId: string;
+  /** 기본 출현 확률 (0~1) */
+  chance: number;
+  /** 출현 가중치 (여러 마리 중 선택 시) */
+  weight: number;
+  /** 최소 깊이 */
+  minDepth: number;
+  /** 최대 깊이 */
+  maxDepth?: number;
+}
+
 export interface DimensionConfig {
   id: number;
   name: string;
   bossHeight: number;
   minerals: MineralRule[];
+  monsters: MonsterSpawnRule[];
   hasMonsterNest: boolean;
 }
 
@@ -29,6 +43,12 @@ export const DIMENSIONS: DimensionConfig[] = [
     name: 'TERRA',
     bossHeight: 1500, 
     hasMonsterNest: true,
+    monsters: [
+      { monsterId: 'cave_slime', chance: 0.02, weight: 1, minDepth: 50, maxDepth: 500 },
+      { monsterId: 'rock_crawler', chance: 0.03, weight: 1, minDepth: 300, maxDepth: 1000 },
+      { monsterId: 'void_bat', chance: 0.04, weight: 1, minDepth: 800, maxDepth: 2000 },
+      { monsterId: 'ancient_shard', chance: 0.01, weight: 1, minDepth: 1200, maxDepth: 3000 },
+    ],
     minerals: [
       // 1. 특수/희귀 광물 (누적 확률 기반)
       // 스케일(scale)이 작을수록 더 촘촘하고 분산된 작은 덩어리로 나옵니다.
