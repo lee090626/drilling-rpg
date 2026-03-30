@@ -7,11 +7,11 @@
     "build": "next build",
     "build:gh": "IS_EXPORT=true NEXT_PUBLIC_BASE_PATH=/drilling-rpg BASE_PATH=/drilling-rpg next build",
     "build:itch": "IS_EXPORT=true NEXT_PUBLIC_BASE_PATH='' BASE_PATH='' next build",
-    "build:cf": "opennextjs-cloudflare build",
+    "build:cf": "IS_EXPORT=true NEXT_PUBLIC_BASE_PATH='' BASE_PATH='' next build",
     "start": "next start",
     "lint": "eslint",
     "deploy": "npm run build:gh && touch out/.nojekyll && gh-pages -t -d out",
-    "deploy:cf": "npm run build:cf && wrangler pages deploy .open-next/assets"
+    "deploy:cf": "npm run build:cf && wrangler pages deploy out"
   },
   "dependencies": {
     "next": "^15.1.0",
