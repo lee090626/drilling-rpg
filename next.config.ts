@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   // GitHub Pages: use /drilling-rpg
   // Itch.io / Cloudflare: must use empty or relative paths
   basePath: isExport ? (process.env.BASE_PATH || '') : '',
-  assetPrefix: isExport ? (process.env.BASE_PATH ? `${process.env.BASE_PATH}/` : './') : '',
+  assetPrefix: isExport ? (process.env.BASE_PATH ? `${process.env.BASE_PATH}/` : undefined) : undefined,
   
   trailingSlash: true,
   images: {
