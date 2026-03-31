@@ -7,7 +7,7 @@ import { Entity } from '../types/game';
 export async function fetchBaseLayout(): Promise<number[][] | null> {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   try {
-    const res = await fetch(`${basePath}/baseLayout.json?t=${Date.now()}`);
+    const res = await fetch(`${basePath}/baseLayout.json`);
     const data = await res.json();
     return data.tiles;
   } catch (err) {
@@ -23,7 +23,7 @@ export async function fetchBaseLayout(): Promise<number[][] | null> {
 export async function fetchEntities(): Promise<Entity[]> {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   try {
-    const res = await fetch(`${basePath}/entities.json?t=${Date.now()}`);
+    const res = await fetch(`${basePath}/entities.json`);
     const data = await res.json();
     return data.entities || [];
   } catch (err) {
