@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { PlayerStats, Drill } from '../../shared/types/game';
 import { MINERALS } from '../../shared/config/mineralData';
 import { DRILLS } from '../../shared/config/drillData';
 import AttackRuneImg from '../../shared/assets/rune/AttackRune.png';
+import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.png';
 
 /**
  * 상점 컴포넌트의 Props 인터페이스입니다.
@@ -64,53 +66,67 @@ export default function Shop({
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
+      {/* 배경 장식 요소 */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ffffff 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+      <div className="absolute top-0 left-0 w-full h-64 bg-linear-to-b from-amber-500/5 to-transparent pointer-events-none" />
+
       {/* 헤더 섹션 - Bento 스타일의 플로팅 헤더 */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 px-4 py-4 md:px-8 md:py-5 bg-zinc-900 border border-zinc-800 rounded-2xl md:rounded-3xl shadow-2xl shrink-0 gap-4 md:gap-6">
-        <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full md:w-auto">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl md:text-3xl">💰</span>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 px-4 py-4 md:px-8 md:py-5 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800/50 rounded-2xl md:rounded-3xl shadow-2xl shrink-0 gap-4 md:gap-6 relative z-10">
+        <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent rounded-2xl md:rounded-3xl pointer-events-none" />
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full md:w-auto relative z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner p-2">
+              <div className="relative w-full h-full">
+                <Image src={GoldIconImg} alt="Shop" fill className="object-contain drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+              </div>
+            </div>
             <div className="flex flex-col">
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-amber-400 leading-none">
                 Shop
               </h2>
-              <span className="text-[10px] text-zinc-600 font-bold tracking-widest uppercase mt-1">Global Market</span>
+              <span className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1 opacity-60">Global Market</span>
             </div>
           </div>
           
-          <div className="flex bg-zinc-950 p-1 rounded-xl md:rounded-2xl border border-zinc-800 w-full sm:w-auto">
+          <div className="flex bg-black/40 p-1 rounded-xl md:rounded-2xl border border-white/5 w-full sm:w-auto shadow-inner">
             <button
               onClick={() => setActiveTab('minerals')}
-              className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-wider transition-all ${
+              className={`flex-1 sm:flex-none px-6 md:px-8 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-wider transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 ${
                 activeTab === 'minerals'
-                  ? 'bg-zinc-800 text-amber-400 shadow-lg border border-zinc-700'
+                  ? 'bg-amber-500 text-black shadow-[0_4px_12px_rgba(245,158,11,0.3)]'
                   : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
-              Sell Mineral
+              Sell
             </button>
             <button 
                 onClick={() => setActiveTab('runes')}
-                className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-wider transition-all ${
+                className={`flex-1 sm:flex-none px-6 md:px-8 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-wider transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 ${
                   activeTab === 'runes' 
-                    ? 'bg-zinc-800 text-amber-400 shadow-lg border border-zinc-700' 
+                    ? 'bg-amber-500 text-black shadow-[0_4px_12px_rgba(245,158,11,0.3)]' 
                     : 'text-zinc-500 hover:text-zinc-300'
                 }`}
               >
-                Modules
+                Runes
               </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
-          <div className="flex items-center justify-center gap-2 md:gap-3 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
-            <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
+        <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
+          <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner group">
+            <div className="w-6 h-6 md:w-8 md:h-8 relative">
+               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            </div>
+            <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
-              <span className="text-amber-400 text-[10px] md:text-sm ml-1.5 md:ml-2 uppercase tracking-widest font-black opacity-80">Gold</span>
+              <span className="text-amber-500 text-[10px] md:text-xs uppercase tracking-widest font-black opacity-60">Gold</span>
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 md:w-12 md:h-12 shrink-0 flex items-center justify-center rounded-xl md:rounded-2xl bg-zinc-800 border border-zinc-700 text-zinc-400 hover:bg-amber-400 hover:text-black hover:border-amber-400 transition-all active:scale-90 shadow-xl"
+            className="w-10 h-10 md:w-14 md:h-14 shrink-0 flex items-center justify-center rounded-xl md:rounded-2xl bg-zinc-800 border border-zinc-700 text-zinc-400 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all active:scale-90 shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50"
           >
             <span className="text-lg md:text-xl font-bold">✕</span>
           </button>
@@ -123,11 +139,17 @@ export default function Shop({
 
           {activeTab === 'minerals' && (
             /* 광물 판매 섹션 */
-            <section>
-              <h3 className="text-[24px] font-black text-zinc-600 tracking-wider mb-6 border-b border-zinc-800 pb-2">
-                Sell Mineral
-              </h3>
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pb-12">
+            <section className="relative z-10">
+              <div className="flex items-center gap-4 mb-8 border-b border-zinc-800 pb-4">
+                <h3 className="text-xl md:text-2xl font-black text-white tracking-widest uppercase">
+                  Market Board
+                </h3>
+                <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                  <span className="text-amber-500 text-[10px] font-black tracking-widest uppercase italic">Live Prices</span>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4 pb-12">
                 {Object.entries(resourcePrices).map(([res, price]) => {
                   const count = (stats.inventory as any)[res] || 0;
                   if (count <= 0) return null;
@@ -145,70 +167,93 @@ export default function Shop({
                   return (
                     <div
                       key={res}
-                      className="bg-zinc-900/60 p-4 md:p-8 rounded-2xl md:rounded-[3rem] border border-zinc-800/50 flex flex-col gap-4 md:gap-6 group transition-all hover:bg-zinc-800 shadow-xl min-h-[180px] md:min-h-[220px] justify-between"
+                      className="bg-zinc-900/40 backdrop-blur-md p-4 md:p-6 rounded-2xl md:rounded-3xl border border-white/5 flex flex-col lg:flex-row items-center gap-6 group transition-all hover:bg-zinc-800/60 hover:border-amber-500/20 shadow-xl relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex flex-col gap-0.5 md:gap-1">
-                          <div className="text-xl md:text-3xl font-black text-white tracking-tighter">
+                      <div className="absolute inset-0 bg-linear-to-r from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                      
+                      {/* 좌측: 광물 정보 */}
+                      <div className="flex items-center gap-4 md:gap-6 w-full lg:w-1/3 shrink-0 relative z-10">
+                        <div className="w-16 h-16 md:w-20 md:h-20 bg-black/40 rounded-2xl flex items-center justify-center p-2 border border-white/5 shadow-inner group-hover:border-amber-500/30 transition-colors shrink-0">
+                          {mineral?.image ? (
+                            <img src={typeof mineral.image === 'string' ? mineral.image : mineral.image.src || mineral.image} alt={displayName} className="w-full h-full object-contain drop-shadow-2xl" />
+                          ) : (
+                            <span className="text-3xl">{mineral?.icon || '💎'}</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <div className="text-xl md:text-2xl font-black text-white tracking-tighter truncate group-hover:text-amber-400 transition-colors">
                             {displayName}
                           </div>
-                          <div className="text-xs md:text-base text-zinc-600 font-black tracking-widest">
-                            Inventory: <span className="text-zinc-400 tabular-nums">{count.toLocaleString()}</span>
+                          <div className="flex items-center gap-2 mt-1">
+                             <div className="flex items-center gap-1.5 px-2 py-0.5 bg-black/30 rounded-md border border-white/5">
+                                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Inv</span>
+                                <span className="text-xs md:text-sm text-zinc-300 font-black tabular-nums">{count.toLocaleString()}</span>
+                             </div>
+                             <div className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 rounded-md border border-amber-500/10">
+                                <span className="text-[10px] text-amber-500/60 font-bold uppercase tracking-widest italic">Price</span>
+                                <span className="text-xs md:text-sm text-amber-500 font-black tabular-nums">{price.toLocaleString()}</span>
+                             </div>
                           </div>
-                        </div>
-
-                        <div className="flex flex-col items-center gap-2 md:gap-3 bg-black/30 p-2 md:p-3 rounded-2xl md:rounded-4xl border border-zinc-800/30">
-                           <div className="flex items-center gap-1 md:gap-1.5 scale-90 sm:scale-100">
-                              {[1, 10, 100].map(amt => (
-                                <button 
-                                  key={amt}
-                                  onClick={() => updateAmount(currentAmount + amt)}
-                                  className="px-2 py-1 md:px-3 md:py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs md:text-[16px] font-black rounded-lg md:rounded-xl transition-all active:scale-90 border border-zinc-700/30"
-                                >
-                                  +{amt}
-                                </button>
-                              ))}
-                              <button 
-                                onClick={() => updateAmount(count)}
-                                className="px-2 py-1 md:px-3 md:py-1.5 bg-amber-400/10 hover:bg-amber-400/20 text-amber-400 text-[8px] md:text-[10px] font-black rounded-lg md:rounded-xl transition-all active:scale-90 border border-amber-400/20 uppercase"
-                              >
-                                Max
-                              </button>
-                           </div>
-                           <div className="flex items-center justify-center w-full">
-                              <input 
-                                type="number" 
-                                value={currentAmount}
-                                onChange={(e) => updateAmount(parseInt(e.target.value) || 0)}
-                                className="w-full sm:w-40 bg-zinc-950 border border-zinc-800 rounded-xl md:rounded-2xl px-3 py-2 md:px-4 md:py-3 text-center text-lg md:text-2xl font-black text-white tabular-nums focus:outline-hidden focus:border-amber-400/50 transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                              />
-                           </div>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center gap-4 mt-2 pt-4 md:pt-6 border-t border-zinc-800/50 w-full">
-                        <div className="flex flex-col">
-                           <div className="flex items-center gap-1.5 md:gap-2">
-                             <span className="text-xl md:text-3xl font-black text-white tabular-nums tracking-tighter">
-                               {totalPrice.toLocaleString()}
-                             </span>
-                             <span className="text-amber-400 font-black text-base md:text-xl tracking-tighter">Gold</span>
-                           </div>
+                      {/* 중앙: 거래 콘솔 */}
+                      <div className="flex flex-col md:flex-row items-center gap-4 w-full lg:flex-1 relative z-10">
+                        <div className="flex flex-wrap items-center justify-center gap-1.5 bg-black/30 p-1.5 rounded-xl border border-white/5 w-full md:w-auto">
+                          {[1, 10, 100].map(amt => (
+                            <button 
+                              key={amt}
+                              onClick={() => updateAmount(currentAmount + amt)}
+                              className="px-3 py-1.5 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white text-[11px] font-black rounded-lg transition-all active:scale-90 border border-white/5 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                            >
+                              +{amt}
+                            </button>
+                          ))}
+                          <button 
+                            onClick={() => updateAmount(count)}
+                            className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 text-[11px] font-black rounded-lg transition-all active:scale-90 border border-amber-500/20 uppercase focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                          >
+                            Max
+                          </button>
+                        </div>
+                        
+                        <div className="relative w-full md:w-32 group/input">
+                          <input 
+                            type="number" 
+                            value={currentAmount}
+                            onChange={(e) => updateAmount(parseInt(e.target.value) || 0)}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-center text-lg font-black text-white tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all shadow-inner [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
                         </div>
 
+                        <div className="flex flex-col items-center md:items-start min-w-[120px]">
+                            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-0.5 opacity-60 italic">Total Value</div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`text-xl md:text-2xl font-black tabular-nums tracking-tighter transition-colors ${currentAmount > 0 ? 'text-white' : 'text-zinc-700'}`}>
+                                {totalPrice.toLocaleString()}
+                              </span>
+                              <div className="w-4 h-4 md:w-5 md:h-5 relative">
+                                <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+
+                      {/* 우측: 판매 버튼 */}
+                      <div className="w-full md:w-auto shrink-0 relative z-10">
                          <button
                           onClick={() => {
                             onSell(res, currentAmount, totalPrice);
                             updateAmount(0);
                           }}
                           disabled={currentAmount <= 0}
-                          className={`min-w-[100px] md:min-w-[140px] py-3 md:py-4 text-sm md:text-[18px] font-black rounded-xl md:rounded-2xl transition-all active:scale-95 border-2 tracking-widest
+                          className={`w-full md:w-32 py-3.5 text-sm font-black rounded-2xl transition-all active:scale-95 tracking-[0.2em] uppercase focus:outline-none focus:ring-2 focus:ring-amber-400/50
                             ${currentAmount > 0 
-                              ? 'bg-amber-400 text-black border-amber-300 shadow-[0_10px_20px_rgba(251,191,36,0.3)] hover:brightness-110 active:translate-y-1' 
-                              : 'bg-zinc-900 text-zinc-500 border-zinc-800 cursor-not-allowed'}
+                              ? 'bg-linear-to-br from-amber-400 to-amber-600 text-black shadow-[0_8px_20px_rgba(217,119,6,0.3)] hover:brightness-110 active:translate-y-0.5' 
+                              : 'bg-zinc-800/50 text-zinc-600 border border-white/5 cursor-not-allowed opacity-50'}
                           `}
                         >
-                          SELL
+                          Sell
                         </button>
                       </div>
                     </div>
@@ -220,90 +265,121 @@ export default function Shop({
 
           {activeTab === 'runes' && (
             /* 스킬룬 관리 섹션 */
-            <div className="flex flex-col gap-6 h-full p-2 overflow-y-auto custom-scrollbar">
+            <div className="flex flex-col gap-8 h-full p-2 overflow-y-auto custom-scrollbar relative z-10 pb-10">
               {/* 상단: 룬 추출 및 합성 카드 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full shrink-0">
                 {/* 티어별 추출기 목록 루프 */}
                 {Array.from({ length: (stats.dimension || 0) + 1 }).map((_, tierIndex) => {
                   const cost = 500 * Math.pow(2, tierIndex);
                   return (
-                  <div key={tierIndex} className="bg-zinc-900 border border-zinc-800 p-6 md:p-10 rounded-2xl md:rounded-[3rem] shadow-2xl relative overflow-hidden group flex flex-col items-center text-center transition-all hover:bg-zinc-800/80">
-                    <div className="absolute top-2 md:top-4 left-4 md:left-6 py-0.5 md:py-1 px-3 md:px-4 bg-amber-400/10 border border-amber-400/20 rounded-full">
-                      <span className="text-amber-400 text-[10px] md:text-[12px] font-black tracking-widest">WORLD {tierIndex} TIER</span>
+                  <div key={tierIndex} className="bg-zinc-900/60 backdrop-blur-xl border border-white/5 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl relative overflow-hidden group flex flex-col items-center text-center transition-all hover:bg-zinc-800/80 hover:border-amber-500/30">
+                    <div className="absolute inset-0 bg-linear-to-b from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    
+                    <div className="absolute top-6 left-1/2 -translate-x-1/2 md:left-10 md:translate-x-0 py-1.5 px-5 bg-amber-500 text-black rounded-full shadow-[0_4px_12px_rgba(245,158,11,0.4)]">
+                      <span className="text-[10px] md:text-[11px] font-black tracking-widest uppercase">World {tierIndex} Tier</span>
                     </div>
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-zinc-950 rounded-2xl md:rounded-3xl flex items-center justify-center mb-4 md:mb-6 shadow-inner border border-zinc-800 mt-6 md:mt-6 overflow-hidden p-2">
+                    
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-black/40 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center mb-6 shadow-inner border border-white/5 mt-10 md:mt-8 overflow-hidden p-4 relative group-hover:border-amber-500/30 transition-colors">
+                       <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />
                        <img 
                          src={typeof AttackRuneImg === 'string' ? AttackRuneImg : (AttackRuneImg as any).src} 
                          alt="Extractor" 
-                         className="w-full h-full object-contain" 
+                         className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-transform duration-700 group-hover:rotate-12" 
                        />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-1 md:mb-2">Tier {tierIndex} Extractor</h3>
-                    <p className="text-zinc-500 text-[10px] md:text-[11px] mb-4 md:mb-6 font-bold tracking-wider opacity-60">Extracts core energy modules for World {tierIndex}.</p>
+                    
+                    <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-2 group-hover:text-amber-400 transition-colors">Tier {tierIndex} Extractor</h3>
+                    <p className="text-zinc-500 text-xs md:text-sm mb-6 md:mb-8 font-bold tracking-tight max-w-[240px] opacity-80">Extraction of core energy modules from the {tierIndex === 0 ? 'Earth' : `Dimension ${tierIndex}`}.</p>
                     
                     {/* 확률표 */}
-                    <div className="grid grid-cols-4 gap-2 w-full mb-8 bg-black/40 p-4 rounded-2xl border border-zinc-800/50">
+                    <div className="grid grid-cols-4 gap-2 w-full mb-8 bg-black/40 p-5 rounded-3xl border border-white/5 shadow-inner">
                       {[
-                        { name: 'Mythic', prob: '<1%', color: 'text-red-500' },
-                        { name: 'Legendary', prob: '?', color: 'text-amber-400' },
-                        { name: 'Radiant', prob: '?', color: 'text-rose-400' },
-                        { name: 'Epic', prob: '?', color: 'text-purple-400' },
-                        { name: 'Rare', prob: '?', color: 'text-blue-400' },
-                        { name: 'Uncommon', prob: '5%', color: 'text-emerald-400' },
-                        { name: 'Common', prob: '95%', color: 'text-zinc-400' },
+                        { name: 'Mythic', prob: '<1%', color: 'text-red-500', bg: 'bg-red-500/10' },
+                        { name: 'Legendary', prob: '?', color: 'text-amber-400', bg: 'bg-amber-400/10' },
+                        { name: 'Radiant', prob: '?', color: 'text-rose-400', bg: 'bg-rose-400/10' },
+                        { name: 'Epic', prob: '?', color: 'text-purple-400', bg: 'bg-purple-400/10' },
+                        { name: 'Rare', prob: '?', color: 'text-blue-400', bg: 'bg-blue-400/10' },
+                        { name: 'Uncommon', prob: '5%', color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+                        { name: 'Common', prob: '95%', color: 'text-zinc-400', bg: 'bg-zinc-400/10' },
                       ].map((item) => (
-                        <div key={item.name} className="flex flex-col items-center">
-                          <span className={`text-[10px] font-black ${item.color}`}>{item.name.slice(0, 3)}</span>
-                          <span className="text-[12px] font-black text-white tabular-nums">{item.prob}</span>
+                        <div key={item.name} className={`flex flex-col items-center p-2 rounded-xl border border-transparent hover:border-white/5 transition-colors ${item.bg}`}>
+                          <span className={`text-[9px] font-black uppercase tracking-widest ${item.color}`}>{item.name.slice(0, 3)}</span>
+                          <span className="text-[12px] font-black text-white tabular-nums mt-0.5">{item.prob}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="w-full flex justify-between items-center mb-8 px-4">
-                      <span className="text-[10px] font-black text-zinc-600 tracking-wider">Extraction Fee</span>
-                      <span className="text-2xl font-black text-amber-400 tabular-nums tracking-tighter">{cost.toLocaleString()} <span className="text-xs text-zinc-500">Credits</span></span>
+                    <div className="w-full flex justify-between items-center mb-8 px-4 py-3 bg-black/20 rounded-2xl border border-white/5">
+                      <span className="text-[11px] font-black text-zinc-500 tracking-widest uppercase">Fee</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl md:text-3xl font-black text-amber-500 tabular-nums tracking-tighter">{cost.toLocaleString()}</span>
+                        <div className="w-5 h-5 md:w-6 md:h-6 relative">
+                          <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+                        </div>
+                      </div>
                     </div>
+                    
                     <button 
                       onClick={() => onExtractRune(tierIndex)} 
-                      className="text-xl w-full py-5 bg-amber-400 hover:brightness-110 text-black rounded-2xl font-black tracking-widest transition-all shadow-xl active:scale-95"
+                      className="w-full py-5 bg-linear-to-br from-amber-400 to-amber-600 text-black rounded-2xl md:rounded-3xl font-black text-lg tracking-[0.2em] uppercase transition-all shadow-[0_12px_24px_rgba(217,119,6,0.3)] active:scale-95 focus:outline-none focus:ring-4 focus:ring-amber-500/40 hover:brightness-110 active:translate-y-1"
                     >
-                      Extract Tier {tierIndex}
+                      Extract
                     </button>
                   </div>
                 )})}
 
-                <div className="bg-zinc-900 border border-zinc-800 p-6 md:p-10 rounded-2xl md:rounded-[3rem] shadow-2xl relative overflow-hidden group flex flex-col items-center text-center transition-all hover:bg-zinc-800/80">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-zinc-950 rounded-2xl md:rounded-3xl flex items-center justify-center text-3xl md:text-4xl mb-4 md:mb-6 shadow-inner border border-zinc-800">🔮</div>
-                  <h3 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-1 md:mb-2">Auto Synthesizer</h3>
-                  <p className="text-zinc-500 text-[10px] md:text-[11px] mb-4 md:mb-8 font-bold tracking-wider opacity-60">Optimizes and synthesizes duplicate runes.</p>
-                  <div className="w-full flex justify-between items-center mb-6 md:mb-8 px-2 md:px-4">
-                    <span className="text-[9px] md:text-[10px] font-black text-zinc-600 tracking-wider">Operation Mode</span>
-                    <span className="text-lg md:text-2xl font-black text-purple-400 tabular-nums tracking-tighter">Batch Processing</span>
+                <div className="bg-zinc-900/60 backdrop-blur-xl border border-white/5 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl relative overflow-hidden group flex flex-col items-center text-center transition-all hover:bg-zinc-800/80 hover:border-purple-500/30">
+                  <div className="absolute inset-0 bg-linear-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-black/40 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center text-5xl md:text-6xl mb-6 shadow-inner border border-white/5 mt-10 md:mt-8 overflow-hidden relative group-hover:border-purple-500/30 transition-colors">
+                     <div className="absolute inset-0 bg-purple-500/5 animate-pulse" />
+                     <span className="relative z-10 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-transform duration-700 group-hover:scale-110">🔮</span>
                   </div>
-                  <button onClick={onSynthesizeRunes} className="w-full py-4 md:py-5 bg-purple-600/80 hover:bg-purple-500 text-white rounded-xl md:rounded-2xl font-black tracking-widest transition-all shadow-xl active:scale-95 border border-purple-500/20 text-sm md:text-base">
+                  
+                  <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-2 group-hover:text-purple-400 transition-colors">Synthesizer</h3>
+                  <p className="text-zinc-500 text-xs md:text-sm mb-6 md:mb-12 font-bold tracking-tight max-w-[240px] opacity-80">Optimizes and merges duplicate energy modules to create higher-tier components.</p>
+                  
+                  <div className="w-full flex justify-between items-center mb-8 px-6 py-4 bg-black/20 rounded-2xl border border-white/5">
+                    <span className="text-[11px] font-black text-zinc-500 tracking-widest uppercase">Processor Mode</span>
+                    <span className="text-xl md:text-2xl font-black text-purple-400 tracking-tighter uppercase italic">Batch Auto</span>
+                  </div>
+                  
+                  <button 
+                    onClick={onSynthesizeRunes} 
+                    className="w-full py-5 bg-linear-to-br from-purple-500 to-purple-700 text-white rounded-2xl md:rounded-3xl font-black text-lg tracking-[0.2em] uppercase transition-all shadow-[0_12px_24px_rgba(168,85,247,0.3)] active:scale-95 focus:outline-none focus:ring-4 focus:ring-purple-500/40 hover:brightness-110 active:translate-y-1"
+                  >
                     Synthesize
                   </button>
                 </div>
               </div>
 
               {/* 하단: 보유 룬 현황 리스트 */}
-              <div className="mt-8 bg-zinc-950 p-10 rounded-[3rem] border border-zinc-800 flex-1 min-h-0 overflow-y-auto mb-10 custom-scrollbar shadow-inner relative">
+              <div className="bg-black/40 backdrop-blur-sm p-6 md:p-10 rounded-[3rem] border border-white/5 flex-1 min-h-0 overflow-y-auto mb-10 custom-scrollbar shadow-inner relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-amber-400/20 to-transparent" />
-                <h3 className="text-[10px] font-black text-zinc-600 tracking-widest mb-10 flex items-center justify-between">
-                  <span>Inventory Log</span>
-                  <span className="bg-zinc-900/80 px-4 py-1.5 rounded-full text-zinc-500 border border-zinc-800 tabular-nums">{stats.inventoryRunes?.length || 0} Modules</span>
-                </h3>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <h3 className="text-[14px] font-black text-white tracking-widest uppercase">Inventory Log</h3>
+                  </div>
+                  <div className="px-4 py-1.5 bg-zinc-900 border border-white/5 rounded-full shadow-lg">
+                    <span className="text-amber-500 font-black tabular-nums tracking-tighter text-sm">{stats.inventoryRunes?.length || 0}</span>
+                    <span className="ml-2 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Active Modules</span>
+                  </div>
+                </div>
+                
                 <div className="flex flex-wrap gap-3">
                   {Object.entries(runeCounts).map(([rarity, count]) => (
-                    <div key={rarity} className={`px-5 py-3 border rounded-xl flex items-center gap-4 transition-all hover:-translate-y-1 shadow-md ${rarityColors[rarity] || 'bg-zinc-900 border-zinc-700 text-zinc-500'}`}>
-                      <span className="text-sm font-black tracking-wider">{rarity}</span>
-                      <span className="text-2xl font-black tabular-nums tracking-tighter">x{count}</span>
+                    <div key={rarity} className={`px-5 py-3 border rounded-2xl flex items-center gap-4 transition-all shadow-xl backdrop-blur-md ${rarityColors[rarity] || 'bg-zinc-900 border-zinc-700 text-zinc-500'}`}>
+                      <div className="w-2 h-2 rounded-full bg-current opacity-40 animate-pulse" />
+                      <span className="text-sm font-black tracking-widest uppercase">{rarity}</span>
+                      <div className="w-px h-4 bg-white/10" />
+                      <span className="text-2xl font-black tabular-nums tracking-tighter text-white">x{count}</span>
                     </div>
                   ))}
                   {(!stats.inventoryRunes || stats.inventoryRunes.length === 0) && (
-                    <div className="w-full text-center py-10 opacity-30">
-                      <p className="text-xs font-bold text-zinc-500 tracking-wider mb-2">No runes acquired yet.</p>
-                      <p className="text-sm font-medium text-zinc-600">Extract some runes using your credits!</p>
+                    <div className="w-full text-center py-16 opacity-30">
+                      <p className="text-lg font-black text-zinc-600 tracking-tighter mb-1">No modules detected.</p>
+                      <p className="text-xs font-bold text-zinc-700 uppercase tracking-widest">Extract core energy from the Global Market.</p>
                     </div>
                   )}
                 </div>
