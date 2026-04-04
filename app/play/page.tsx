@@ -8,7 +8,7 @@ export const dynamic = 'force-static';
  */
 export default function Play() {
   return (
-    <main id="drilling-game-root" className="fixed inset-0 bg-zinc-950 overflow-hidden select-none">
+    <main className="fixed inset-0 bg-zinc-950 overflow-hidden select-none">
       {/* 
           High-Visibility SEO Layer for AdSense & Crawlers:
           자바스크립트가 실행되기 전, 서버에서 바로 내려주는 텍스트들입니다.
@@ -41,7 +41,7 @@ export default function Play() {
       </div>
 
       {/* Actual Game Engine (Canvas will cover the text above) */}
-      <div className="relative z-10 w-full h-full bg-transparent">
+      <div className="relative z-60 w-full h-full bg-transparent">
         <GameEngine />
       </div>
     </main>

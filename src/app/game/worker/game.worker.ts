@@ -72,6 +72,8 @@ class GameEngineInstance {
       this.isRunning = true;
       this.lastLoopTime = performance.now();
       this.startLoop();
+      // 엔진이 준비되었음을 알림
+      self.postMessage({ type: 'ENGINE_READY' });
     }
   }
 
