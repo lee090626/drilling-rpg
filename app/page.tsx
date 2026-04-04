@@ -7,6 +7,8 @@ import DiamondIcon from '@/src/shared/assets/minerals/DiamondIcon.png';
 import RubyIcon from '@/src/shared/assets/minerals/RubyIcon.png';
 import EmeraldIcon from '@/src/shared/assets/minerals/EmeraldIcon.png';
 
+export const dynamic = 'force-static';
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-black text-white selection:bg-cyan-500 selection:text-white">

@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
   basePath: isExport ? (process.env.BASE_PATH || '') : '',
   assetPrefix: isExport ? (process.env.BASE_PATH ? `${process.env.BASE_PATH}/` : undefined) : undefined,
   
-  trailingSlash: true,
+  // trailingSlash: true 옵션은 Cloudflare Pages의 index 서빙과 충돌할 수 있어 비활성화합니다.
+  trailingSlash: false,
   images: {
     unoptimized: true,
   },
