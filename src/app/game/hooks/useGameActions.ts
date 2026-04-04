@@ -109,19 +109,6 @@ export const useGameActions = (
     updateUi();
   }, [sendToWorker, updateUi]);
 
-  const toggleModal = useCallback((target: keyof GameWorld['ui']) => {
-    const { ui } = worldRef.current;
-    (ui as any)[target] = !ui[target];
-    updateUi();
-  }, [worldRef, updateUi]);
-
-  const handleClose = useCallback((target: keyof GameWorld['ui']) => {
-    (worldRef.current.ui as any)[target] = false;
-    updateUi();
-  }, [worldRef, updateUi]);
-
-
-
   /** 용광로에서 새로운 제련 작업 시작 */
   const handleStartSmelting = useCallback((recipeId: string) => {
     const stats = worldRef.current.player.stats;
@@ -204,6 +191,10 @@ export const useGameActions = (
     handleCollectSmelting,
     handleUnlockResearch,
     handleUseArtifact,
-    handleEquipArtifact
+    handleEquipArtifact,
+    handleTravelDimension: () => {
+      sendToWorker('ACTION', { action: 'travelDimension' });
+      updateUi();
+    }
   };
 };

@@ -9,6 +9,7 @@ export const inputSystem = (world: GameWorld) => {
   world.intent.moveX = 0;
   world.intent.moveY = 0;
   world.intent.action = 'none';
+  world.intent.miningTarget = null;
 
   // 현재 모달창(상점, 인벤토리 등)이 하나라도 열려있는지 확인
   const { ui } = world;

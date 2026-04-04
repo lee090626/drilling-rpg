@@ -93,11 +93,25 @@ export const saveManager = {
       const data = JSON.parse(json);
       
       // 구 버전 데이터와의 호환성을 위한 패치 로직
-      if (data.stats && !data.stats.equipmentStates) {
-        data.stats.equipmentStates = {};
-      }
-      if (data.stats && !data.stats.unlockedResearchIds) {
-        data.stats.unlockedResearchIds = ['root'];
+      if (data.stats) {
+        const s = data.stats;
+        if (!s.equipmentStates) s.equipmentStates = {};
+        if (!s.unlockedResearchIds) s.unlockedResearchIds = ['root'];
+        if (!s.killedMonsterIds) s.killedMonsterIds = [];
+        if (s.artifacts === undefined) s.artifacts = [];
+        if (s.equippedArtifactId === undefined) s.equippedArtifactId = null;
+        if (!s.artifactCooldowns) s.artifactCooldowns = {};
+        if (!s.refinerySlots) s.refinerySlots = 1;
+        if (!s.activeSmeltingJobs) s.activeSmeltingJobs = [];
+        if (!s.inventoryRunes) s.inventoryRunes = [];
+        
+        // 인벤토리 누락 아이템 보정
+        if (s.inventory) {
+          const inv = s.inventory;
+          if (inv.iron_ingot === undefined) inv.iron_ingot = 0;
+          if (inv.gold_ingot === undefined) inv.gold_ingot = 0;
+          if (inv.polished_diamond === undefined) inv.polished_diamond = 0;
+        }
       }
       
       return data;

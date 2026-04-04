@@ -23,6 +23,7 @@ export const createParticles = (world: GameWorld, x: number, y: number, color: s
 export const createFloatingText = (world: GameWorld, x: number, y: number, text: string, color: string, life: number = 1.0) => {
   const ft = world.floatingTextPool.get();
   if (ft) {
+    // x, y는 픽셀 단위 좌표. x에 TILE_SIZE/2를 더해 타일 중앙을 가리키도록 함.
     ft.x = x + TILE_SIZE / 2;
     ft.y = y;
     ft.text = text;

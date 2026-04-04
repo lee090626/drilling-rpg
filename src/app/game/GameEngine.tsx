@@ -142,7 +142,7 @@ export default function GameEngine() {
   }, [sendToWorker]);
 
   const { closeAllModals, toggleModal, handleClose, handleOpen, isAnyModalOpen } = useGameUI(worldRef, updateUi);
-  const { handleUpgrade, handleCraft, handleSell, handleExtractRune, handleSynthesizeRunes, handleEquipDrill, handleEquipDrone, handleEquipRune, handleUnequipRune, handleSelectCheckpoint, handleResetGame, handleRegenerateWorld, handleExportSave, handleImportSave, handleStartSmelting, handleCollectSmelting, handleUnlockResearch, handleUseArtifact, handleEquipArtifact } = useGameActions(worldRef, updateUi, sendToWorker);
+  const { handleUpgrade, handleCraft, handleSell, handleExtractRune, handleSynthesizeRunes, handleEquipDrill, handleEquipDrone, handleEquipRune, handleUnequipRune, handleSelectCheckpoint, handleResetGame, handleRegenerateWorld, handleExportSave, handleImportSave, handleStartSmelting, handleCollectSmelting, handleUnlockResearch, handleUseArtifact, handleEquipArtifact, handleTravelDimension } = useGameActions(worldRef, updateUi, sendToWorker);
 
   // 1. 워커 엔진 초기화 (최초 1회)
   useEffect(() => {
@@ -172,6 +172,13 @@ export default function GameEngine() {
           navigator.clipboard.writeText(exported);
           alert('Save code copied to clipboard!');
         }
+      } else if (type === 'PORTAL_TRIGGERED') {
+        const nextDim = payload.nextDim;
+        if (confirm(`Dimension ${nextDim}으로 이동하시겠습니까?\n새로운 세계에서 모험이 시작됩니다!`)) {
+          handleTravelDimension();
+        }
+      } else if (type === 'DIMENSION_TRAVEL_COMPLETE') {
+        alert(`Dimension ${payload.dimension}에 도착했습니다!`);
       }
     };
 

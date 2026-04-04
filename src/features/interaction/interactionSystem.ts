@@ -76,27 +76,17 @@ const handleEntityInteraction = (world: GameWorld, entity: Entity) => {
  * 포탈 상호작용을 처리하여 다음 차원으로 이동시킵니다.
  */
 const handlePortalInteraction = (world: GameWorld) => {
-  const { player, tileMap } = world;
+  const { player } = world;
   
-  // 상호작용 시스템은 매 프레임 실행되므로 의도 체크 및 쿨다운/확인창이 필요함
   if (world.intent.action === 'interact') {
     const nextDim = player.stats.dimension + 1;
-    if (confirm(`Dimension ${nextDim}으로 이동하시겠습니까?\n새로운 세계에서 모험이 시작됩니다!`)) {
-      player.stats.dimension = nextDim;
-      tileMap.dimension = nextDim;
-      
-      // 위치 초기화 (지상 베이스캠프 근처)
-      player.pos.x = 15;
-      player.pos.y = 5; 
-      player.visualPos.x = 15;
-      player.visualPos.y = 5;
-      
-      // 수정된 타일 정보 초기화
-      tileMap.modifiedTiles.clear(); 
-      player.stats.depth = 0;
-      
-      alert(`Dimension ${nextDim}에 도착했습니다!`);
-    }
+    
+    // 워커에서는 confirm/alert을 사용할 수 없으므로 메인 스레드에 이벤트를 보냅니다.
+    self.postMessage({
+      type: 'PORTAL_TRIGGERED',
+      payload: { nextDim }
+    });
+
     // 즉시 재발생 방지를 위해 의도 초기화
     world.intent.action = 'none';
   }

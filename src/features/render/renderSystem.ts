@@ -109,6 +109,19 @@ export const renderSystem = (world: GameWorld, canvas: HTMLCanvasElement | Offsc
     ctx.strokeRect(pX, pY, TILE_SIZE, TILE_SIZE);
   }
 
+  // 4-1. 채굴/공격 타겟팅 표시
+  if (player.isDrilling && world.intent.miningTarget) {
+    const tx = world.intent.miningTarget.x * TILE_SIZE;
+    const ty = world.intent.miningTarget.y * TILE_SIZE;
+    
+    ctx.strokeStyle = '#ef4444'; // 빨간색
+    ctx.lineWidth = 3;
+    ctx.strokeRect(tx + 2, ty + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+    
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+    ctx.fillRect(tx + 2, ty + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+  }
+
   // 4-2. 드랍된 아이템 렌더링
   world.droppedItems.forEach(item => {
     const itemW = 40;

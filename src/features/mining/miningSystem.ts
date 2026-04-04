@@ -33,8 +33,16 @@ function updateMiningTarget(world: GameWorld) {
   const targetX = Math.floor(player.pos.x + (intent.moveX !== 0 ? intent.moveX * 1.0 : 0) + 0.5);
   const targetY = Math.floor(player.pos.y + (intent.moveY !== 0 ? intent.moveY * 1.0 : 0) + 0.5);
   const targetTile = tileMap.getTile(targetX, targetY);
+  
+  // 몬스터 존재 여부 체크
+  const hasMonster = world.entities.some(e => 
+    (e.type === 'monster' || e.type === 'boss') && 
+    e.stats && e.stats.hp > 0 &&
+    targetX >= e.x && targetX < e.x + (e.width || 1) &&
+    targetY >= e.y && targetY < e.y + (e.height || 1)
+  );
 
-  if (targetTile && targetTile.type !== 'empty' && targetTile.type !== 'wall' && targetTile.type !== 'portal') {
+  if (hasMonster || (targetTile && targetTile.type !== 'empty' && targetTile.type !== 'wall' && targetTile.type !== 'portal')) {
     intent.miningTarget = { x: targetX, y: targetY };
   } else {
     intent.miningTarget = null;

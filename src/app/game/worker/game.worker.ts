@@ -108,7 +108,7 @@ class GameEngineInstance {
         refinerySystem(this.world, now);
         spawnSystem(this.world);
         monsterAiSystem(this.world);
-        combatSystem(this.world, deltaTime);
+        combatSystem(this.world, deltaTime, now);
         effectSystem(this.world, deltaTime);
 
         // 2. 렌더링 (Context가 있을 때만 호출)
@@ -326,6 +326,74 @@ class GameEngineInstance {
             stats.maxHp += node.effect.value;
           }
         }
+        break;
+      }
+
+      case 'synthesizeRunes': {
+        const rarities: Rarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Radiant', 'Legendary', 'Mythic', 'Ancient'];
+        const runeGroups = new Map<string, any[]>();
+        
+        for (const rune of stats.inventoryRunes) {
+          const key = `${rune.runeId}_${rune.rarity}`;
+          if (!runeGroups.has(key)) runeGroups.set(key, []);
+          runeGroups.get(key)!.push(rune);
+        }
+
+        for (const [, group] of runeGroups) {
+          if (group.length >= 5) {
+            const sample = group[0];
+            const currentTierIdx = rarities.indexOf(sample.rarity as Rarity);
+            
+            if (currentTierIdx !== -1 && currentTierIdx < rarities.length - 1) {
+              // 5개 제거
+              let removedCount = 0;
+              stats.inventoryRunes = stats.inventoryRunes.filter(r => {
+                if (removedCount < 5 && group.includes(r)) {
+                  removedCount++;
+                  return false;
+                }
+                return true;
+              });
+
+              // 상위 등급 1개 추가
+              stats.inventoryRunes.push({
+                id: `rune_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+                runeId: sample.runeId,
+                rarity: rarities[currentTierIdx + 1]
+              });
+              
+              console.log(`[Worker] Synthesized 5 ${sample.rarity} ${sample.runeId} into 1 ${rarities[currentTierIdx + 1]}`);
+            }
+            break; // 한 번에 한 종류만 합성
+          }
+        }
+        break;
+      }
+
+      case 'travelDimension': {
+        const nextDim = stats.dimension + 1;
+        stats.dimension = nextDim;
+        
+        // 월드 초기화
+        const newSeed = Math.floor(Math.random() * 1000000);
+        stats.mapSeed = newSeed;
+        this.world.tileMap.reset(newSeed, nextDim);
+        
+        // 플레이어 상태 초기화
+        this.world.player.pos = { x: 15, y: 8 };
+        this.world.player.visualPos = { x: 15, y: 8 };
+        stats.depth = 0;
+        
+        // 휘발성 데이터 청소
+        this.world.particles = [];
+        this.world.floatingTexts = [];
+        this.world.droppedItems = [];
+        this.world.spawnedCoords.clear();
+        
+        console.log(`[Worker] Traveled to Dimension ${nextDim}`);
+        
+        // 메인 스레드에 알림 (필요시)
+        self.postMessage({ type: 'DIMENSION_TRAVEL_COMPLETE', payload: { dimension: nextDim } });
         break;
       }
     }

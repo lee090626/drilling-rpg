@@ -56,12 +56,21 @@ export const physicsSystem = (world: GameWorld, now: number) => {
         const targetX = Math.round(player.pos.x + dx);
         const targetY = Math.round(player.pos.y + dy);
         
-        // --- 몬스터 충돌 체크 ---
-        const monsterAtTarget = world.entities.find(e => 
-          (e.type === 'monster' || e.type === 'boss') && 
-          e.stats && e.stats.hp > 0 &&
-          Math.round(e.x) === targetX && Math.round(e.y) === targetY
-        );
+        // --- 몬스터 충돌 체크 (AABB 방식) ---
+        const monsterAtTarget = world.entities.find(e => {
+          if ((e.type !== 'monster' && e.type !== 'boss') || !e.stats || e.stats.hp <= 0) return false;
+          
+          const w = e.width || 1;
+          const h = e.height || 1;
+          
+          // targetX, targetY가 엔티티의 점유 범위 내에 있는지 확인
+          return (
+            targetX >= e.x && 
+            targetX < e.x + w && 
+            targetY >= e.y && 
+            targetY < e.y + h
+          );
+        });
 
         const tile = tileMap.getTile(targetX, targetY);
 

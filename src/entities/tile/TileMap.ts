@@ -176,11 +176,12 @@ export class TileMap {
   getInitialMonster(x: number, y: number): Entity | null {
     if (y < BASE_DEPTH + 10) return null;
     const config = getDimensionConfig(this.dimension);
-    if (y === config.bossHeight - 1 && x === 15) {
+    if (y === config.bossHeight - 3 && x === 14) {
       const bossDef = BOSSES[0];
       return {
         id: `boss_${this.dimension}_${bossDef.id}`,
         type: 'boss', name: bossDef.name, x, y,
+        width: 3, height: 3,
         interactionType: 'none',
         stats: { hp: bossDef.stats.hp, maxHp: bossDef.stats.hp, attack: bossDef.stats.attack, speed: 0.01, defense: 100 },
         state: 'idle',
@@ -222,6 +223,18 @@ export class TileMap {
       }
     }
     return result;
+  }
+
+  /**
+   * 타일 데이터를 완전히 초기화합니다. (차원 이동 시 사용)
+   * @param newSeed 새로운 월드 시드
+   * @param newDimension 새로운 차원 번호
+   */
+  reset(newSeed?: number, newDimension?: number): void {
+    if (newSeed !== undefined) this.seed = newSeed;
+    if (newDimension !== undefined) this.dimension = newDimension;
+    this.data.fill(0);
+    this.modifiedIndices.clear();
   }
 
   deserialize(data: any, seed?: number, dimension?: number): void {

@@ -2,26 +2,30 @@ import { GameWorld } from '../../entities/world/model';
 import { TILE_SIZE } from '../../shared/config/constants';
 import { MONSTERS } from '../../shared/config/monsterData';
 import { calculateMiningDamage } from '../mining/miningCalculator';
+import { createFloatingText } from '../../shared/lib/effectUtils';
 
 /**
  * 플레이어와 몬스터 간의 전투(대미지 처리, 사망 등)를 담당하는 시스템입니다.
  */
-export const combatSystem = (world: GameWorld, deltaTime: number) => {
+export const combatSystem = (world: GameWorld, deltaTime: number, now: number) => {
   const { player, entities, floatingTexts } = world;
-  const now = Date.now();
 
   // 1. 몬스터 -> 플레이어 공격
   entities.forEach(entity => {
     if (entity.type !== 'monster' && entity.type !== 'boss') return;
     if (!entity.stats || entity.stats.hp <= 0) return;
 
-    // 몬스터의 타일 중앙과의 거리 계산
-    const dx = player.pos.x - (entity.x + 0.5);
-    const dy = player.pos.y - (entity.y + 0.5);
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    // 몬스터 사거리 체크 (AABB 확장 영역 이내에 플레이어가 있는지)
+    const w = entity.width || 1;
+    const h = entity.height || 1;
+    
+    const isInRange = 
+      player.pos.x >= entity.x - 0.5 && 
+      player.pos.x < entity.x + w + 0.5 &&
+      player.pos.y >= entity.y - 0.5 &&
+      player.pos.y < entity.y + h + 0.5;
 
-    // 공격 사거리 (타일 1.2배 이내)
-    if (distance < 1.2) {
+    if (isInRange) {
       const cooldown = 1000; // 1초당 1회 공격
       if (!entity.lastAttackTime || now - entity.lastAttackTime > cooldown) {
         
@@ -31,13 +35,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number) => {
         player.lastHitTime = now;
         
         // 플로팅 텍스트
-        floatingTexts.push({
-          x: player.pos.x * TILE_SIZE,
-          y: player.pos.y * TILE_SIZE - 20,
-          text: `-${damage}`,
-          color: '#ef4444', // 빨간색
-          life: 1.0,
-        });
+        createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `-${damage}`, '#ef4444');
 
         entity.lastAttackTime = now;
         
@@ -55,12 +53,17 @@ export const combatSystem = (world: GameWorld, deltaTime: number) => {
       if (entity.type !== 'monster' && entity.type !== 'boss') return;
       if (!entity.stats || entity.stats.hp <= 0) return;
 
-      // 타겟팅 중인 타일의 주변 몬스터 체크 (반경 1.5타일)
-      const dx = target.x + 0.5 - entity.x;
-      const dy = target.y + 0.5 - entity.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+      // 타겟팅 중인 타일이 엔티티 영역 내에 있는지 체크
+      const w = entity.width || 1;
+      const h = entity.height || 1;
+      
+      const isHit = 
+        target.x >= entity.x && 
+        target.x < entity.x + w && 
+        target.y >= entity.y && 
+        target.y < entity.y + h;
 
-      if (distance < 1.5) {
+      if (isHit) {
         // 채굴 데이터(속도, 파워) 가져오기
         const { finalDamage, attackInterval } = calculateMiningDamage(player.stats, entity.type as any);
         
@@ -68,13 +71,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number) => {
         if (!player.lastAttackTime || now - player.lastAttackTime > attackInterval) {
           entity.stats.hp -= finalDamage;
           
-          floatingTexts.push({
-            x: entity.x * TILE_SIZE,
-            y: (entity.y - 0.5) * TILE_SIZE,
-            text: `${finalDamage}`,
-            color: '#fbbf24', // 노란색
-            life: 1.0,
-          });
+          createFloatingText(world, entity.x * TILE_SIZE, (entity.y - 0.5) * TILE_SIZE, `${finalDamage}`, '#fbbf24');
 
           player.lastAttackTime = now;
 
@@ -118,13 +115,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number) => {
              
              player.stats.goldCoins += totalGold;
              
-             floatingTexts.push({
-               x: entity.x * TILE_SIZE,
-               y: (entity.y - 1) * TILE_SIZE,
-               text: `+${totalGold} G`,
-               color: '#fde047',
-               life: 1.5,
-             });
+             createFloatingText(world, entity.x * TILE_SIZE, (entity.y - 1) * TILE_SIZE, `+${totalGold} G`, '#fde047', 1.5);
           }
         }
       }
