@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next';
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   // Use a relative or placeholder Domain if the actual deployment domain is unknown.
   // Ideally, process.env.NEXT_PUBLIC_SITE_URL should be used in production.
