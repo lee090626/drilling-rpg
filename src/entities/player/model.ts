@@ -33,9 +33,11 @@ export const createInitialPlayer = (seed: number): Player => ({
     ownedDrillIds: ['rusty_drill'],
     maxDepthReached: 0,
     artifacts: [],
+    equippedArtifactId: null,
+    artifactCooldowns: {},
     hp: 200,
     maxHp: 200,
-    attackPower: 10,
+    power: 10,
     moveSpeed: 100,
     inventory: {
       dirt: 0, stone: 0, coal: 0, iron: 0, gold: 0, diamond: 0,
