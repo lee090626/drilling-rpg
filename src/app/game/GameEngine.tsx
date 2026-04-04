@@ -56,7 +56,8 @@ export default function GameEngine() {
   const [syncData, setSyncData] = useState<GameSyncData | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [uiVersion, setUiVersion] = useState(0); 
-  const [windowSize, setWindowSize] = useState({ width: 1280, height: 720 });
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [isEngineReady, setIsEngineReady] = useState(false);
 
   const updateUi = useCallback(() => {
     setUiVersion(v => v + 1);
@@ -157,13 +158,21 @@ export default function GameEngine() {
     const worker = globalWorker;
     worker.onmessage = (e) => {
       const { type, payload } = e.data;
-      if (type === 'SYNC') {
-        const data = payload as GameSyncData;
-        setSyncData(data);
-        worldRef.current.player.stats = data.stats;
-        worldRef.current.player.pos = data.pos;
-        worldRef.current.player.visualPos = data.visualPos;
-        worldRef.current.shake = data.shake;
+      if (type === 'SYNC' && payload) {
+        // 데이터가 들어오면 엔진이 준비된 것으로 간주 (백업 로직)
+        if (!isEngineReady) {
+          setIsEngineReady(true);
+        }
+        
+        // 기존 속성별 동기화 방식으로 복구
+        worldRef.current.player.stats = payload.stats;
+        worldRef.current.player.pos = payload.pos;
+        worldRef.current.player.visualPos = payload.visualPos;
+        worldRef.current.shake = payload.shake;
+        setSyncData(payload);
+      } else if (type === 'ENGINE_READY') {
+        setIsEngineReady(true);
+        console.log('[Main] Engine is ready to render!');
       } else if (type === 'SAVE') {
         saveManager.save(payload);
       } else if (type === 'EXPORT_DATA') {
@@ -255,8 +264,37 @@ export default function GameEngine() {
         ref={canvasRef}
         width={windowSize.width}
         height={windowSize.height}
-        className="w-full h-full block relative z-0"
+        className={`w-full h-full block relative z-0 transition-opacity duration-1000 ${isEngineReady ? 'opacity-100' : 'opacity-0'}`}
       />
+
+      {/* Loading Overlay (AdSense Bot Visibility Layer) */}
+      {!isEngineReady && (
+        <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center text-center p-10 space-y-8 animate-in fade-in duration-500">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-2xl animate-bounce">
+              <span className="text-4xl font-black italic">D</span>
+            </div>
+            <div className="absolute -inset-4 bg-cyan-500/20 blur-2xl rounded-full -z-10 animate-pulse"></div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">
+              Drilling <span className="text-cyan-500">RPG</span>
+            </h2>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-cyan-500 animate-[loading_2s_ease-in-out_infinite]"></div>
+              </div>
+              <p className="text-[10px] font-mono text-cyan-500/50 uppercase tracking-[0.3em]">Dimension Neural Syncing...</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 max-w-xs text-[10px] text-zinc-500 font-mono uppercase tracking-widest pt-12">
+            <div className="p-3 border border-white/5 rounded-xl bg-white/5">WASD to Move</div>
+            <div className="p-3 border border-white/5 rounded-xl bg-white/5">Space to Mine</div>
+          </div>
+        </div>
+      )}
 
       <div className="absolute inset-0 z-10 pointer-events-none">
         <div className="pointer-events-auto w-full h-full">

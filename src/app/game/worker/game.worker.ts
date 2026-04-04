@@ -25,8 +25,9 @@ class GameEngineInstance {
   world: GameWorld;
   canvas: OffscreenCanvas | null = null;
   ctx: OffscreenCanvasRenderingContext2D | null = null;
-  isRunning: boolean = false;
-  lastLoopTime: number = 0;
+  private isRunning: boolean = false;
+  private lastLoopTime: number = 0;
+  private sentReadySignal: boolean = false;
   lastSyncTime: number = 0;
   lastSaveTime: number = 0;
   syncInterval: number = 50; // 20Hz
