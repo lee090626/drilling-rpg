@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { PlayerStats, SmeltingJob } from '../../shared/types/game';
-import { REFINERY_RECIPES, RefineryRecipe } from '../../shared/config/refineryData';
-import { MINERALS, MineralDefinition } from '../../shared/config/mineralData';
-import { getDroneData } from '../../shared/config/droneData';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import { PlayerStats, SmeltingJob } from '@/shared/types/game';
+import { REFINERY_RECIPES, RefineryRecipe } from '@/shared/config/refineryData';
+import { MINERALS, MineralDefinition } from '@/shared/config/mineralData';
+import { getDroneData } from '@/shared/config/droneData';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 interface RefineryWindowProps {
   stats: PlayerStats;

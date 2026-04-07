@@ -1,9 +1,9 @@
-import { PlayerStats } from '../../shared/types/game';
-import { DRILLS } from '../../shared/config/drillData';
-import { MINERALS } from '../../shared/config/mineralData';
-import { getMasteryMultiplier, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
-import { getTotalRuneStat } from '../../shared/lib/runeUtils';
-import { getResearchBonuses } from '../../shared/lib/researchUtils';
+import { PlayerStats } from '@/shared/types/game';
+import { DRILLS } from '@/shared/config/drillData';
+import { MINERALS } from '@/shared/config/mineralData';
+import { getMasteryMultiplier, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getTotalRuneStat } from '@/shared/lib/runeUtils';
+import { getResearchBonuses } from '@/shared/lib/researchUtils';
 
 /**
  * 채굴 대미지 계산 결과 인터페이스

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import { PlayerStats, ResearchNode } from '../../shared/types/game';
-import { RESEARCH_NODES } from '../../shared/config/researchData';
-import { calculateNodePositions } from '../../shared/lib/researchUtils';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import { PlayerStats, ResearchNode } from '@/shared/types/game';
+import { RESEARCH_NODES } from '@/shared/config/researchData';
+import { calculateNodePositions } from '@/shared/lib/researchUtils';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 interface LaboratoryProps {
   stats: PlayerStats;

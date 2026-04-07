@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react';
 import Image, { StaticImageData } from 'next/image';
-import { PlayerStats } from '@/src/shared/types/game';
-import { getDimensionConfig } from '../../../shared/config/dimensionData';
-import { getDrillData } from '../../../shared/config/drillData';
-import { ARTIFACT_DATA } from '../../../shared/config/artifactData';
+import { PlayerStats } from '@/shared/types/game';
+import { getDimensionConfig } from '@/shared/config/dimensionData';
+import { getDrillData } from '@/shared/config/drillData';
+import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 
 // 실무형 에셋 관리: 직접 임포트 방식 적용
-import StatusIconImg from '@/src/shared/assets/ui/icons/StatusIcon.webp';
-import InventoryIconImg from '@/src/shared/assets/ui/icons/InventoryIcon.webp';
-import BookIconImg from '@/src/shared/assets/ui/icons/BookIcon.webp';
-import SettingsIconImg from '@/src/shared/assets/ui/icons/SettingsIcon.webp';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import StatusIconImg from '@/shared/assets/ui/icons/StatusIcon.webp';
+import InventoryIconImg from '@/shared/assets/ui/icons/InventoryIcon.webp';
+import BookIconImg from '@/shared/assets/ui/icons/BookIcon.webp';
+import SettingsIconImg from '@/shared/assets/ui/icons/SettingsIcon.webp';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 interface NavItem {
   label: string;

@@ -1,9 +1,9 @@
-import { GameWorld } from '../../entities/world/model';
-import { DRONES } from '../../shared/config/droneData';
-import { TILE_SIZE } from '../../shared/config/constants';
-import { getTileColor } from '../../shared/lib/tileUtils';
-import { MINERALS } from '../../shared/config/mineralData';
-import { createParticles } from '../../shared/lib/effectUtils';
+import { GameWorld } from '@/entities/world/model';
+import { DRONES } from '@/shared/config/droneData';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { getTileColor } from '@/shared/lib/tileUtils';
+import { MINERALS } from '@/shared/config/mineralData';
+import { createParticles } from '@/shared/lib/effectUtils';
 import { calculateDroneDamage } from './miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 

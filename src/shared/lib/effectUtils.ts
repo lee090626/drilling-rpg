@@ -1,4 +1,4 @@
-import { GameWorld } from '../../entities/world/model';
+import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE } from '../config/constants';
 
 /**

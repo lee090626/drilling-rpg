@@ -1,13 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
-import { PlayerStats } from '../../shared/types/game';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
-import { DRILLS } from '../../shared/config/drillData';
-import { getNextLevelExp, getMasteryMultiplier, getUnlockedSlotCount, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
-import { getTotalRuneStat } from '../../shared/lib/runeUtils';
-import { SKILL_RUNES } from '../../shared/config/skillRuneData';
-import { ARTIFACT_DATA } from '../../shared/config/artifactData';
-import { getResearchBonuses } from '../../shared/lib/researchUtils';
+import { PlayerStats } from '@/shared/types/game';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import { DRILLS } from '@/shared/config/drillData';
+import { getNextLevelExp, getMasteryMultiplier, getUnlockedSlotCount, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getTotalRuneStat } from '@/shared/lib/runeUtils';
+import { SKILL_RUNES } from '@/shared/config/skillRuneData';
+import { ARTIFACT_DATA } from '@/shared/config/artifactData';
+import { getResearchBonuses } from '@/shared/lib/researchUtils';
 
 interface StatusWindowProps {
   stats: PlayerStats;

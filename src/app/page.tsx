@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import CoalIcon from '@/src/shared/assets/minerals/CoalIcon.png';
-import IronIcon from '@/src/shared/assets/minerals/IronIcon.png';
-import GoldIcon from '@/src/shared/assets/minerals/GoldIcon.png';
-import DiamondIcon from '@/src/shared/assets/minerals/DiamondIcon.png';
-import RubyIcon from '@/src/shared/assets/minerals/RubyIcon.png';
-import EmeraldIcon from '@/src/shared/assets/minerals/EmeraldIcon.png';
+import CoalIcon from '@/shared/assets/minerals/CoalIcon.png';
+import IronIcon from '@/shared/assets/minerals/IronIcon.png';
+import GoldIcon from '@/shared/assets/minerals/GoldIcon.png';
+import DiamondIcon from '@/shared/assets/minerals/DiamondIcon.png';
+import RubyIcon from '@/shared/assets/minerals/RubyIcon.png';
+import EmeraldIcon from '@/shared/assets/minerals/EmeraldIcon.png';
 
 export const dynamic = 'force-static';
 

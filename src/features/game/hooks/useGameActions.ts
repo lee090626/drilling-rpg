@@ -1,17 +1,17 @@
 import { useCallback } from 'react';
-import { GameWorld } from '../../../entities/world/model';
-import { saveManager, SaveData } from '../../../shared/lib/saveManager';
-import { CraftRequirements, CraftResult, Rarity } from '../../../shared/types/game';
-import { SKILL_RUNES } from '../../../shared/config/skillRuneData';
-import { DRILLS } from '../../../shared/config/drillData';
-import { REFINERY_RECIPES } from '../../../shared/config/refineryData';
-import { RESEARCH_NODES } from '../../../shared/config/researchData';
-import { getResearchBonuses } from '../../../shared/lib/researchUtils';
-import { getDroneData } from '../../../shared/config/droneData';
-import { createInitialEquipmentState } from '../../../shared/lib/masteryUtils';
-import { ARTIFACT_DATA } from '../../../shared/config/artifactData';
-import { TILE_SIZE } from '../../../shared/config/constants';
-import { createFloatingText, createParticles } from '../../../shared/lib/effectUtils';
+import { GameWorld } from '@/entities/world/model';
+import { saveManager, SaveData } from '@/shared/lib/saveManager';
+import { CraftRequirements, CraftResult, Rarity } from '@/shared/types/game';
+import { SKILL_RUNES } from '@/shared/config/skillRuneData';
+import { DRILLS } from '@/shared/config/drillData';
+import { REFINERY_RECIPES } from '@/shared/config/refineryData';
+import { RESEARCH_NODES } from '@/shared/config/researchData';
+import { getResearchBonuses } from '@/shared/lib/researchUtils';
+import { getDroneData } from '@/shared/config/droneData';
+import { createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { ARTIFACT_DATA } from '@/shared/config/artifactData';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 
 /**
  * 게임의 핵심 액션(업그레이드, 제작, 판매 등)을 처리하는 커스텀 훅입니다.

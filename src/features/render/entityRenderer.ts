@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
-import { GameWorld } from '../../entities/world/model';
-import { Entity } from '../../shared/types/game';
-import { TILE_SIZE } from '../../shared/config/constants';
-import { DRONES } from '../../shared/config/droneData';
+import { GameWorld } from '@/entities/world/model';
+import { Entity } from '@/shared/types/game';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { DRONES } from '@/shared/config/droneData';
 
 /**
  * 엔티티별 Pixi 컨테이너 캐시 (ID -> Container)

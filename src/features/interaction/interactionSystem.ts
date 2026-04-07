@@ -1,5 +1,5 @@
-import { GameWorld } from '../../entities/world/model';
-import { Entity } from '../../shared/types/game';
+import { GameWorld } from '@/entities/world/model';
+import { Entity } from '@/shared/types/game';
 
 /**
  * 플레이어와 NPC(엔티티) 또는 포탈 간의 상호작용을 관리하는 시스템입니다.

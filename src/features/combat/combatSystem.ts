@@ -1,8 +1,8 @@
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE } from '../../shared/config/constants';
-import { MONSTERS } from '../../shared/config/monsterData';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { MONSTERS } from '@/shared/config/monsterData';
 import { calculateMiningDamage } from '../mining/miningCalculator';
-import { createFloatingText } from '../../shared/lib/effectUtils';
+import { createFloatingText } from '@/shared/lib/effectUtils';
 
 /**
  * 플레이어와 몬스터 간의 전투(대미지 처리, 사망 등)를 담당하는 시스템입니다.

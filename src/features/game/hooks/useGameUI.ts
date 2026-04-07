@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { GameWorld } from '../../../entities/world/model';
+import { GameWorld } from '@/entities/world/model';
 
 /**
  * 게임의 UI 상태(모달 창의 열림/닫힘)를 관리하는 커스텀 훅입니다.

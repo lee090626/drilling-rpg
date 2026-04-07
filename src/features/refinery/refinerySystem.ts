@@ -1,6 +1,6 @@
-import { GameWorld } from '../../entities/world/model';
-import { DRONES, getDroneData } from '../../shared/config/droneData';
-import { REFINERY_RECIPES } from '../../shared/config/refineryData';
+import { GameWorld } from '@/entities/world/model';
+import { DRONES, getDroneData } from '@/shared/config/droneData';
+import { REFINERY_RECIPES } from '@/shared/config/refineryData';
 
 /**
  * 제련소의 자동화 로직을 담당하는 시스템입니다.

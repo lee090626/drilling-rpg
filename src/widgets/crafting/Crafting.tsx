@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { PlayerStats } from '../../shared/types/game';
-import { DRILLS } from '../../shared/config/drillData';
-import { DRONES } from '../../shared/config/droneData';
-import { MINERALS } from '../../shared/config/mineralData';
-import { formatNumber } from '../../shared/lib/numberUtils';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import { PlayerStats } from '@/shared/types/game';
+import { DRILLS } from '@/shared/config/drillData';
+import { DRONES } from '@/shared/config/droneData';
+import { MINERALS } from '@/shared/config/mineralData';
+import { formatNumber } from '@/shared/lib/numberUtils';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 /**
  * 제작 시스템 컴포넌트의 Props 인터페이스입니다.

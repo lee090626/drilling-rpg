@@ -1,4 +1,4 @@
-import { Position, Entity } from '../../shared/types/game';
+import { Position, Entity } from '@/shared/types/game';
 
 /**
  * 두 좌표 사이의 거리를 계산합니다.

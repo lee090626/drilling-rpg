@@ -1,10 +1,10 @@
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE } from '../../shared/config/constants';
-import { getTileColor } from '../../shared/lib/tileUtils';
-import { getNextLevelExp, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
-import { getTotalRuneStat } from '../../shared/lib/runeUtils';
-import { getResearchBonuses } from '../../shared/lib/researchUtils';
-import { createFloatingText, createParticles } from '../../shared/lib/effectUtils';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { getTileColor } from '@/shared/lib/tileUtils';
+import { getNextLevelExp, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getTotalRuneStat } from '@/shared/lib/runeUtils';
+import { getResearchBonuses } from '@/shared/lib/researchUtils';
+import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 import { calculateMiningDamage } from './miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 import { droneSystem } from './droneSystem';

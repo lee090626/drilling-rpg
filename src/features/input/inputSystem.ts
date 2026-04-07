@@ -1,4 +1,4 @@
-import { GameWorld } from '../../entities/world/model';
+import { GameWorld } from '@/entities/world/model';
 
 /**
  * 사용자의 키보드 입력을 해석하여 월드의 의도(Intent) 상태로 변환하는 시스템입니다.

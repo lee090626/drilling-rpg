@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '../../shared/config/constants';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '@/shared/config/constants';
 import { renderEntities } from './entityRenderer';
 import { createHitFlashFilter, createRadialLightMask } from './pixiEffects';
 

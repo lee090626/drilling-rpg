@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { PlayerStats } from '../../shared/types/game';
-import { MINERALS } from '../../shared/config/mineralData';
-import { BOSSES } from '../../shared/config/bossData';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import { PlayerStats } from '@/shared/types/game';
+import { MINERALS } from '@/shared/config/mineralData';
+import { BOSSES } from '@/shared/config/bossData';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 interface EncyclopediaProps {
   stats: PlayerStats;

@@ -1,28 +1,28 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { createInitialWorld, GameWorld } from '../../entities/world/model';
-import { fetchBaseLayout, fetchEntities } from '../../shared/lib/dataLoader';
-import { saveManager, SaveData } from '../../shared/lib/saveManager';
-import { MINERALS } from '../../shared/config/mineralData';
+import { createInitialWorld, GameWorld } from '@/entities/world/model';
+import { fetchBaseLayout, fetchEntities } from '@/shared/lib/dataLoader';
+import { saveManager, SaveData } from '@/shared/lib/saveManager';
+import { MINERALS } from '@/shared/config/mineralData';
 
 // Widgets
-import Hud from '../../widgets/hud/ui/Hud';
-import Shop from '../../widgets/shop/Shop';
-import Inventory from '../../widgets/inventory/Inventory';
-import Crafting from '../../widgets/crafting/Crafting';
-import StatusWindow from '../../widgets/status/StatusWindow';
-import Settings from '../../widgets/settings/Settings';
-import Elevator from '../../widgets/elevator/Elevator';
-import Encyclopedia from '../../widgets/encyclopedia/Encyclopedia';
-import RefineryWindow from '../../widgets/refinery/RefineryWindow';
-import Laboratory from '../../widgets/laboratory/Laboratory';
-import GuideWindow from '../../widgets/guide/GuideWindow';
+import Hud from '@/widgets/hud/ui/Hud';
+import Shop from '@/widgets/shop/Shop';
+import Inventory from '@/widgets/inventory/Inventory';
+import Crafting from '@/widgets/crafting/Crafting';
+import StatusWindow from '@/widgets/status/StatusWindow';
+import Settings from '@/widgets/settings/Settings';
+import Elevator from '@/widgets/elevator/Elevator';
+import Encyclopedia from '@/widgets/encyclopedia/Encyclopedia';
+import RefineryWindow from '@/widgets/refinery/RefineryWindow';
+import Laboratory from '@/widgets/laboratory/Laboratory';
+import GuideWindow from '@/widgets/guide/GuideWindow';
 
 // Hooks
 import { useGameUI } from './hooks/useGameUI';
 import { useGameActions } from './hooks/useGameActions';
-import MobileController from '../../features/input/ui/MobileController';
+import MobileController from '@/features/input/ui/MobileController';
 
 const SHORTCUTS: Record<string, keyof GameWorld['ui']> = {
   'i': 'isInventoryOpen',

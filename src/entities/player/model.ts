@@ -1,4 +1,4 @@
-import { PlayerStats, Position } from '../../shared/types/game';
+import { PlayerStats, Position } from '@/shared/types/game';
 
 /**
  * 게임 내 플레이어 캐릭터의 상태를 나타내는 인터페이스입니다.

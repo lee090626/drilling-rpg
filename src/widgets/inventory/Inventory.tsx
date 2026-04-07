@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { PlayerStats, TileType } from '../../shared/types/game';
-import { DRILLS } from '../../shared/config/drillData';
-import { getNextLevelExp, getUnlockedSlotCount, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
-import { DRONES } from '../../shared/config/droneData';
-import { MINERALS } from '../../shared/config/mineralData';
+import { PlayerStats, TileType } from '@/shared/types/game';
+import { DRILLS } from '@/shared/config/drillData';
+import { getNextLevelExp, getUnlockedSlotCount, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { DRONES } from '@/shared/config/droneData';
+import { MINERALS } from '@/shared/config/mineralData';
 import Image from 'next/image';
-import { SKILL_RUNES } from '../../shared/config/skillRuneData';
-import AttackRuneImg from '../../shared/assets/rune/AttackRune.png';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
+import { SKILL_RUNES } from '@/shared/config/skillRuneData';
+import AttackRuneImg from '@/shared/assets/rune/AttackRune.png';
+import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
 /**
  * 인벤토리 컴포넌트의 Props 인터페이스입니다.

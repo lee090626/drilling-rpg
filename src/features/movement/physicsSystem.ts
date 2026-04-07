@@ -1,13 +1,13 @@
-import { GameWorld } from '../../entities/world/model';
+import { GameWorld } from '@/entities/world/model';
 import { 
   TILE_SIZE, 
   BASE_DEPTH,
   MOVEMENT_DELAY_MS
-} from '../../shared/config/constants';
-import { DRILLS } from '../../shared/config/drillData';
-import { createInitialEquipmentState } from '../../shared/lib/masteryUtils';
-import { getTotalRuneStat } from '../../shared/lib/runeUtils';
-import { getResearchBonuses } from '../../shared/lib/researchUtils';
+} from '@/shared/config/constants';
+import { DRILLS } from '@/shared/config/drillData';
+import { createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getTotalRuneStat } from '@/shared/lib/runeUtils';
+import { getResearchBonuses } from '@/shared/lib/researchUtils';
 
 /**
  * 플레이어의 이동, 충돌 체크, 그리드 기반 위치 보간을 담당하는 시스템입니다.

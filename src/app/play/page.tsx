@@ -1,4 +1,4 @@
-import GameEngine from '@/src/app/game/GameEngine';
+import GameEngine from '@/features/game/GameEngine';
 
 export const dynamic = 'force-static';
 

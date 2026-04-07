@@ -1,5 +1,5 @@
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE } from '../../shared/config/constants';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE } from '@/shared/config/constants';
 
 /**
  * 몬스터의 AI 행동(추격, 공격 대기 등)을 처리하는 시스템입니다.

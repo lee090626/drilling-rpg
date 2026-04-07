@@ -1,6 +1,6 @@
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE } from '../../shared/config/constants';
-import { createFloatingText, createParticles } from '../../shared/lib/effectUtils';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE } from '@/shared/config/constants';
+import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 
 /**
  * 보스 처치 성공 시의 로직을 수행합니다 (유물 획득, 포탈 생성 등).

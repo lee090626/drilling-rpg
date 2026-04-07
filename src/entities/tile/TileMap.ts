@@ -1,9 +1,9 @@
-import { Tile, TileType, Entity } from '../../shared/types/game';
-import { getMineralStats } from '../../shared/lib/tileUtils';
-import { BASE_DEPTH } from '../../shared/config/constants';
-import { getDimensionConfig } from '../../shared/config/dimensionData';
-import { MONSTERS } from '../../shared/config/monsterData';
-import { BOSSES } from '../../shared/config/bossData';
+import { Tile, TileType, Entity } from '@/shared/types/game';
+import { getMineralStats } from '@/shared/lib/tileUtils';
+import { BASE_DEPTH } from '@/shared/config/constants';
+import { getDimensionConfig } from '@/shared/config/dimensionData';
+import { MONSTERS } from '@/shared/config/monsterData';
+import { BOSSES } from '@/shared/config/bossData';
 
 /** 맵의 최대 높이 (타일 단위) */
 export const MAP_HEIGHT = 1550;

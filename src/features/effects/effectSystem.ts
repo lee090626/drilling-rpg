@@ -1,6 +1,6 @@
-import { GameWorld } from '../../entities/world/model';
-import { MINERALS } from '../../shared/config/mineralData';
-import { TILE_SIZE } from '../../shared/config/constants';
+import { GameWorld } from '@/entities/world/model';
+import { MINERALS } from '@/shared/config/mineralData';
+import { TILE_SIZE } from '@/shared/config/constants';
 
 /**
  * 게임 내 비주얼 효과(파티클, 플로팅 텍스트)의 생명 주기와 물리적 변화를 관리하는 시스템입니다.

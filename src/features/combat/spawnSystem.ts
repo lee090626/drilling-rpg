@@ -1,5 +1,5 @@
-import { GameWorld } from '../../entities/world/model';
-import { TILE_SIZE } from '../../shared/config/constants';
+import { GameWorld } from '@/entities/world/model';
+import { TILE_SIZE } from '@/shared/config/constants';
 
 /**
  * 플레이어의 위치를 기반으로 주변 맵에서 몬스터를 탐색하고 엔티티로 소환하는 시스템입니다.

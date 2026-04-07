@@ -1,7 +1,7 @@
 import { TileMap } from '../tile/TileMap';
 import { Player } from '../player/model';
-import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType } from '../../shared/types/game';
-import { ObjectPool } from '../../shared/lib/effectPool';
+import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType } from '@/shared/types/game';
+import { ObjectPool } from '@/shared/lib/effectPool';
 
 /**
  * 게임의 모든 상태를 포함하는 최상위 월드 객체 인터페이스입니다.
