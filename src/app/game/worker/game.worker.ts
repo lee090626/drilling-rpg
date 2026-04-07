@@ -16,18 +16,34 @@ import { getDroneData } from '../../../shared/config/droneData';
 import { SKILL_RUNES } from '../../../shared/config/skillRuneData';
 import { TileMap } from '../../../entities/tile/TileMap';
 import { Rarity } from '../../../shared/types/game';
+import * as PIXI from 'pixi.js';
+
+// PixiJS v8 Web Worker 지원을 위한 어댑터 설정 (ReferenceError: document is not defined 방지)
+PIXI.DOMAdapter.set(PIXI.WebWorkerAdapter);
 
 /**
- * [Engine v2] GameEngineInstance 클래스
- * - 워커 내부의 모든 상태와 렌더링 루프를 캡슐화합니다.
+ * [Pixi Engine] GameEngineInstance 클래스
+ * - 워커 내부에서 PixiJS Application을 관리하고 렌더링 루프를 제어합니다.
  */
 class GameEngineInstance {
   world: GameWorld;
-  canvas: OffscreenCanvas | null = null;
-  ctx: OffscreenCanvasRenderingContext2D | null = null;
+  pixiApp: PIXI.Application | null = null;
+  
+  // Pixi 레이어 구조
+  layers: {
+    stage: PIXI.Container;
+    tileLayer: PIXI.Container;
+    entityLayer: PIXI.Container;
+    effectLayer: PIXI.Container;
+    uiLayer: PIXI.Container;
+    lightLayer: PIXI.Container;
+  } | null = null;
+  
+  // 에셋 텍스처 캐시
+  textures: { [key: string]: PIXI.Texture } = {};
+  
   private isRunning: boolean = false;
   private lastLoopTime: number = 0;
-  private sentReadySignal: boolean = false;
   lastSyncTime: number = 0;
   lastSaveTime: number = 0;
   syncInterval: number = 50; // 20Hz
@@ -36,18 +52,49 @@ class GameEngineInstance {
     this.world = createInitialWorld(12345);
   }
 
-  /** 새로운 캔버스 제어권을 할당받음 */
-  setCanvas(newCanvas: OffscreenCanvas) {
-    this.canvas = newCanvas;
-    this.ctx = newCanvas.getContext('2d') as any;
-    console.log('[Worker] Canvas updated and context acquired.');
+  /** 새로운 캔버스 제어권을 할당받음 및 Pixi 초기화 */
+  async setCanvas(newCanvas: OffscreenCanvas) {
+    if (this.pixiApp) {
+      this.pixiApp.destroy(true, { children: true, texture: true });
+    }
+
+    this.pixiApp = new PIXI.Application();
+    
+    // PixiJS v8 스타일 초기화 (OffscreenCanvas 지원)
+    await this.pixiApp.init({
+      canvas: newCanvas,
+      width: newCanvas.width,
+      height: newCanvas.height,
+      backgroundAlpha: 0,
+      antialias: true,
+      preference: 'webgl' // 성능을 위해 WebGL 강제
+    });
+
+    console.log('[Worker] PixiJS Application initialized with OffscreenCanvas.');
+
+    // 레이어 초기화
+    const stage = new PIXI.Container();
+    const tileLayer = new PIXI.Container();
+    const entityLayer = new PIXI.Container();
+    const effectLayer = new PIXI.Container();
+    const lightLayer = new PIXI.Container(); // 조명 효과 레이어 (멀티플라이 블렌딩용)
+    const uiLayer = new PIXI.Container();
+
+    stage.addChild(tileLayer);
+    stage.addChild(entityLayer);
+    stage.addChild(effectLayer);
+    stage.addChild(lightLayer);
+    stage.addChild(uiLayer);
+
+    this.pixiApp.stage.addChild(stage);
+    
+    this.layers = { stage, tileLayer, entityLayer, effectLayer, lightLayer, uiLayer };
   }
 
   /** 월드 상태 초기화 (세이브 데이터 포함) */
-  init(payload: any) {
+  async init(payload: any) {
     console.log('[Worker] Initializing world...');
     const seed = payload.seed || 12345;
-    // 기존 에셋 정보는 보존하면서 월드 재생성
     const currentAssets = this.world.assets;
     const currentLayout = this.world.baseLayout;
     const currentEntities = this.world.entities;
@@ -67,35 +114,94 @@ class GameEngineInstance {
     }
 
     if (payload.offscreen) {
-      this.setCanvas(payload.offscreen);
+      await this.setCanvas(payload.offscreen);
     }
 
     if (!this.isRunning) {
       this.isRunning = true;
       this.lastLoopTime = performance.now();
       this.startLoop();
-      // 엔진이 준비되었음을 알림
       console.log('[Worker] Loop started. Sending ENGINE_READY.');
       self.postMessage({ type: 'ENGINE_READY' });
     }
   }
 
-  /** 에셋 데이터 업데이트 (ImageBitmap 전송) */
-  updateAssets(payload: any) {
+  /** 아틀라스 에셋 데이터 업데이트 (Spritesheet 활용) */
+  async updateAssetsFromAtlas(payload: any) {
     if (!this.world) return;
-    console.log('[Worker] Updating assets...');
-    const { bitmaps, entityBitmaps, tileBitmaps, itemBitmaps, layout, entities } = payload;
+    console.log('[Worker] Converting Atlas to Pixi Textures...');
+    const { atlasData, layout, entities } = payload;
     
-    this.world.assets.player = bitmaps.player;
-    this.world.assets.tileset = bitmaps.tileset;
-    this.world.assets.baseTileset = bitmaps.baseTileset;
-    this.world.assets.entities = entityBitmaps;
-    this.world.assets.tileBitmaps = tileBitmaps;
-    this.world.assets.itemBitmaps = itemBitmaps;
     this.world.baseLayout = layout;
     this.world.entities = entities;
+
+    // Pixi 텍스처로 변환 및 캐싱
+    for (const atlas of atlasData) {
+      const { json, bitmap } = atlas;
+      const baseTexture = PIXI.Texture.from(bitmap as any);
+      
+      const spritesheet = new PIXI.Spritesheet(baseTexture, json);
+      await spritesheet.parse();
+
+      // 전역 캐시 및 엔진 내부 캐시 등록
+      for (const [name, texture] of Object.entries(spritesheet.textures)) {
+        // 1. PixiJS 전역 캐시 (PIXI.Texture.from 호출 대응)
+        PIXI.Assets.cache.set(name, texture);
+        PIXI.Assets.cache.set(`/${name}`, texture);
+        PIXI.Assets.cache.set(`./${name}`, texture);
+
+        // 2. 엔진 내부 매핑 (this.textures)
+        this.textures[name] = texture;
+        
+        const cleanName = name.replace('.png', '');
+
+        // 타일 매핑 (dirt.png -> tile_dirt)
+        this.textures[`tile_${cleanName}`] = texture;
+
+        // 아이템 매핑 (DirtIcon.png -> item_dirt)
+        if (name.endsWith('Icon.png')) {
+          const itemName = cleanName.replace('Icon', '').toLowerCase();
+          this.textures[`item_${itemName}`] = texture;
+        }
+
+        // 특수 캐릭터/타일셋 매핑
+        if (name === 'Player.png') {
+          this.textures['player'] = texture;
+        }
+        if (name === 'BaseTileset.png') {
+          this.textures['tileset'] = texture;
+          this.textures['baseTileset'] = texture;
+
+          // 베이스캠프 타일셋 슬라이싱 (128x128 타일, 5열)
+          const TILE_SIZE_RAW = 128;
+          const COLUMNS = 5;
+          const rows = Math.floor(texture.height / TILE_SIZE_RAW);
+          
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < COLUMNS; col++) {
+              const id = row * COLUMNS + col;
+              // @ts-ignore - PixiJS v8 style texture frame slicing
+              this.textures[`tile_base_${id}`] = new PIXI.Texture({
+                source: texture.source,
+                frame: new PIXI.Rectangle(
+                  texture.frame.x + col * TILE_SIZE_RAW, 
+                  texture.frame.y + row * TILE_SIZE_RAW, 
+                  TILE_SIZE_RAW, 
+                  TILE_SIZE_RAW
+                )
+              });
+            }
+          }
+        }
+      }
+    }
     
-    console.log('[Worker] Assets updated.');
+    console.log(`[Worker] Atlas optimization complete. ${Object.keys(this.textures).length} textures cached.`);
+    self.postMessage({ type: 'ENGINE_READY' });
+  }
+
+  updateAssets(payload: any) {
+    // ... 기존 코드는 호환성을 위해 유지하거나 제거 가능 (현재는 ATLAS만 사용)
   }
 
   /** 메인 루프 시작 */
@@ -118,10 +224,9 @@ class GameEngineInstance {
         combatSystem(this.world, deltaTime, now);
         effectSystem(this.world, deltaTime);
 
-        // 2. 렌더링 (Context가 있을 때만 호출)
-        if (this.ctx && this.canvas) {
-           // renderSystem 내부에서 캔버스 크기나 컨텍스트를 직접 사용하도록 함
-           renderSystem(this.world, this.canvas as any, this.ctx as any);
+        // 2. 렌더링 (Pixi 엔진 활용)
+        if (this.pixiApp && this.layers) {
+           renderSystem(this.world, this.pixiApp, this.layers, now, this.textures);
         }
 
         // 3. UI 동기화 (20Hz)
@@ -164,9 +269,8 @@ class GameEngineInstance {
 
   /** 브라우저 크기 조정 대응 */
   resize(width: number, height: number) {
-    if (this.canvas) {
-      this.canvas.width = width;
-      this.canvas.height = height;
+    if (this.pixiApp) {
+      this.pixiApp.renderer.resize(width, height);
     }
   }
 
@@ -263,6 +367,15 @@ class GameEngineInstance {
       
       case 'useArtifact': {
         this.world.intent.action = 'artifact';
+        break;
+      }
+
+      case 'respawn': {
+        // HP 회복 및 위치 초기화
+        stats.hp = stats.maxHp;
+        this.world.player.pos = { x: 15, y: 8 };
+        this.world.player.visualPos = { x: 15, y: 8 };
+        console.log('[Worker] Player respawned at Base Camp.');
         break;
       }
 
@@ -420,8 +533,13 @@ self.addEventListener('message', (e: MessageEvent) => {
     case 'ASSETS':
       engine.updateAssets(payload);
       break;
+    case 'ASSETS_ATLAS':
+      engine.updateAssetsFromAtlas(payload);
+      break;
     case 'SET_CANVAS':
-      if (payload.offscreen) engine.setCanvas(payload.offscreen);
+      if (payload.offscreen) {
+        engine.setCanvas(payload.offscreen);
+      }
       break;
     case 'INPUT':
       engine.handleInput(payload);

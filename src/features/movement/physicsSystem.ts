@@ -17,6 +17,11 @@ import { getResearchBonuses } from '../../shared/lib/researchUtils';
 export const physicsSystem = (world: GameWorld, now: number) => {
   const { player, intent, tileMap } = world;
   
+  if (player.stats.hp <= 0) {
+    player.isDrilling = false;
+    return;
+  }
+
   // 1. 부드러운 그리드 기반 이동 및 채굴 전환 로직
   const drill = DRILLS[player.stats.equippedDrillId] || DRILLS['rusty_drill'];
   const researchBonuses = getResearchBonuses(player.stats);

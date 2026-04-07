@@ -195,6 +195,10 @@ export const useGameActions = (
     handleTravelDimension: () => {
       sendToWorker('ACTION', { action: 'travelDimension' });
       updateUi();
+    },
+    handleRespawn: () => {
+      sendToWorker('ACTION', { action: 'respawn' });
+      updateUi();
     }
   };
 };

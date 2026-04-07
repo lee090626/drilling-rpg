@@ -11,10 +11,15 @@
     "start": "next start",
     "lint": "eslint",
     "deploy": "npm run build:gh && touch out/.nojekyll && gh-pages -t -d out",
-    "deploy:cf": "npm run build:cf && wrangler pages deploy out"
+    "deploy:cf": "npm run build:cf && wrangler pages deploy out",
+    "optimize:images": "node scripts/optimize-assets.mjs",
+    "optimize:atlas": "node scripts/generate-atlas.mjs"
   },
   "dependencies": {
+    "free-tex-packer-core": "^0.3.5",
+    "glob": "^13.0.6",
     "next": "^15.1.0",
+    "pixi.js": "^8.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-scrollbar-hide": "^4.0.0"

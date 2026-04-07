@@ -22,8 +22,9 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   const currentDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
   const researchBonuses = getResearchBonuses(stats);
   
-  // 1. 공격 속도 계산
-  const attackInterval = currentDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed));
+  // 1. 공격 속도 계산 (연구 속도 보너스 + 룬 속도 보너스)
+  const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
+  const attackInterval = currentDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus));
 
   // 2. 숙련도 배율 계산
   const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
@@ -32,7 +33,8 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   // 3. 룬 보너스 및 치명타 계산
   const runeAttackBonus = getTotalRuneStat(stats, 'power');
   const critRate = getTotalRuneStat(stats, 'critRate');
-  const critDamage = getTotalRuneStat(stats, 'critDmg');
+  // 치명타 기본 피해량 1.5배 + 룬 추가 피해량
+  const critDamage = 1.5 + getTotalRuneStat(stats, 'critDmg'); 
 
   const drillPower = currentDrill.basePower;
   const masteryBonus = Math.round(drillPower * (masteryMult - 1));

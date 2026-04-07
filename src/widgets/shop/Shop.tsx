@@ -6,7 +6,7 @@ import { PlayerStats, Drill } from '../../shared/types/game';
 import { MINERALS } from '../../shared/config/mineralData';
 import { DRILLS } from '../../shared/config/drillData';
 import AttackRuneImg from '../../shared/assets/rune/AttackRune.png';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.png';
+import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
 import { SKILL_RUNES } from '../../shared/config/skillRuneData';
 import SkillRuneIcon from '../../shared/ui/SkillRuneIcon';
 

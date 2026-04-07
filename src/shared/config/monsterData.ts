@@ -25,8 +25,8 @@ export const MONSTERS: MonsterDefinition[] = [
     maxDepth: 500,
     rarity: 'Common',
     stats: {
-      hp: 30,
-      attack: 5,
+      hp: 30000,
+      attack: 0,
       speed: 0.02,
       defense: 0,
     },

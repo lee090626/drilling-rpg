@@ -74,57 +74,54 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
           createFloatingText(world, entity.x * TILE_SIZE, (entity.y - 0.5) * TILE_SIZE, `${finalDamage}`, '#fbbf24');
 
           player.lastAttackTime = now;
-
-          // 몬스터 사망 처리
-          if (entity.stats.hp <= 0) {
-             // 보상 골드 지급 (동적 계산: Base + MaxHP 비례 * 등급 배수 * 보스 배수)
-             let multiplier = 1;
-             
-             // 1. 일반 등급(Rarity)에 따른 기본 배수 산정
-             // (향후 몬스터나 보스 데이터에 rarity가 들어갈 것을 대비한 이름/ID 조회)
-             const mobDef = MONSTERS.find(m => m.name === entity.name);
-             if (mobDef && mobDef.rarity) {
-               switch (mobDef.rarity) {
-                 case 'Uncommon': multiplier = 2; break;
-                 case 'Rare': multiplier = 3; break;
-                 case 'Epic': multiplier = 5; break;
-                 case 'Radiant': multiplier = 7; break;
-                 case 'Legendary': multiplier = 10; break;
-                 case 'Mythic': multiplier = 15; break;
-                 case 'Ancient': multiplier = 20; break;
-               }
-             }
-
-             // 2. 보스 중복 태그 (Boss Modifier)
-             // 보스라면 위에서 구한 등급 배수에 추가로 5배를 곱함
-             // (예: 기본 보스 = 1 * 5 = 5배 / 에픽 보스 = 5 * 5 = 25배)
-             if (entity.type === 'boss') {
-               multiplier *= 5; 
-             }
-             
-             // 기본 골드 10 + (최대 체력의 10% * 최종 배수)
-             const baseGold = 10;
-             const hpBonus = Math.floor((entity.stats.maxHp || 100) * 0.1);
-             const totalGold = Math.floor(baseGold + (hpBonus * multiplier));
-             
-             // 영구 처치 목록에 등록하여 다시 해당 좌표에 가도 부활하지 않게 방지 (시드 고정)
-             if (!player.stats.killedMonsterIds) player.stats.killedMonsterIds = [];
-             if (!player.stats.killedMonsterIds.includes(entity.id)) {
-               player.stats.killedMonsterIds.push(entity.id);
-             }
-             
-             player.stats.goldCoins += totalGold;
-             
-             createFloatingText(world, entity.x * TILE_SIZE, (entity.y - 1) * TILE_SIZE, `+${totalGold} G`, '#fde047', 1.5);
-          }
         }
       }
     });
   }
 
-  // 플레이어 사망 체크
+  // 3. 플레이어 사망 체크
   if (player.stats.hp <= 0) {
     player.stats.hp = 0;
-    // 게임 오버 혹은 부활 로직은 상위에서 결정
   }
+
+  // 4. HP가 0 이하가 된 몬스터들을 월드에서 실시간 제거 및 보상 지급
+  world.entities = entities.filter(entity => {
+    if (entity.type === 'monster' || entity.type === 'boss') {
+      if (entity.stats && entity.stats.hp <= 0) {
+        // 이미 처치된 몬스터인지 확인 (중복 보상 방지)
+        if (!player.stats.killedMonsterIds) player.stats.killedMonsterIds = [];
+        const wasKilled = player.stats.killedMonsterIds.includes(entity.id);
+
+        if (!wasKilled) {
+          // 보상 지급
+          let multiplier = 1;
+          const mobDef = MONSTERS.find(m => m.name === entity.name);
+          if (mobDef && mobDef.rarity) {
+            switch (mobDef.rarity) {
+              case 'Uncommon': multiplier = 2; break;
+              case 'Rare': multiplier = 3; break;
+              case 'Epic': multiplier = 5; break;
+              case 'Radiant': multiplier = 7; break;
+              case 'Legendary': multiplier = 10; break;
+              case 'Mythic': multiplier = 15; break;
+              case 'Ancient': multiplier = 20; break;
+            }
+          }
+          if (entity.type === 'boss') multiplier *= 5;
+
+          const baseGold = 10;
+          const hpBonus = Math.floor((entity.stats.maxHp || 100) * 0.1);
+          const totalGold = Math.floor(baseGold + (hpBonus * multiplier));
+
+          player.stats.killedMonsterIds.push(entity.id);
+          player.stats.goldCoins += totalGold;
+
+          createFloatingText(world, entity.x * TILE_SIZE, (entity.y - 1) * TILE_SIZE, `+${totalGold} G`, '#fde047', 1.5);
+        }
+        return false; // 필터링 (제거)
+      }
+      return true; // 생존
+    }
+    return true; // 기타 엔티티
+  });
 };

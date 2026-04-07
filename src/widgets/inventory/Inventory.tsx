@@ -9,7 +9,7 @@ import { MINERALS } from '../../shared/config/mineralData';
 import Image from 'next/image';
 import { SKILL_RUNES } from '../../shared/config/skillRuneData';
 import AttackRuneImg from '../../shared/assets/rune/AttackRune.png';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.png';
+import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
 
 /**
  * 인벤토리 컴포넌트의 Props 인터페이스입니다.

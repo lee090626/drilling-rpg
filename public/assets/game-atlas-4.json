@@ -1,0 +1,39 @@
+{
+  "frames": {
+    "RubyIcon.png": {
+      "frame": {
+        "x": 3,
+        "y": 3,
+        "w": 612,
+        "h": 662
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 206,
+        "y": 181,
+        "w": 612,
+        "h": 662
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://github.com/odrick/free-tex-packer-core",
+    "version": "0.3.5",
+    "image": "game-atlas-4.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 618,
+      "h": 668
+    },
+    "scale": 1
+  }
+}

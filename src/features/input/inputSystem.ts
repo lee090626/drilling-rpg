@@ -16,8 +16,8 @@ export const inputSystem = (world: GameWorld) => {
   const isAnyModalOpen = ui.isShopOpen || ui.isInventoryOpen || ui.isSettingsOpen || 
                          ui.isCraftingOpen || ui.isElevatorOpen || ui.isStatusOpen || ui.isEncyclopediaOpen;
   
-  // 모달이 열려있으면 게임 플레이 입력을 차단함
-  if (isAnyModalOpen) return;
+  // 모달이 열려있거나 사망 상태면 입력을 차단함
+  if (isAnyModalOpen || world.player.stats.hp <= 0) return;
 
   const keys = world.keys;
   const mobile = world.mobileJoystick;

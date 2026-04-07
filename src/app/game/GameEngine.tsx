@@ -75,81 +75,64 @@ export default function GameEngine() {
     }
   }, []);
 
+  const loadImageBitmap = useCallback((url: string): Promise<ImageBitmap> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => createImageBitmap(img).then(resolve).catch(reject);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }, []);
+
   const loadAssetsAndTransfer = useCallback(async () => {
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-    const assetsToLoad = [
-      { name: 'player', url: `${basePath}/Player.png` },
-      { name: 'tileset', url: `${basePath}/BaseTileset.png` },
-    ];
+    const assetsPath = `${basePath}/assets`;
 
     try {
-      const bitmaps: Record<string, ImageBitmap> = {};
+      // 1. Load Manifest
+      const manifestRes = await fetch(`${assetsPath}/manifest.json`);
+      if (!manifestRes.ok) throw new Error('Failed to load atlas manifest');
+      const manifest = await manifestRes.json();
+
+      const atlasData: any[] = [];
       const transferList: Transferable[] = [];
 
-      await Promise.all(assetsToLoad.map(async (asset) => {
-        const response = await fetch(asset.url);
-        const blob = await response.blob();
-        if (asset.name === 'tileset') {
-          const b1 = await createImageBitmap(blob);
-          const b2 = await createImageBitmap(blob);
-          bitmaps['tileset'] = b1;
-          bitmaps['baseTileset'] = b2;
-          transferList.push(b1, b2);
-        } else {
-          const b = await createImageBitmap(blob);
-          bitmaps[asset.name] = b;
-          transferList.push(b);
-        }
+      // 2. Load each Atlas
+      await Promise.all(manifest.atlasFiles.map(async (jsonFile: string) => {
+        const jsonRes = await fetch(`${assetsPath}/${jsonFile}`);
+        const jsonData = await jsonRes.json();
+        
+        // Find corresponding image file (atlas-X.webp)
+        const webpFile = jsonFile.replace('.json', '.webp');
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = `${assetsPath}/${webpFile}`;
+        });
+        
+        const bitmap = await createImageBitmap(img);
+        atlasData.push({ json: jsonData, bitmap });
+        transferList.push(bitmap);
       }));
 
+      // 3. Load other static data
       const [layout, entities] = await Promise.all([fetchBaseLayout(), fetchEntities()]);
-      const entityBitmaps: Record<string, ImageBitmap> = {};
-      await Promise.all(entities.map(async (ent) => {
-        if (ent.imagePath) {
-          const url = ent.imagePath.startsWith('/') ? `${basePath}${ent.imagePath}` : `${basePath}/${ent.imagePath}`;
-          try {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            const b = await createImageBitmap(blob);
-            entityBitmaps[ent.imagePath] = b;
-            transferList.push(b);
-          } catch(e) {}
-        }
-      }));
 
-      const tileBitmaps: Record<string, ImageBitmap> = {};
-      const itemBitmaps: Record<string, ImageBitmap> = {};
-      await Promise.all(MINERALS.map(async (m) => {
-        if (m.tileImage) {
-          const url = typeof m.tileImage === 'string' ? m.tileImage : m.tileImage.src;
-          try {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            const b = await createImageBitmap(blob);
-            tileBitmaps[m.key] = b;
-            transferList.push(b);
-          } catch(e) {}
-        }
-        if (m.image) {
-          const url = typeof m.image === 'string' ? m.image : m.image.src;
-          try {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            const b = await createImageBitmap(blob);
-            itemBitmaps[m.key] = b;
-            transferList.push(b);
-          } catch(e) {}
-        }
-      }));
-
-      sendToWorker('ASSETS', { bitmaps, entityBitmaps, tileBitmaps, itemBitmaps, layout, entities }, transferList);
+      // 4. Send to Worker
+      sendToWorker('ASSETS_ATLAS', { atlasData, layout, entities }, transferList);
+      console.log(`[Main] Sent ${atlasData.length} atlases to worker.`);
     } catch (err) {
       console.error("Asset transfer failed:", err);
+      // Fallback: If atlas fails, engine ready anyway to prevent stuck loading
+      setIsEngineReady(true);
     }
   }, [sendToWorker]);
 
   const { closeAllModals, toggleModal, handleClose, handleOpen, isAnyModalOpen } = useGameUI(worldRef, updateUi);
-  const { handleUpgrade, handleCraft, handleSell, handleExtractRune, handleSynthesizeRunes, handleEquipDrill, handleEquipDrone, handleEquipRune, handleUnequipRune, handleSelectCheckpoint, handleResetGame, handleRegenerateWorld, handleExportSave, handleImportSave, handleStartSmelting, handleCollectSmelting, handleUnlockResearch, handleUseArtifact, handleEquipArtifact, handleTravelDimension } = useGameActions(worldRef, updateUi, sendToWorker);
+  const { handleUpgrade, handleCraft, handleSell, handleExtractRune, handleSynthesizeRunes, handleEquipDrill, handleEquipDrone, handleEquipRune, handleUnequipRune, handleSelectCheckpoint, handleResetGame, handleRegenerateWorld, handleExportSave, handleImportSave, handleStartSmelting, handleCollectSmelting, handleUnlockResearch, handleUseArtifact, handleEquipArtifact, handleTravelDimension, handleRespawn } = useGameActions(worldRef, updateUi, sendToWorker);
 
   // 1. 워커 엔진 초기화 (최초 1회)
   useEffect(() => {
@@ -270,7 +253,7 @@ export default function GameEngine() {
     }
   }, [isClient]);
 
-  if (!isClient) return <div className="text-white p-20 font-mono">INITIALIZING ENGINE...</div>;
+  if (!isClient) return <div className="fixed inset-0 bg-zinc-950" />;
 
   const world = worldRef.current;
   const { ui, player } = world;
@@ -281,39 +264,10 @@ export default function GameEngine() {
         ref={canvasRef}
         width={windowSize.width}
         height={windowSize.height}
-        className={`w-full h-full block relative z-0 transition-opacity duration-1000 ${isEngineReady ? 'opacity-100' : 'opacity-0'}`}
+        className="w-full h-full block relative z-0 opacity-100"
       />
 
-      {/* Loading Overlay (AdSense Bot Visibility Layer) */}
-      {!isEngineReady && (
-        <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center text-center p-10 space-y-8 animate-in fade-in duration-500">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-2xl animate-bounce">
-              <span className="text-4xl font-black italic">D</span>
-            </div>
-            <div className="absolute -inset-4 bg-cyan-500/20 blur-2xl rounded-full -z-10 animate-pulse"></div>
-          </div>
-          
-          <div className="space-y-4">
-            <h2 className="text-4xl font-black uppercase italic tracking-tighter text-white">
-              Drilling <span className="text-cyan-500">RPG</span>
-            </h2>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-cyan-500 animate-[loading_2s_ease-in-out_infinite]"></div>
-              </div>
-              <p className="text-[10px] font-mono text-cyan-500/50 uppercase tracking-[0.3em]">Dimension Neural Syncing...</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 max-w-xs text-[10px] text-zinc-500 font-mono uppercase tracking-widest pt-12">
-            <div className="p-3 border border-white/5 rounded-xl bg-white/5">WASD to Move</div>
-            <div className="p-3 border border-white/5 rounded-xl bg-white/5">Space to Mine</div>
-          </div>
-        </div>
-      )}
-
-      <div className="absolute inset-0 z-10 pointer-events-none">
+      <div className="absolute inset-0 z-20 pointer-events-none">
         <div className="pointer-events-auto w-full h-full">
           <Hud 
             stats={player.stats} 
@@ -356,6 +310,35 @@ export default function GameEngine() {
       }} /></Overlay>}
       {world.ui.isLaboratoryOpen && <Overlay key="laboratory" onClose={() => handleClose('isLaboratoryOpen')}><Laboratory stats={player.stats} onUnlockResearch={handleUnlockResearch} onClose={() => handleClose('isLaboratoryOpen')} /></Overlay>}
       {world.ui.isGuideOpen && <Overlay key="guide" onClose={() => handleClose('isGuideOpen')}><GuideWindow onClose={() => handleClose('isGuideOpen')} /></Overlay>}
+      
+      {/* Death Overlay */}
+      {player.stats.hp <= 0 && (
+        <div className="absolute inset-0 z-100 flex flex-col items-center justify-center bg-red-950/60 backdrop-blur-xl animate-in fade-in duration-700">
+           <div className="text-center space-y-8 p-12 bg-zinc-950/80 border-2 border-red-500/50 rounded-3xl shadow-2xl shadow-red-900/40 max-w-md w-full">
+              <div className="space-y-2">
+                <h2 className="text-5xl font-black text-red-500 tracking-tighter uppercase italic drop-shadow-sm">
+                  Driller Down
+                </h2>
+                <p className="text-zinc-400 font-medium tracking-widest text-xs uppercase">
+                  Structural integrity compromised
+                </p>
+              </div>
+              
+              <div className="py-4">
+                <div className="text-4xl font-mono text-zinc-500">
+                  DEPTH: <span className="text-white">{player.stats.depth}m</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleRespawn}
+                className="w-full py-4 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black rounded-xl transition-all shadow-lg shadow-red-900/20 uppercase tracking-widest text-sm"
+              >
+                Request Respawn
+              </button>
+           </div>
+        </div>
+      )}
     </div>
   );
 }

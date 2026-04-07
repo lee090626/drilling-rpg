@@ -1,0 +1,231 @@
+{
+  "frames": {
+    "IronDrill.png": {
+      "frame": {
+        "x": 3,
+        "y": 3,
+        "w": 410,
+        "h": 912
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 368,
+        "y": 49,
+        "w": 410,
+        "h": 912
+      },
+      "sourceSize": {
+        "w": 1078,
+        "h": 976
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "EmeraldIcon.png": {
+      "frame": {
+        "x": 3,
+        "y": 921,
+        "w": 583,
+        "h": 679
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 220,
+        "y": 173,
+        "w": 583,
+        "h": 679
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Mechanic.png": {
+      "frame": {
+        "x": 3,
+        "y": 1606,
+        "w": 512,
+        "h": 418
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 256,
+        "y": 303,
+        "w": 512,
+        "h": 418
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "StoneIcon.png": {
+      "frame": {
+        "x": 419,
+        "y": 3,
+        "w": 899,
+        "h": 677
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 60,
+        "y": 181,
+        "w": 899,
+        "h": 677
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BaseTileset.png": {
+      "frame": {
+        "x": 1324,
+        "y": 3,
+        "w": 640,
+        "h": 640
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 640,
+        "h": 640
+      },
+      "sourceSize": {
+        "w": 640,
+        "h": 640
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "IronIcon.png": {
+      "frame": {
+        "x": 1324,
+        "y": 649,
+        "w": 638,
+        "h": 640
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 193,
+        "y": 192,
+        "w": 638,
+        "h": 640
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "DirtIcon.png": {
+      "frame": {
+        "x": 592,
+        "y": 1295,
+        "w": 889,
+        "h": 665
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 68,
+        "y": 179,
+        "w": 889,
+        "h": 665
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "GoldIcon.png": {
+      "frame": {
+        "x": 1487,
+        "y": 1295,
+        "w": 529,
+        "h": 529
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 256,
+        "y": 247,
+        "w": 529,
+        "h": 529
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Merchant.png": {
+      "frame": {
+        "x": 592,
+        "y": 686,
+        "w": 354,
+        "h": 512
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 335,
+        "y": 256,
+        "w": 354,
+        "h": 512
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://github.com/odrick/free-tex-packer-core",
+    "version": "0.3.5",
+    "image": "game-atlas-3.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2019,
+      "h": 2027
+    },
+    "scale": 1
+  }
+}

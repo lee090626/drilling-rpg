@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { PlayerStats, Position } from '../../shared/types/game';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.png';
+import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
 
 interface ElevatorProps {
   stats: PlayerStats;

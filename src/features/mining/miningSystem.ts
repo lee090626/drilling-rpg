@@ -3,6 +3,7 @@ import { TILE_SIZE } from '../../shared/config/constants';
 import { getTileColor } from '../../shared/lib/tileUtils';
 import { getNextLevelExp, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
 import { getTotalRuneStat } from '../../shared/lib/runeUtils';
+import { getResearchBonuses } from '../../shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '../../shared/lib/effectUtils';
 import { calculateMiningDamage } from './miningCalculator';
 import { handleBossDefeat } from './bossSystem';
@@ -53,7 +54,7 @@ function updateMiningTarget(world: GameWorld) {
  * 플레이어의 드릴링 액션을 처리합니다.
  */
 function handlePlayerMining(world: GameWorld, now: number) {
-  const { player, tileMap, intent } = world;
+  const { player, tileMap, intent, entities } = world;
 
   if (!player.isDrilling || !intent.miningTarget) {
     if (player.isDrilling) player.isDrilling = false;
@@ -61,6 +62,19 @@ function handlePlayerMining(world: GameWorld, now: number) {
   }
 
   const { x, y } = intent.miningTarget;
+
+  // 몬스터를 조준 중이면 바닥(타일) 채굴은 건너뛰고 combatSystem에서만 처리되도록 함
+  const hasMonster = entities.some(e => 
+    (e.type === 'monster' || e.type === 'boss') && 
+    e.stats && e.stats.hp > 0 &&
+    x >= e.x && x < e.x + (e.width || 1) &&
+    y >= e.y && y < e.y + (e.height || 1)
+  );
+
+  if (hasMonster) {
+    return;
+  }
+
   const targetTile = tileMap.getTile(x, y);
   if (!targetTile) return;
 
@@ -73,13 +87,13 @@ function handlePlayerMining(world: GameWorld, now: number) {
   // 타격 처리
   const destroyed = finalDamage > 0 ? tileMap.damageTile(x, y, finalDamage) : false;
   
-  if (finalDamage > 0) {
+  if (finalDamage >= 0) {
     player.lastHitTime = now;
     world.shake = Math.max(world.shake, destroyed ? 2.0 : 0.5);
     
     // 시각 효과
     createParticles(world, x * TILE_SIZE, y * TILE_SIZE, getTileColor(targetTile.type), 2);
-    createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE, isCrit ? `Crit! -${finalDamage}` : `-${finalDamage}`, isCrit ? '#f87171' : '#ffffff');
+    createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE, isCrit ? `Crit! -${finalDamage}` : `${finalDamage}`, isCrit ? '#f87171' : '#ffffff');
   }
 
   world.timestamp.lastMiningTime = now;
@@ -99,7 +113,9 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
   
   // 아이템 드롭 및 숙련도
   if (player.stats.inventory[type as any] !== undefined) {
-    const luck = getTotalRuneStat(player.stats, 'luck');
+    const researchBonuses = getResearchBonuses(player.stats);
+    // researchBonuses.luck의 기본값이 1이므로, 1을 뺀 추가 보너스만 취합
+    const luck = getTotalRuneStat(player.stats, 'luck') + (researchBonuses.luck - 1);
     let dropCount = 1;
     let remLuck = luck;
     while (remLuck >= 1) { dropCount++; remLuck--; }

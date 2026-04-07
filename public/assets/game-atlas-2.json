@@ -1,0 +1,207 @@
+{
+  "frames": {
+    "Refinery.png": {
+      "frame": {
+        "x": 3,
+        "y": 3,
+        "w": 1024,
+        "h": 1024
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1024,
+        "h": 1024
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Player.png": {
+      "frame": {
+        "x": 3,
+        "y": 1033,
+        "w": 876,
+        "h": 992
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 148,
+        "y": 32,
+        "w": 876,
+        "h": 992
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "GoldDrill.png": {
+      "frame": {
+        "x": 885,
+        "y": 1033,
+        "w": 449,
+        "h": 928
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 368,
+        "y": 48,
+        "w": 449,
+        "h": 928
+      },
+      "sourceSize": {
+        "w": 1078,
+        "h": 976
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CoalIcon.png": {
+      "frame": {
+        "x": 1340,
+        "y": 1033,
+        "w": 683,
+        "h": 853
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 168,
+        "y": 84,
+        "w": 683,
+        "h": 853
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "wall.png": {
+      "frame": {
+        "x": 1340,
+        "y": 1892,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "iron.png": {
+      "frame": {
+        "x": 1474,
+        "y": 1892,
+        "w": 128,
+        "h": 127
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 127
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "StoneDrill.png": {
+      "frame": {
+        "x": 1033,
+        "y": 3,
+        "w": 413,
+        "h": 926
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 369,
+        "y": 25,
+        "w": 413,
+        "h": 926
+      },
+      "sourceSize": {
+        "w": 1078,
+        "h": 976
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "DiamondIcon.png": {
+      "frame": {
+        "x": 1452,
+        "y": 3,
+        "w": 584,
+        "h": 742
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 220,
+        "y": 141,
+        "w": 584,
+        "h": 742
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://github.com/odrick/free-tex-packer-core",
+    "version": "0.3.5",
+    "image": "game-atlas-2.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2039,
+      "h": 2028
+    },
+    "scale": 1
+  }
+}

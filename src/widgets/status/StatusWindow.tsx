@@ -1,12 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { PlayerStats } from '../../shared/types/game';
-import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.png';
+import GoldIconImg from '@/src/shared/assets/ui/icons/MoneyIcon.webp';
 import { DRILLS } from '../../shared/config/drillData';
 import { getNextLevelExp, getMasteryMultiplier, getUnlockedSlotCount, createInitialEquipmentState } from '../../shared/lib/masteryUtils';
 import { getTotalRuneStat } from '../../shared/lib/runeUtils';
 import { SKILL_RUNES } from '../../shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '../../shared/config/artifactData';
+import { getResearchBonuses } from '../../shared/lib/researchUtils';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -26,10 +27,27 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
   const baseAttack = equippedDrill.basePower;
   const masteryBonus = Math.round(baseAttack * (masteryMult - 1));
   
-  // Rune Bonuses
+  // Unified Stat Calculations
+  const researchBonuses = getResearchBonuses(stats);
   const runePowerBonus = Math.floor(getTotalRuneStat(stats, 'power'));
+  const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
+  const runeCritRate = getTotalRuneStat(stats, 'critRate');
+  const runeCritDmg = getTotalRuneStat(stats, 'critDmg');
+  const runeLuck = getTotalRuneStat(stats, 'luck');
+  const runeMoveSpeed = getTotalRuneStat(stats, 'moveSpeed');
 
-  const totalPower = stats.power + baseAttack + masteryBonus + runePowerBonus;
+  const finalPower = stats.power + baseAttack + masteryBonus + runePowerBonus + researchBonuses.power;
+  const finalCritRate = runeCritRate;
+  const finalCritDmg = 1.5 + runeCritDmg;
+  const finalMiningInterval = Math.round(equippedDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus)));
+
+  const baseSpeedStat = stats.moveSpeed || 100;
+  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed;
+  const drillSpeedMult = equippedDrill.moveSpeedMult || 1;
+  const finalMoveSpeedMult = (baseSpeedMult * drillSpeedMult + (runeMoveSpeed * 0.01)) || 1;
+
+  const finalLuck = runeLuck + (researchBonuses.luck - 1);
+  const finalGoldBonus = researchBonuses.goldBonus;
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
@@ -65,54 +83,90 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
       </div>
 
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-y-auto pr-2 custom-scrollbar pb-6">
-        {/* COLUMN 1: BASE METRICS */}
+        {/* COLUMN 1: COMBAT & MINING */}
         <div className="space-y-4">
           <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-            Attributes
+            Combat & Mining
           </h3>
 
-          {[
-            { label: 'Power', value: totalPower },
-            { label: 'Max HP', value: stats.maxHp },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex justify-between items-center group hover:border-[#eab308]/50 transition-colors"
-            >
-              <div className="text-[10px] md:text-[11px] font-bold text-white tracking-tight">
-                {stat.label}
+          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
+            {[
+              { label: 'Total Power', value: finalPower },
+              { label: 'Max HP', value: stats.maxHp },
+              { label: 'Crit Rate', value: `${(finalCritRate * 100).toFixed(1)}%` },
+              { label: 'Crit Damage', value: `${(finalCritDmg * 100).toFixed(0)}%` },
+              { label: 'Mining Speed', value: `${finalMiningInterval}ms` },
+            ].map((stat, i) => (
+              <div key={i} className="flex justify-between items-center group">
+                <div className="text-[11px] font-bold text-zinc-400 tracking-tight">
+                  {stat.label}
+                </div>
+                <div className="text-sm font-black text-emerald-400 tabular-nums">
+                  {stat.value}
+                </div>
               </div>
-              <div className="text-xl md:text-2xl font-black text-[#eab308] tabular-nums">
-                {stat.value}
+            ))}
+          </div>
+
+          <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mt-6 mb-4 border-b border-zinc-800 pb-2">
+            Exploration & Utility
+          </h3>
+          
+          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
+            {[
+              { label: 'Move Speed', value: `${(finalMoveSpeedMult * 100).toFixed(0)}%` },
+              { label: 'Luck (Drop Bonus)', value: `+${(finalLuck * 100).toFixed(0)}%` },
+              { label: 'Gold Bonus', value: `+${((finalGoldBonus - 1) * 100).toFixed(0)}%` },
+            ].map((stat, i) => (
+              <div key={i} className="flex justify-between items-center group">
+                <div className="text-[11px] font-bold text-zinc-400 tracking-tight">
+                  {stat.label}
+                </div>
+                <div className="text-sm font-black text-[#eab308] tabular-nums">
+                  {stat.value}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* COLUMN 2: PLAYER DETAILS */}
-        <div className="space-y-6">
+        {/* COLUMN 2: PLAYER DETAILS & RECORDS */}
+        <div className="space-y-6 flex flex-col">
           <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
             Player Status
           </h3>
 
-          <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 space-y-6 md:space-y-8">
+          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 space-y-4">
             {/* HP BAR */}
-            <div className="space-y-2 md:space-y-3">
+            <div className="space-y-2">
               <div className="flex justify-between items-end">
-                <span className="text-[10px] font-bold text-zinc-400">
-                  Health
-                </span>
+                <span className="text-[10px] font-bold text-zinc-400">Health</span>
                 <span className="text-sm font-black text-white tabular-nums">
-                  {Math.floor(stats.hp)}{' '}
-                  <span className="text-zinc-500">/ {stats.maxHp}</span>
+                  {Math.floor(stats.hp)} <span className="text-zinc-500">/ {stats.maxHp}</span>
                 </span>
               </div>
-              <div className="h-4 md:h-5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-[2px]">
+              <div className="h-4 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-[2px]">
                 <div
                   className="h-full bg-rose-600 rounded-full transition-all duration-500"
                   style={{ width: `${(stats.hp / stats.maxHp) * 100}%` }}
                 />
               </div>
+            </div>
+
+            {/* RECORDS */}
+            <div className="flex flex-col gap-2 pt-4 border-t border-zinc-700/50">
+               <div className="flex justify-between items-center">
+                 <span className="text-[10px] font-bold text-zinc-400">Max Depth</span>
+                 <span className="text-xs font-black text-blue-400">{stats.maxDepthReached || 0}m</span>
+               </div>
+               <div className="flex justify-between items-center">
+                 <span className="text-[10px] font-bold text-zinc-400">Dimension</span>
+                 <span className="text-xs font-black text-purple-400">Dim {stats.dimension || 0}</span>
+               </div>
+               <div className="flex justify-between items-center">
+                 <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>
+                 <span className="text-xs font-black text-emerald-400">{stats.discoveredMinerals?.length || 0}</span>
+               </div>
             </div>
           </div>
 
