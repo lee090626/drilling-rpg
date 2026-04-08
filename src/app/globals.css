@@ -1,9 +1,17 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 @plugin "tailwind-scrollbar-hide";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  @font-face {
+    font-family: 'Russo One';
+    src: url('https://fonts.gstatic.com/s/russoone/v14/Znu-a-wZshSmge6zQRvwz6_T.woff2') format('woff2');
+  }
+
+  --font-russo: "Russo One", sans-serif;
+  --color-emerald-400: #34d399;
 }
 
 @theme inline {

@@ -6,17 +6,16 @@ import { getDrillData } from '@/shared/config/drillData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 
 // 실무형 에셋 관리: 직접 임포트 방식 적용
-import StatusIconImg from '@/shared/assets/ui/icons/StatusIcon.webp';
-import InventoryIconImg from '@/shared/assets/ui/icons/InventoryIcon.webp';
-import BookIconImg from '@/shared/assets/ui/icons/BookIcon.webp';
-import SettingsIconImg from '@/shared/assets/ui/icons/SettingsIcon.webp';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import { AtlasIcon } from './AtlasIcon';
+import { atlasMap } from '@/shared/config/atlasMap';
+// Icons are now sourced from the texture atlas via AtlasIcon
 
 interface NavItem {
   label: string;
   key: string;
   src?: StaticImageData;
   icon?: string;
+  iconKey?: keyof typeof atlasMap;
   onClick?: () => void;
   color: string;
 }
@@ -50,10 +49,10 @@ const Hud: React.FC<HudProps> = React.memo(({
 
   /** 하단 네비게이션 메뉴 항목 */
   const navItems: NavItem[] = useMemo(() => [
-    { label: 'Status', key: 'C', src: StatusIconImg, onClick: onOpenStatus, color: '#eab308' },
-    { label: 'Inventory', key: 'I', src: InventoryIconImg, onClick: onOpenInventory, color: '#f59e0b' },
-    { label: 'Book', key: 'B', src: BookIconImg, onClick: onOpenEncyclopedia, color: '#a855f7' },
-    { label: 'Setting', key: 'S', src: SettingsIconImg, onClick: onOpenSettings, color: '#94a3b8' },
+    { label: 'Status', key: 'C', iconKey: 'status', onClick: onOpenStatus, color: '#eab308' },
+    { label: 'Inventory', key: 'I', iconKey: 'inventory', onClick: onOpenInventory, color: '#f59e0b' },
+    { label: 'Book', key: 'B', iconKey: 'book', onClick: onOpenEncyclopedia, color: '#a855f7' },
+    { label: 'Setting', key: 'S', iconKey: 'setting', onClick: onOpenSettings, color: '#94a3b8' },
     { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
   ], [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide]);
 
@@ -89,7 +88,7 @@ const Hud: React.FC<HudProps> = React.memo(({
         <div className="flex flex-col items-end gap-2 md:gap-3">
             <div className="flex items-center gap-1.5 md:gap-3 bg-zinc-900/80 backdrop-blur-md border border-yellow-500/20 px-2 py-1 md:px-4 md:py-2 rounded-lg md:rounded-xl shadow-lg">
                 <div className="flex items-center justify-center rounded-full bg-transparent w-4 h-4 md:w-6 md:h-7 relative">
-                    <Image src={GoldIconImg} alt="Gold" fill className="object-contain drop-shadow-md" />
+                    <AtlasIcon name="gold" alt="Gold" size={24} />
                 </div>
                 <span className="text-yellow-400 font-mono text-sm md:text-xl lg:text-2xl font-black tracking-tight">
                     {stats.goldCoins.toLocaleString()}
@@ -179,7 +178,9 @@ const Hud: React.FC<HudProps> = React.memo(({
                         />
                         
                         <div className="relative w-20 h-20 md:w-20 md:h-20 lg:w-20 lg:h-20 z-10 transition-all duration-300 flex items-center justify-center">
-                            {item.src ? (
+                            {item.iconKey ? (
+                                <AtlasIcon name={item.iconKey as any} alt={item.label} size={48} />
+                            ) : item.src ? (
                                 <Image 
                                     src={item.src} 
                                     alt={item.label} 
