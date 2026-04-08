@@ -1,7 +1,7 @@
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { MONSTERS } from '@/shared/config/monsterData';
-import { calculateMiningDamage } from '../mining/miningCalculator';
+import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { createFloatingText } from '@/shared/lib/effectUtils';
 
 /**

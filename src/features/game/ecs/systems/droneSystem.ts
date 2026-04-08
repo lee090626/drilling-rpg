@@ -4,7 +4,7 @@ import { TILE_SIZE } from '@/shared/config/constants';
 import { getTileColor } from '@/shared/lib/tileUtils';
 import { MINERALS } from '@/shared/config/mineralData';
 import { createParticles } from '@/shared/lib/effectUtils';
-import { calculateDroneDamage } from './miningCalculator';
+import { calculateDroneDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 
 /**

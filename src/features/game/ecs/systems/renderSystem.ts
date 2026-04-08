@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '@/shared/config/constants';
 import { renderEntities } from './entityRenderer';
-import { createHitFlashFilter, createRadialLightMask } from './pixiEffects';
+import { createHitFlashFilter, createRadialLightMask } from '../../lib/pixiEffects';
 
 // 타일 스프라이트 캐시 (좌표키 -> Sprite)
 const tileSpriteCache = new Map<string, PIXI.Sprite>();

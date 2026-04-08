@@ -5,7 +5,7 @@ import { getNextLevelExp, createInitialEquipmentState } from '@/shared/lib/maste
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
-import { calculateMiningDamage } from './miningCalculator';
+import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 import { droneSystem } from './droneSystem';
 
