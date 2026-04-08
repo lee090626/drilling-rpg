@@ -117,11 +117,6 @@ export default function GameOverlay({
         </div>
       )}
 
-      {/* Debug Info */}
-      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-100 border border-white/20 select-none pointer-events-auto">
-        <div>Visible Entities: {visibleEntitiesCount}</div>
-        <div className="text-zinc-400 mt-1">Press [P] for 5,000 Monsters</div>
-      </div>
     </div>
   );
 }

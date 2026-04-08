@@ -28,21 +28,53 @@ export default function SkillRuneIcon({ runeId, rarity, size = 'w-16 h-16', clas
   const imgSrc = typeof runeDef.image === 'string' ? runeDef.image : (runeDef.image.src || runeDef.image);
 
   return (
-    <div className={`relative ${size} flex flex-col items-center justify-center rounded-2xl border bg-linear-to-br ${themeClass} overflow-hidden shadow-inner ${className}`}>
-      {/* Background glow for high tiers */}
-      {['Legendary', 'Mythic', 'Ancient', 'Radiant'].includes(rarity) && (
-        <>
-          <div className="absolute -inset-full bg-linear-to-r from-transparent via-white/10 to-transparent animate-[spin_4s_linear_infinite]" />
-          <div className="absolute inset-0 bg-current opacity-10 animate-pulse" />
-        </>
+    <div className={`relative ${size} flex flex-col items-center justify-center rounded-2xl border bg-linear-to-br ${themeClass} overflow-hidden shadow-2xl transition-all duration-500 transform-gpu ${className}`}>
+      
+      {/* 1. Background Layers (Aura/Rays) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Radiant/Legendary/Ancient: Rotating Rays */}
+        {['Radiant', 'Legendary', 'Ancient'].includes(rarity) && (
+          <div className="absolute -inset-[50%] bg-[radial-gradient(conic,transparent_20deg,currentColor_45deg,transparent_70deg)] opacity-20 animate-rune-spin-slow transform-gpu" />
+        )}
+        
+        {/* Ancient: Reverse Rotating Orbit Layer */}
+        {rarity === 'Ancient' && (
+          <div className="absolute -inset-[30%] border border-current opacity-30 rounded-full animate-rune-orbit transform-gpu" />
+        )}
+
+        {/* Mythic: Lightning/Flicker Overlay */}
+        {rarity === 'Mythic' && (
+          <div className="absolute inset-0 bg-current opacity-20 animate-rune-lightning transform-gpu" />
+        )}
+      </div>
+
+      {/* 2. Middle Layer (Glow/Pulse) */}
+      <div className={`absolute inset-0 pointer-events-none transform-gpu
+        ${rarity === 'Uncommon' ? 'animate-rune-fade' : ''}
+        ${rarity === 'Rare' ? 'animate-rune-pulse' : ''}
+        ${['Epic', 'Radiant', 'Legendary', 'Mythic', 'Ancient'].includes(rarity) ? 'animate-rune-pulse' : ''}
+      `}>
+        <div className="absolute inset-0 bg-current opacity-10" />
+      </div>
+
+      {/* 3. Front Particle Layer */}
+      {['Legendary', 'Mythic', 'Ancient', 'Epic'].includes(rarity) && (
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-current/20 to-transparent animate-rune-fade pointer-events-none" />
       )}
-      <div className="relative z-10 w-[70%] h-[70%] flex items-center justify-center">
+
+      {/* 4. The Icon itself */}
+      <div className={`relative z-10 w-[70%] h-[70%] flex items-center justify-center transform-gpu drop-shadow-2xl
+        ${['Legendary', 'Mythic', 'Ancient'].includes(rarity) ? 'animate-rune-flicker brightness-110' : ''}
+      `}>
         <img 
           src={imgSrc} 
           alt={runeDef.name} 
-          className="w-full h-full object-contain drop-shadow-2xl" 
+          className="w-full h-full object-contain filter " 
         />
       </div>
+
+      {/* 5. Highlight/Gloss Overlay */}
+      <div className="absolute inset-0 bg-linear-to-tr from-white/5 to-white/10 opacity-50 pointer-events-none" />
     </div>
   );
 }

@@ -171,11 +171,11 @@ function updateMiningTarget(world: GameWorld, layers: any) {
   const { uiLayer } = layers;
   const { intent, tileMap } = world;
   
-  let targetRect = uiLayer.getChildByName('miningTarget') as PIXI.Graphics;
+  let targetRect = uiLayer.getChildByLabel('miningTarget') as PIXI.Graphics;
   
   if (intent.miningTarget && !targetRect) {
     targetRect = new PIXI.Graphics();
-    targetRect.name = 'miningTarget';
+    targetRect.label = 'miningTarget';
     uiLayer.addChild(targetRect);
   }
   

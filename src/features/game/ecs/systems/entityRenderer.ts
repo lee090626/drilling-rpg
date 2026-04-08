@@ -103,7 +103,7 @@ function updateEntitySpriteFromSoA(idx: number, soa: any, player: any, container
   container.y = ey;
 
   // 텍스처 및 색상 업데이트 (타입에 따라)
-  const body = container.getChildByName('body') as any;
+  const body = container.getChildByLabel('body') as any;
   if (body) {
     // 몬스터 종류에 따른 틴트/이모지 처리 (간소화)
     if (type === 1) body.tint = 0xef4444; // Monster
@@ -137,7 +137,7 @@ function updateEntitySpriteByIndex(idx: number, entity: any, container: PIXI.Con
   container.x = targetX * TILE_SIZE;
   container.y = targetY * TILE_SIZE;
   
-  const body = container.getChildByName('body') as PIXI.Sprite;
+  const body = container.getChildByLabel('body') as PIXI.Sprite;
   if (body) {
     const isHit = now - (entity.lastHitTime || 0) < 100;
     body.alpha = isHit ? 0.7 : 1.0;
@@ -160,14 +160,14 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
       text: entity.imagePath!,
       style: { fontSize: entW * 0.8, align: 'center' }
     });
-    emojiText.name = 'body';
+    emojiText.label = 'body';
     emojiText.anchor.set(0.5, 0.5);
     emojiText.position.set(entW / 2, entH / 2);
     container.addChild(emojiText);
   } else {
     const texture = textures[textureKey] || PIXI.Texture.WHITE;
     const sprite = new PIXI.Sprite(texture);
-    sprite.name = 'body';
+    sprite.label = 'body';
     sprite.width = entW;
     sprite.height = entH;
     
@@ -179,7 +179,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
 
   if (!isPlayer) {
     const hpBar = new PIXI.Graphics();
-    hpBar.name = 'hpBar';
+    hpBar.label = 'hpBar';
     hpBar.y = -18; // HP바 위치 상단으로 이동
     container.addChild(hpBar);
 
@@ -188,7 +188,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
         text: entity.name, 
         style: { fontSize: 14, fill: 0xffffff, fontWeight: 'bold', stroke: { color: 0x000000, width: 2 } }
       });
-      nameTag.name = 'nameTag';
+      nameTag.label = 'nameTag';
       nameTag.anchor.set(0.5, 0.5);
       nameTag.position.set(entW / 2, -35); // 이름표 위치 조정
       container.addChild(nameTag);
@@ -198,7 +198,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
       text: '!', 
       style: { fontSize: 28, fill: 0xff0000, fontWeight: '900', stroke: { color: 0xffffff, width: 3 } }
     });
-    indicator.name = 'attackIndicator';
+    indicator.label = 'attackIndicator';
     indicator.anchor.set(0.5, 0.5);
     indicator.position.set(entW / 2, -35); // HP바 위로 이동
     indicator.visible = false;
@@ -214,7 +214,7 @@ function isEmojiString(str: string): boolean {
 }
 
 function updateAttackIndicatorFromSoA(idx: number, soa: any, container: PIXI.Container, now: number) {
-  const indicator = container.getChildByName('attackIndicator') as PIXI.Text;
+  const indicator = container.getChildByLabel('attackIndicator') as PIXI.Text;
   if (!indicator) return;
 
   const attackCooldown = 1000;
@@ -230,7 +230,7 @@ function updateAttackIndicatorFromSoA(idx: number, soa: any, container: PIXI.Con
 }
 
 function updateHPBarFromSoA(idx: number, soa: any, player: any, container: PIXI.Container) {
-  const hpBar = container.getChildByName('hpBar') as PIXI.Graphics;
+  const hpBar = container.getChildByLabel('hpBar') as PIXI.Graphics;
   if (!hpBar) return;
 
   const ex = soa.x[idx];

@@ -15,19 +15,6 @@ import { TILE_SIZE } from '@/shared/config/constants';
 export function handlePlayerAction(world: GameWorld, payload: any) {
   const { action, data } = payload;
   
-  if (action === 'STRESS_TEST') {
-    console.log('[Worker] Stress Test: Spawning 5000 monsters...');
-    const px = world.player.pos.x;
-    const py = world.player.pos.y;
-    
-    for (let i = 0; i < 5000; i++) {
-      const rx = px + (Math.random() - 0.5) * 60; // 60타일 범위
-      const ry = py + (Math.random() - 0.5) * 60;
-      // 0: none, 1: monster, 2: boss
-      world.entities.create(1, rx * TILE_SIZE, ry * TILE_SIZE, undefined, 0);
-    }
-    return;
-  }
 
   const stats = world.player.stats;
 

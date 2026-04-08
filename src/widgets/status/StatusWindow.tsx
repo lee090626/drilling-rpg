@@ -8,6 +8,7 @@ import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
+import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -326,17 +327,11 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                               const runeItem = stats.inventoryRunes.find(r => r.id === slottedRuneId);
                               const runeConfig = runeItem ? SKILL_RUNES[runeItem.runeId] : null;
                               return (
-                                <div className="relative flex items-center justify-center">
-                                  {runeConfig?.image ? (
-                                    <img 
-                                      src={typeof runeConfig.image === 'string' ? runeConfig.image : runeConfig.image.src || runeConfig.image} 
-                                      alt={runeConfig.name} 
-                                      className="w-5 h-5 md:w-6 md:h-6 object-contain" 
-                                    />
-                                  ) : (
-                                    <span className="text-sm md:text-base">⚙️</span>
-                                  )}
-                                  <span className="absolute -top-1 -right-1 text-[8px] bg-zinc-950 rounded-full w-3 h-3 flex items-center justify-center opacity-0 group-hover/rune:opacity-100 transition-opacity">✕</span>
+                                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl">
+                                  {runeItem && <SkillRuneIcon runeId={runeItem.runeId} rarity={runeItem.rarity as any} size="w-full h-full" />}
+                                  <span className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover/rune:opacity-100 transition-opacity z-20">
+                                    <span className="text-[10px] text-white font-black">✕</span>
+                                  </span>
                                 </div>
                               );
                             })()

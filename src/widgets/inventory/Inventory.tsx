@@ -8,6 +8,7 @@ import { DRONES } from '@/shared/config/droneData';
 import { MINERALS } from '@/shared/config/mineralData';
 import Image from 'next/image';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
+import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AttackRuneImg from '@/shared/assets/rune/AttackRune.png';
 import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 
@@ -434,25 +435,12 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                         setSelectedRuneId(rune.id === selectedRuneId ? null : rune.id);
                         setIsEquippingRune(false);
                       }}
-                      className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group ${rarityColors[rune.rarity] || 'bg-zinc-900 border-zinc-700 text-zinc-500'} focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 ${selectedRuneId === rune.id ? 'ring-2 ring-[#eab308] scale-[1.02]' : ''}`}
+                      className={`relative aspect-square rounded-2xl transition-all flex flex-col items-center justify-center p-0 overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 ${selectedRuneId === rune.id ? 'ring-2 ring-[#eab308] scale-[1.02] z-10' : ''}`}
                     >
-                      <div className="w-20 h-20 md:w-28 md:h-28 mb-3 md:mb-5 transition-transform flex items-center justify-center">
-                        {SKILL_RUNES[rune.runeId]?.image ? (
-                          <img 
-                            src={typeof SKILL_RUNES[rune.runeId].image === 'string' ? SKILL_RUNES[rune.runeId].image : SKILL_RUNES[rune.runeId].image.src || SKILL_RUNES[rune.runeId].image} 
-                            alt={SKILL_RUNES[rune.runeId].name} 
-                            className="w-full h-full object-contain drop-shadow-lg" 
-                          />
-                        ) : (
-                          "⚙️"
-                        )}
-                      </div>
-                      <div className="flex flex-col items-center gap-1.5 w-full text-center">
-                        <div className="text-[10px] md:text-xs font-black tracking-widest px-3 py-1 rounded-full bg-black/40 border border-white/5">
+                      <SkillRuneIcon runeId={rune.runeId} rarity={rune.rarity as any} size="w-full h-full" />
+                      <div className="absolute top-2 left-2 flex flex-col items-start gap-1.5 pointer-events-none">
+                        <div className="text-[8px] font-black tracking-widest px-2 py-0.5 rounded-full bg-black/60 border border-white/10 text-white/50">
                           {rune.rarity}
-                        </div>
-                        <div className="text-xs md:text-base font-black text-white mt-1 truncate w-full px-2">
-                          {SKILL_RUNES[rune.runeId]?.name || 'Unknown'}
                         </div>
                       </div>
                     </button>
@@ -472,16 +460,12 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                   <div className="flex justify-start mb-8">
                   </div>
 
-                  <div className="w-44 h-44 md:w-64 md:h-64 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-10 p-4">
-                    {selectedRuneConfig.image ? (
-                      <img 
-                        src={typeof selectedRuneConfig.image === 'string' ? selectedRuneConfig.image : selectedRuneConfig.image.src || selectedRuneConfig.image} 
-                        alt={selectedRuneConfig.name} 
-                        className="w-full h-full object-contain drop-shadow-2xl" 
-                      />
-                    ) : (
-                      <span className="text-8xl md:text-9xl">⚙️</span>
-                    )}
+                  <div className="w-44 h-44 md:w-64 md:h-64 bg-zinc-950 rounded-3xl shadow-2xl border border-zinc-800 flex items-center justify-center mx-auto mb-10 overflow-hidden relative group">
+                    <SkillRuneIcon 
+                      runeId={selectedRuneInstance.runeId} 
+                      rarity={selectedRuneInstance.rarity as any} 
+                      size="w-full h-full" 
+                    />
                   </div>
 
                   <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-6 tracking-tighter">
@@ -549,18 +533,9 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                   >
                     {isUnlocked ? (
                       currentRuneItem ? (
-                        <div className="flex flex-col items-center">
-                          {SKILL_RUNES[currentRuneItem.runeId]?.image ? (
-                            <img 
-                              src={typeof SKILL_RUNES[currentRuneItem.runeId].image === 'string' ? SKILL_RUNES[currentRuneItem.runeId].image : SKILL_RUNES[currentRuneItem.runeId].image.src || SKILL_RUNES[currentRuneItem.runeId].image} 
-                              alt={SKILL_RUNES[currentRuneItem.runeId].name} 
-                              className="w-10 h-10 md:w-12 md:h-12 object-contain mb-1" 
-                            />
-                          ) : (
-                            <span className="text-2xl mb-1 flex items-center justify-center">⚙️</span>
-                          )}
-                          <span className="text-[8px] font-bold text-zinc-400">Lv.{currentRuneItem.rarity.charAt(0)}</span>
-                          <div className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity">
+                        <div className="flex flex-col items-center w-full h-full">
+                          <SkillRuneIcon runeId={currentRuneItem.runeId} rarity={currentRuneItem.rarity as any} size="w-full h-full" />
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity z-20">
                             <span className="text-[10px] font-black text-[#eab308] tracking-widest">REPLACE</span>
                           </div>
                         </div>

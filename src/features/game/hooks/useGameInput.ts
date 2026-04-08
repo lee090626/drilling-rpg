@@ -42,10 +42,6 @@ export function useGameInput(
         return;
       }
       
-      if (key === 'p') {
-        sendToWorker('ACTION', { action: 'STRESS_TEST' });
-        return;
-      }
 
       if (isAnyModalOpen()) return;
       
