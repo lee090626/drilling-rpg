@@ -4,12 +4,13 @@ interface Props {
   name: AtlasIconName;
   alt?: string;
   size?: number; // pixel size
+  className?: string;
 }
 
 /**
  * 게임의 여러 WebP 아틀라스 시트에서 특정 이미지를 추출하여 렌더링하는 범용 아이콘 컴포넌트입니다.
  */
-export const AtlasIcon: React.FC<Props> = ({ name, alt = '', size = 32 }) => {
+export const AtlasIcon: React.FC<Props> = ({ name, alt = '', size = 32, className = '' }) => {
   const meta = atlasMap[name];
   if (!meta) return <div style={{ width: size, height: size, backgroundColor: '#333' }} />;
 
@@ -45,7 +46,7 @@ export const AtlasIcon: React.FC<Props> = ({ name, alt = '', size = 32 }) => {
   };
 
   return (
-    <div style={containerStyle} aria-label={alt}>
+    <div style={containerStyle} aria-label={alt} className={className}>
       <div style={spriteStyle} />
     </div>
   );
