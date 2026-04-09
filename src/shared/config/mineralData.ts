@@ -1,35 +1,5 @@
 import { TileType, Rarity } from '../types/game';
-import DirtIcon from '../assets/minerals/DirtIcon.png';
-import StoneIcon from '../assets/minerals/StoneIcon.png';
-import CoalIcon from '../assets/minerals/CoalIcon.png';
-import IronIcon from '../assets/minerals/IronIcon.png';
-import GoldIcon from '../assets/minerals/GoldIcon.png';
-import DiamondIcon from '../assets/minerals/DiamondIcon.png';
-import EmeraldIcon from '../assets/minerals/EmeraldIcon.png';
-import RubyIcon from '../assets/minerals/RubyIcon.png';
-import SapphireIcon from '../assets/minerals/SapphireIcon.png';
-import UraniumIcon from '../assets/minerals/UraniumIcon.png';
-import ObsidianIcon from '../assets/minerals/ObsidianIcon.png';
-
-// 추출된 타일 이미지들 임포트
-import DirtTile from '../assets/tiles/dirt.png';
-import StoneTile from '../assets/tiles/stone.png';
-import CoalTile from '../assets/tiles/coal.png';
-import IronTile from '../assets/tiles/iron.png';
-import GoldTile from '../assets/tiles/gold.png';
-import DiamondTile from '../assets/tiles/diamond.png';
-import EmeraldTile from '../assets/tiles/emerald.png';
-import RubyTile from '../assets/tiles/ruby.png';
-import SapphireTile from '../assets/tiles/sapphire.png';
-import UraniumTile from '../assets/tiles/uranium.png';
-import ObsidianTile from '../assets/tiles/obsidian.png';
-import WallTile from '../assets/tiles/wall.png';
-import DungeonBricksTile from '../assets/tiles/dungeon_bricks.png';
-import PortalTile from '../assets/tiles/portal.png';
-import LavaTile from '../assets/tiles/lava.png';
-import MonsterNestTile from '../assets/tiles/monster_nest.png';
-import BossCoreTile from '../assets/tiles/boss_core.png';
-import BossSkinTile from '../assets/tiles/boss_skin.png';
+import { AtlasIconName } from './atlasMap';
 
 export interface MineralDefinition {
   key: TileType;
@@ -41,8 +11,8 @@ export interface MineralDefinition {
   basePrice: number; // 상점 판매 가격 (G)
   baseHealth: number; // 광물 파괴에 필요한 타격 체력
   defense: number; // 광물 방어력
-  image?: any; // 선택적인 실제 이미지 에셋 (아이템 아이콘 용)
-  tileImage?: any; // 맵 타일용 이미지 에셋
+  image?: AtlasIconName | null | any; // 아이템 아이콘 (아틀라스 키)
+  tileImage?: AtlasIconName | null | any; // 맵 타일용 (아틀라스 키)
   _cachedImage?: any; // 렌더링 캔버스 최적화용 캐시 객체
   _cachedTileImage?: any; // 타일 렌더링 최적화용 캐시 객체
 }
@@ -58,8 +28,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 1,
     baseHealth: 30,
     defense: 0,
-    image: DirtIcon,
-    tileImage: DirtTile,
+    image: 'dirt_icon',
+    tileImage: 'dirt_tile',
   },
   {
     key: 'stone',
@@ -71,8 +41,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 1,
     baseHealth: 100,
     defense: 10,
-    image: StoneIcon,
-    tileImage: StoneTile,
+    image: 'stone_icon',
+    tileImage: 'stone_tile',
   },
   {
     key: 'coal',
@@ -84,8 +54,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 5,
     baseHealth: 250,
     defense: 25,
-    image: CoalIcon,
-    tileImage: CoalTile,
+    image: 'coal_icon',
+    tileImage: 'coal_tile',
   },
   {
     key: 'iron',
@@ -97,8 +67,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 20,
     baseHealth: 600,
     defense: 60,
-    image: IronIcon,
-    tileImage: IronTile,
+    image: 'iron_icon',
+    tileImage: 'iron_tile',
   },
   {
     key: 'gold',
@@ -110,8 +80,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 100,
     baseHealth: 600,
     defense: 100,
-    image: GoldIcon,
-    tileImage: GoldTile,
+    image: 'gold_icon',
+    tileImage: 'gold_tile',
   },
   {
     key: 'diamond',
@@ -123,8 +93,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 300,
     baseHealth: 1000,
     defense: 150,
-    tileImage: DiamondTile,
-    image: DiamondIcon, 
+    image: 'diamond_icon',
+    tileImage: 'diamond_tile',
   },
   {
     key: 'emerald',
@@ -136,8 +106,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 800,
     baseHealth: 1500,
     defense: 200,
-    tileImage: EmeraldTile,
-    image: EmeraldIcon,
+    image: 'emerald_icon',
+    tileImage: 'emerald_tile',
   },
   {
     key: 'ruby',
@@ -149,8 +119,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 1500,
     baseHealth: 2000,
     defense: 300,
-    tileImage: RubyTile,
-    image: RubyIcon,
+    image: 'ruby_icon',
+    tileImage: 'ruby_tile',
   },
   {
     key: 'sapphire',
@@ -162,7 +132,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 3000,
     baseHealth: 3000,
     defense: 450,
-    tileImage: SapphireTile,
+    image: null,
+    tileImage: 'sapphire_tile',
   },
   {
     key: 'uranium',
@@ -174,7 +145,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 5000,
     baseHealth: 6000,
     defense: 850,
-    tileImage: UraniumTile,
+    image: null,
+    tileImage: 'uranium_tile',
   },
   {
     key: 'obsidian',
@@ -186,7 +158,8 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 10000,
     baseHealth: 10000,
     defense: 1200,
-    tileImage: ObsidianTile,
+    image: null,
+    tileImage: 'obsidian_tile',
   },
   {
     key: 'iron_ingot',
@@ -198,6 +171,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 150,
     baseHealth: 0,
     defense: 0,
+    image: 'iron_icon',
   },
   {
     key: 'gold_ingot',
@@ -209,6 +183,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 500,
     baseHealth: 0,
     defense: 0,
+    image: 'gold_icon',
   },
   {
     key: 'polished_diamond',
@@ -220,8 +195,9 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 8000,
     baseHealth: 0,
     defense: 0,
+    image: 'diamond_icon',
   },
-  // 특수 타일 데이터 (유지보수용 개별 이미지 연동)
+  // 특수 타일 데이터 (아틀라스 키값 기반)
   {
     key: 'wall' as any,
     name: 'Wall',
@@ -232,7 +208,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 1000,
     defense: 0,
-    tileImage: WallTile,
+    tileImage: 'wall_tile',
   },
   {
     key: 'lava' as any,
@@ -244,7 +220,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: Infinity,
     defense: 0,
-    tileImage: LavaTile,
+    tileImage: 'lava_tile',
   },
   {
     key: 'portal' as any,
@@ -256,7 +232,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: Infinity,
     defense: 0,
-    tileImage: PortalTile,
+    tileImage: 'portal_tile',
   },
   {
     key: 'dungeon_bricks' as any,
@@ -268,7 +244,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 1000,
     defense: 0,
-    tileImage: DungeonBricksTile,
+    tileImage: 'dungeon_bricks_tile',
   },
   {
     key: 'monster_nest' as any,
@@ -280,7 +256,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 200,
     defense: 0,
-    tileImage: MonsterNestTile,
+    tileImage: 'dungeon_bricks_tile', // Fallback
   },
   {
     key: 'boss_core' as any,
@@ -292,7 +268,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 10000,
     defense: 0,
-    tileImage: BossCoreTile,
+    tileImage: 'lava_tile', // Fallback
   },
   {
     key: 'boss_skin' as any,
@@ -304,7 +280,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 40000,
     defense: 0,
-    tileImage: BossSkinTile,
+    tileImage: 'lava_tile', // Fallback
   }
 ];
 

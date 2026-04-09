@@ -1,14 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
-import { DRILLS } from '@/shared/config/drillData';
-import { getNextLevelExp, getMasteryMultiplier, getUnlockedSlotCount, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
-import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -67,8 +64,8 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -244,15 +241,11 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           </h3>
 
           <div className="bg-[#252526] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl flex flex-col items-center text-center relative group overflow-hidden">
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center text-4xl md:text-6xl mb-4 md:mb-6 border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
               {equippedDrill.image ? (
-                <img
-                  src={typeof equippedDrill.image === 'string' ? equippedDrill.image : (equippedDrill.image as any).src || equippedDrill.image}
-                  alt={equippedDrill.name}
-                  className="w-full h-full object-contain p-2 md:p-4"
-                />
+                <AtlasIcon name={equippedDrill.image} size={96} />
               ) : (
-                equippedDrill.icon
+                <span className="text-4xl md:text-6xl">{equippedDrill.icon}</span>
               )}
             </div>
 
@@ -338,7 +331,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                               const runeConfig = runeItem ? SKILL_RUNES[runeItem.runeId] : null;
                               return (
                                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl">
-                                  {runeItem && <SkillRuneIcon runeId={runeItem.runeId} rarity={runeItem.rarity as any} size="w-full h-full" />}
+                                  {runeItem && <SkillRuneIcon runeId={runeItem.runeId} rarity={runeItem.rarity as any} size={32} />}
                                   <span className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover/rune:opacity-100 transition-opacity z-20">
                                     <span className="text-[10px] text-white font-black">✕</span>
                                   </span>

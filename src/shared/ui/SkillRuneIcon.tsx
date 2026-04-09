@@ -13,14 +13,16 @@ export const rarityColors: Record<string, string> = {
   Ancient: 'from-cyan-900/40 to-cyan-950 border-cyan-900/50 text-cyan-400 glow-cyan',
 };
 
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
+
 interface SkillRuneIconProps {
   runeId: string;
   rarity: Rarity;
-  size?: string;
+  size?: number; // 픽셀 단위 크기
   className?: string;
 }
 
-export default function SkillRuneIcon({ runeId, rarity, size = 'w-16 h-16', className = '' }: SkillRuneIconProps) {
+export default function SkillRuneIcon({ runeId, rarity, size = 64, className = '' }: SkillRuneIconProps) {
   const runeDef = SKILL_RUNES[runeId];
   if (!runeDef) return <div className={`${size} bg-zinc-900 rounded-2xl ${className}`} />;
 
@@ -28,7 +30,7 @@ export default function SkillRuneIcon({ runeId, rarity, size = 'w-16 h-16', clas
   const imgSrc = typeof runeDef.image === 'string' ? runeDef.image : (runeDef.image.src || runeDef.image);
 
   return (
-    <div className={`relative ${size} flex flex-col items-center justify-center rounded-2xl border bg-linear-to-br ${themeClass} overflow-hidden shadow-2xl transition-all duration-500 transform-gpu ${className}`}>
+    <div className={`relative flex flex-col items-center justify-center rounded-2xl border bg-linear-to-br ${themeClass} overflow-hidden shadow-2xl transition-all duration-500 transform-gpu ${className}`} style={{ width: size, height: size }}>
       
       {/* 1. Background Layers (Aura/Rays) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -62,15 +64,10 @@ export default function SkillRuneIcon({ runeId, rarity, size = 'w-16 h-16', clas
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-current/20 to-transparent animate-rune-fade pointer-events-none" />
       )}
 
-      {/* 4. The Icon itself */}
       <div className={`relative z-10 w-[70%] h-[70%] flex items-center justify-center transform-gpu drop-shadow-2xl
         ${['Legendary', 'Mythic', 'Ancient'].includes(rarity) ? 'animate-rune-flicker brightness-110' : ''}
       `}>
-        <img 
-          src={imgSrc} 
-          alt={runeDef.name} 
-          className="w-full h-full object-contain filter " 
-        />
+        <AtlasIcon name={runeDef.image as any} size={Math.floor(size * 0.7)} />
       </div>
 
       {/* 5. Highlight/Gloss Overlay */}

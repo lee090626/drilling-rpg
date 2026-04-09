@@ -8,9 +8,10 @@ import { DRONES } from '@/shared/config/droneData';
 import { MINERALS } from '@/shared/config/mineralData';
 import Image from 'next/image';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
+import { MINERALS } from '@/shared/config/mineralData';
+import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
-import AttackRuneImg from '@/shared/assets/rune/AttackRune.png';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 /**
  * 인벤토리 컴포넌트의 Props 인터페이스입니다.
@@ -117,8 +118,8 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -159,11 +160,11 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                       {isSelected && (
                          <div className="absolute inset-0 opacity-10" style={{ backgroundColor: m.color }} />
                       )}
-                      <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 group-hover:scale-105 transition-transform flex items-center justify-center text-3xl md:text-5xl">
+                      <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 group-hover:scale-105 transition-transform flex items-center justify-center">
                         {m.image ? (
-                          <img src={typeof m.image === 'string' ? m.image : m.image.src || m.image} alt={m.name} className="w-full h-full object-contain drop-shadow-md" />
+                          <AtlasIcon name={m.image} size={64} />
                         ) : (
-                          m.icon
+                          <span className="text-3xl md:text-5xl">{m.icon}</span>
                         )}
                       </div>
                       <div className="flex flex-col items-center gap-1.5">
@@ -195,11 +196,11 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                     </span>
                   </div>
 
-                  <div className="w-40 h-40 md:w-56 md:h-56 bg-zinc-950 rounded-3xl md:rounded-4xl shadow-inner border border-zinc-800 flex items-center justify-center text-7xl md:text-9xl mx-auto mb-6 md:mb-10 overflow-hidden">
+                  <div className="w-40 h-40 md:w-56 md:h-56 bg-zinc-950 rounded-3xl md:rounded-4xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-6 md:mb-10 overflow-hidden">
                     {selectedMineral.image ? (
-                      <img src={typeof selectedMineral.image === 'string' ? selectedMineral.image : selectedMineral.image.src || selectedMineral.image} alt={selectedMineral.name} className="w-24 h-24 md:w-40 md:h-40 object-contain drop-shadow-xl" />
+                      <AtlasIcon name={selectedMineral.image} size={160} />
                     ) : (
-                      selectedMineral.icon
+                      <span className="text-7xl md:text-9xl">{selectedMineral.icon}</span>
                     )}
                   </div>
 
@@ -251,15 +252,11 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                     }`}
                   >
                     <div className="flex items-center gap-6 mb-8 text-left">
-                      <div className="w-28 h-28 md:w-36 md:h-36 bg-zinc-950 rounded-3xl flex items-center justify-center text-6xl border border-zinc-900 shadow-inner overflow-hidden">
+                      <div className="w-28 h-28 md:w-36 md:h-36 bg-zinc-950 rounded-3xl flex items-center justify-center border border-zinc-900 shadow-inner overflow-hidden">
                         {drill.image ? (
-                          <img
-                            src={typeof drill.image === 'string' ? drill.image : drill.image.src || drill.image}
-                            alt={drill.name}
-                            className="w-full h-full object-contain p-2"
-                          />
+                          <AtlasIcon name={drill.image} size={128} />
                         ) : (
-                          drill.icon
+                          <span className="text-6xl">{drill.icon}</span>
                         )}
                       </div>
                       <div>
@@ -437,7 +434,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                       }}
                       className={`relative aspect-square rounded-2xl transition-all flex flex-col items-center justify-center p-0 overflow-hidden group focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 ${selectedRuneId === rune.id ? 'ring-2 ring-[#eab308] scale-[1.02] z-10' : ''}`}
                     >
-                      <SkillRuneIcon runeId={rune.runeId} rarity={rune.rarity as any} size="w-full h-full" />
+                      <SkillRuneIcon runeId={rune.runeId} rarity={rune.rarity as any} size={80} />
                       <div className="absolute top-2 left-2 flex flex-col items-start gap-1.5 pointer-events-none">
                         <div className="text-[8px] font-black tracking-widest px-2 py-0.5 rounded-full bg-black/60 border border-white/10 text-white/50">
                           {rune.rarity}
@@ -464,7 +461,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                     <SkillRuneIcon 
                       runeId={selectedRuneInstance.runeId} 
                       rarity={selectedRuneInstance.rarity as any} 
-                      size="w-full h-full" 
+                      size={200} 
                     />
                   </div>
 
@@ -492,8 +489,8 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 </div>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
-                  <img src={typeof AttackRuneImg === 'string' ? AttackRuneImg : (AttackRuneImg as any).src} alt="Rune Placeholder" className="w-24 h-24 mb-6 grayscale" />
-                  <p className="text-xs font-bold text-zinc-500 tracking-widest">
+                  <AtlasIcon name="attack_rune" size={96} />
+                  <p className="text-xs font-bold text-zinc-500 tracking-widest mt-6">
                     Select a Rune
                   </p>
                 </div>
@@ -534,9 +531,9 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                     {isUnlocked ? (
                       currentRuneItem ? (
                         <div className="flex flex-col items-center w-full h-full">
-                          <SkillRuneIcon runeId={currentRuneItem.runeId} rarity={currentRuneItem.rarity as any} size="w-full h-full" />
+                          <SkillRuneIcon runeId={currentRuneItem.runeId} rarity={currentRuneItem.rarity as any} size={70} />
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity z-20">
-                            <span className="text-[10px] font-black text-[#eab308] tracking-widest">REPLACE</span>
+                            <span className="text-[10px] font-black text-[#eab308] tracking-widest uppercase">Replace</span>
                           </div>
                         </div>
                       ) : (

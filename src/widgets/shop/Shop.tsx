@@ -5,10 +5,9 @@ import Image from 'next/image';
 import { PlayerStats, Drill } from '@/shared/types/game';
 import { MINERALS } from '@/shared/config/mineralData';
 import { DRILLS } from '@/shared/config/drillData';
-import AttackRuneImg from '@/shared/assets/rune/AttackRune.png';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 /**
  * 상점 컴포넌트의 Props 인터페이스입니다.
@@ -119,10 +118,8 @@ function Shop({
         
         <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full md:w-auto relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner p-2">
-              <div className="relative w-full h-full">
-                <Image src={GoldIconImg} alt="Shop" fill className="object-contain drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-              </div>
+            <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner">
+                <AtlasIcon name="gold" size={40} />
             </div>
             <div className="flex flex-col">
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-amber-400 leading-none">
@@ -158,8 +155,8 @@ function Shop({
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner group">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
@@ -210,9 +207,9 @@ function Shop({
                       
                       {/* 좌측: 광물 정보 */}
                       <div className="flex items-center gap-4 md:gap-6 w-full lg:w-1/3 shrink-0 relative z-10">
-                        <div className="w-16 h-16 md:w-20 md:h-20 bg-black/40 rounded-2xl flex items-center justify-center p-2 border border-white/5 shadow-inner group-hover:border-amber-500/30 transition-colors shrink-0">
+                        <div className="w-16 h-16 md:w-20 md:h-20 bg-black/40 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner group-hover:border-amber-500/30 transition-colors shrink-0">
                           {mineral?.image ? (
-                            <img src={typeof mineral.image === 'string' ? mineral.image : mineral.image.src || mineral.image} alt={displayName} className="w-full h-full object-contain drop-shadow-2xl" />
+                            <AtlasIcon name={mineral.image} size={80} />
                           ) : (
                             <span className="text-3xl">{mineral?.icon || '💎'}</span>
                           )}
@@ -269,8 +266,8 @@ function Shop({
                               <span className={`text-xl md:text-2xl font-black tabular-nums tracking-tighter transition-colors ${currentAmount > 0 ? 'text-white' : 'text-zinc-700'}`}>
                                 {totalPrice.toLocaleString()}
                               </span>
-                              <div className="w-4 h-4 md:w-5 md:h-5 relative">
-                                <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+                              <div className="flex items-center justify-center">
+                                <AtlasIcon name="gold" size={20} />
                               </div>
                             </div>
                         </div>
@@ -316,13 +313,9 @@ function Shop({
                       <span className="text-[10px] md:text-[11px] font-black tracking-widest uppercase">World {tierIndex} Tier</span>
                     </div>
                     
-                    <div className="w-24 h-24 md:w-32 md:h-32 bg-black/40 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center mb-6 shadow-inner border border-white/5 mt-10 md:mt-8 overflow-hidden p-4 relative group-hover:border-amber-500/30 transition-colors">
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-black/40 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center mb-6 shadow-inner border border-white/5 mt-10 md:mt-8 overflow-hidden relative group-hover:border-amber-500/30 transition-colors">
                        <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />
-                       <img 
-                         src={typeof AttackRuneImg === 'string' ? AttackRuneImg : (AttackRuneImg as any).src} 
-                         alt="Extractor" 
-                         className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-transform duration-700 group-hover:rotate-12" 
-                       />
+                       <AtlasIcon name="attack_rune" size={128} className="transition-transform duration-700 group-hover:rotate-12" />
                     </div>
                     
                     <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-2 group-hover:text-amber-400 transition-colors">Tier {tierIndex} Summoner</h3>
@@ -345,8 +338,8 @@ function Shop({
                       <span className="text-[11px] font-black text-zinc-500 tracking-widest uppercase">Fee</span>
                       <div className="flex items-center gap-2">
                         <span className="text-2xl md:text-3xl font-black text-amber-500 tabular-nums tracking-tighter">{cost.toLocaleString()}</span>
-                        <div className="w-5 h-5 md:w-6 md:h-6 relative">
-                          <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+                        <div className="flex items-center justify-center">
+                          <AtlasIcon name="gold" size={24} />
                         </div>
                       </div>
                     </div>
@@ -456,8 +449,8 @@ function Shop({
                   }}
                 >
                   {rouletteItems.map((item, idx) => (
-                    <div key={idx} className={`shrink-0 w-[150px] h-[150px] transition-all duration-300 ${startRouletteAnim ? 'opacity-50 scale-90 blur-[2px]' : 'opacity-100 scale-100'} ${idx === 50 && startRouletteAnim ? 'opacity-100! scale-110! blur-0!' : ''}`}>
-                      <SkillRuneIcon runeId={item.runeId} rarity={item.rarity as any} size="w-full h-full" />
+                    <div key={idx} className={`shrink-0 transition-all duration-300 ${startRouletteAnim ? 'opacity-50 scale-90 blur-[2px]' : 'opacity-100 scale-100'} ${idx === 50 && startRouletteAnim ? 'opacity-100! scale-110! blur-0!' : ''}`}>
+                      <SkillRuneIcon runeId={item.runeId} rarity={item.rarity as any} size={150} />
                     </div>
                   ))}
                 </div>
@@ -490,7 +483,7 @@ function Shop({
                       <SkillRuneIcon 
                         runeId={res.runeId} 
                         rarity={res.rarity as any} 
-                        size="w-full h-full"
+                        size={160}
                       />
                     </div>
                     <div className="flex flex-col items-center">

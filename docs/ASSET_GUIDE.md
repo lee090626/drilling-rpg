@@ -28,12 +28,15 @@
 ### 단계 2: 자동 패킹 명령어 실행
 터미널에서 다음 명령어를 실행합니다.
 ```bash
+# 에셋 최적화 및 좌표 동기화 (최초 실행 시 필수)
 npm run optimize:atlas
-```
-이 명령어는 모든 이미지를 모아 최적화된 WebP 아틀라스와 JSON 매니페스트를 자동으로 생성합니다.
+npm run update:atlas-map
 
-### 단계 3: 코드에서 참조
-`monsterData.ts` 등 설정 파일에서 해당 자산을 참조할 때는 **파일명(확장자 포함)**을 사용합니다.
+# 개발 서버 실행
+npm run dev
+```
+이 명령어들은 모든 이미지를 최적화된 WebP 아틀라스로 변환하고, UI에서 즉시 사용할 수 있도록 `atlasMap.ts` 좌표 정보를 자동으로 갱신합니다.
+
 ```typescript
 {
   id: 'new_monster',
@@ -41,6 +44,11 @@ npm run optimize:atlas
   ...
 }
 ```
+
+### 단계 4: UI 아이콘 등록 (선택 사항)
+만약 추가한 에셋을 `AtlasIcon` 컴포넌트로 UI에서 사용하고 싶다면:
+1. `src/shared/config/atlasFiles.ts` 파일의 `ATLAS_FILE_MAPPING` 객체에 '아이콘_이름: 파일명' 쌍을 추가합니다.
+2. `npm run update:atlas-map`을 실행하여 좌표를 동기화합니다.
 
 ---
 

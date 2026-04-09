@@ -1,10 +1,5 @@
 import { Drill } from '../types/game';
-import RustyDrillImg from '../assets/drills/RustyDrill.png';
-import StoneDrillImg from '../assets/drills/StoneDrill.png';
-import IronDrillImg from '../assets/drills/IronDrill.png';
-import GoldDrillImg from '../assets/drills/GoldDrill.png';
-import DiamondDrillImg from '../assets/drills/DiamondDrill.png';
-
+import { AtlasIconName } from './atlasMap';
 
 export const DRILLS: { [id: string]: Drill } = {
   rusty_drill: {
@@ -17,7 +12,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 200,
     moveSpeedMult: 1.0,
     price: { dirt: 0 },
-    image: RustyDrillImg,
+    image: 'rusty_drill',
     maxSkillSlots: 3,
   },
   rusty_pickaxe: {
@@ -42,7 +37,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 180,
     moveSpeedMult: 1.0,
     price: { stone: 25 },
-    image: StoneDrillImg,
+    image: 'stone_drill',
     maxSkillSlots: 3,
   },
   stone_pickaxe: {
@@ -67,7 +62,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 170,
     moveSpeedMult: 1.0,
     price: { iron: 30, coal: 50 },
-    image: IronDrillImg,
+    image: 'iron_drill',
     maxSkillSlots: 3,
   },
   iron_pickaxe: {
@@ -92,7 +87,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 160,
     moveSpeedMult: 1.0,
     price: { gold: 30, iron: 50 },
-    image: GoldDrillImg,
+    image: 'gold_drill',
     maxSkillSlots: 3,
   },
   gold_pickaxe: {
@@ -117,7 +112,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 140,
     moveSpeedMult: 1.0,
     price: { diamond: 45, gold: 75 },
-    image: DiamondDrillImg,
+    image: 'diamond_drill',
     maxSkillSlots: 3,
   },
   diamond_pickaxe: {
@@ -143,6 +138,7 @@ export const DRILLS: { [id: string]: Drill } = {
     moveSpeedMult: 1.0,
     specialEffect: 'efficient',
     price: { emerald: 45, diamond: 75 },
+    image: 'emerald_drill',
     maxSkillSlots: 3,
   },
   emerald_pickaxe: {
@@ -256,9 +252,6 @@ export const DRILLS: { [id: string]: Drill } = {
   },
 };
 
-/**
- * ID를 기반으로 드릴 데이터를 반환합니다.
- */
 export const getDrillData = (id: string): Drill | undefined => {
   return DRILLS[id];
 };

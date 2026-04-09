@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
 import { MINERALS } from '@/shared/config/mineralData';
 import { BOSSES } from '@/shared/config/bossData';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 interface EncyclopediaProps {
   stats: PlayerStats;
@@ -52,8 +52,8 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -89,8 +89,8 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                           : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
                     }`}
                   >
-                    <div className={`w-20 h-20 flex items-center justify-center text-6xl mb-4 transition-all ${!isDiscovered ? 'filter blur-md grayscale opacity-50' : ''}`}>
-                      {isDiscovered ? (m.image ? <img src={typeof m.image === 'string' ? m.image : m.image.src || m.image} alt={m.name} className="w-full h-full object-contain drop-shadow-lg" /> : m.icon) : '?'}
+                    <div className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isDiscovered ? 'filter blur-md grayscale opacity-50' : ''}`}>
+                      {isDiscovered ? (m.image ? <AtlasIcon name={m.image} size={64} /> : <span className="text-6xl">{m.icon}</span>) : '?'}
                     </div>
                     <div className="text-[20px] text-zinc-500 font-bold tracking-widest">
                       {isDiscovered ? m.name : 'Unknown'}
@@ -196,7 +196,7 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
 
         <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
           <div className={`w-36 h-36 flex items-center justify-center ${!isDiscovered ? 'filter blur-xl opacity-20' : ''}`}>
-            {isDiscovered ? (mineral.image ? <img src={typeof mineral.image === 'string' ? mineral.image : mineral.image.src || mineral.image} alt={mineral.name} className="w-full h-full object-contain drop-shadow-2xl" /> : mineral.icon) : '?'}
+            {isDiscovered ? (mineral.image ? <AtlasIcon name={mineral.image} size={112} /> : <span className="text-8xl">{mineral.icon}</span>) : '?'}
           </div>
           {!isDiscovered && <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">LOCKED</div>}
           {isDiscovered && (
@@ -214,7 +214,7 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
             <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest uppercase">Base Value</div>
             <div className="flex items-center gap-1.5">
                <span className="text-sm font-black text-amber-500">{isDiscovered ? mineral.basePrice.toLocaleString() : '???'}</span>
-               {isDiscovered && <Image src={GoldIconImg} alt="Gold" width={14} height={14} />}
+               {isDiscovered && <AtlasIcon name="gold" size={14} />}
             </div>
           </div>
         </div>

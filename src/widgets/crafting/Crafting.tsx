@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
 import { DRONES } from '@/shared/config/droneData';
 import { MINERALS } from '@/shared/config/mineralData';
 import { formatNumber } from '@/shared/lib/numberUtils';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 /**
  * 제작 시스템 컴포넌트의 Props 인터페이스입니다.
@@ -114,8 +113,8 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
@@ -210,10 +209,10 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                         className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-3xl bg-black/40 border border-white/5 flex items-center justify-center text-4xl transition-all shrink-0 overflow-hidden shadow-inner group-hover:border-rose-500/30`}
                       >
                         {rcp.image ? (
-                          <img
-                            src={typeof rcp.image === 'string' ? rcp.image : rcp.image?.src || rcp.image}
-                            alt={rcp.name}
-                            className={`w-full h-full object-contain p-2 ${owned ? 'opacity-40 grayscale' : 'drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]'}`}
+                          <AtlasIcon
+                            name={rcp.image}
+                            size={64}
+                            className={owned ? 'opacity-40 grayscale' : ''}
                           />
                         ) : (
                           <span className={`${owned ? 'opacity-40 grayscale' : ''}`}>{rcp.icon}</span>
@@ -263,10 +262,9 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                   <div className="w-28 h-28 md:w-40 md:h-40 rounded-[2.5rem] bg-black/40 border border-white/5 flex items-center justify-center p-4 shadow-inner relative group/preview mb-6">
                     <div className="absolute inset-0 bg-rose-500/10 blur-3xl opacity-50 group-hover/preview:opacity-100 transition-opacity" />
                     {selectedRecipe.image ? (
-                      <img
-                        src={typeof selectedRecipe.image === 'string' ? selectedRecipe.image : selectedRecipe.image.src || selectedRecipe.image}
-                        alt={selectedRecipe.name}
-                        className="w-full h-full object-contain relative z-10"
+                      <AtlasIcon
+                        name={selectedRecipe.image}
+                        size={128}
                       />
                     ) : (
                       <span className="text-6xl relative z-10">{selectedRecipe.icon}</span>
@@ -341,9 +339,9 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                               <div className="flex items-center gap-2.5">
                                 <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center p-1.5 shadow-inner">
                                   {key === 'goldCoins' ? (
-                                    <Image src={GoldIconImg} alt="Gold" width={24} height={24} className="object-contain" />
+                                    <AtlasIcon name="gold" size={24} />
                                   ) : mineral?.image ? (
-                                    <img src={typeof mineral.image === 'string' ? mineral.image : mineral.image.src || mineral.image} alt={key} className="w-full h-full object-contain" />
+                                    <AtlasIcon name={mineral.image} size={24} />
                                   ) : (
                                     <span className="text-sm">{mineral?.icon || '📦'}</span>
                                   )}

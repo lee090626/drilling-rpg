@@ -51,8 +51,9 @@
 # 의존성 설치
 npm install
 
-# 에셋 최적화 (최초 실행 시 필수)
+# 에셋 최적화 및 좌표 동기화 (최초 실행 시 필수)
 npm run optimize:atlas
+npm run update:atlas-map
 
 # 개발 서버 실행
 npm run dev

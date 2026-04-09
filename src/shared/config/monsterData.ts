@@ -21,7 +21,7 @@ export const MONSTERS: MonsterDefinition[] = [
   {
     id: 'pebble_golem',
     name: '꼬마 바위 골렘',
-    imagePath: 'pebble_golem.png',
+    imagePath: 'PebbleGolem.png',
     minDepth: 0,
     maxDepth: 500,
     rarity: 'Common',
@@ -36,7 +36,7 @@ export const MONSTERS: MonsterDefinition[] = [
   {
     id: 'thief_mole',
     name: '도둑 두더지',
-    imagePath: 'thief_mole.png',
+    imagePath: 'ThiefMole.png',
     minDepth: 100,
     maxDepth: 600,
     rarity: 'Uncommon',
@@ -51,7 +51,7 @@ export const MONSTERS: MonsterDefinition[] = [
   {
     id: 'iron_scale_tortoise',
     name: '강철비늘 거북',
-    imagePath: 'iron_scale_tortoise.png',
+    imagePath: 'SteelScaleTurtle.png',
     minDepth: 200,
     maxDepth: 700,
     rarity: 'Rare',
@@ -67,7 +67,7 @@ export const MONSTERS: MonsterDefinition[] = [
   {
     id: 'oros_face',
     name: '태고의 바위 오로스',
-    imagePath: 'oros_face.png',
+    imagePath: 'OrosFace.png',
     minDepth: 480,
     maxDepth: 550,
     rarity: 'Legendary',

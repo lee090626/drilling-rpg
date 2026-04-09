@@ -4,7 +4,7 @@ import { PlayerStats, SmeltingJob } from '@/shared/types/game';
 import { REFINERY_RECIPES, RefineryRecipe } from '@/shared/config/refineryData';
 import { MINERALS, MineralDefinition } from '@/shared/config/mineralData';
 import { getDroneData } from '@/shared/config/droneData';
-import GoldIconImg from '@/shared/assets/ui/icons/MoneyIcon.webp';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 interface RefineryWindowProps {
   stats: PlayerStats;
@@ -82,8 +82,8 @@ function RefineryWindow({ stats, onClose, onStartSmelting, onCollectSmelting }: 
 
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner">
-            <div className="w-6 h-6 md:w-8 md:h-8 relative">
-               <Image src={GoldIconImg} alt="Gold" fill className="object-contain" />
+            <div className="flex items-center justify-center">
+               <AtlasIcon name="gold" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
@@ -131,8 +131,8 @@ function RefineryWindow({ stats, onClose, onStartSmelting, onCollectSmelting }: 
                     <div className="flex items-center gap-4 md:gap-8 w-full sm:w-auto relative z-10">
                       {/* 원재료 */}
                       <div className="flex flex-col items-center gap-2">
-                        <div className="w-14 h-14 md:w-18 md:h-18 bg-black/40 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner p-3 group-hover:border-sky-500/30 transition-colors">
-                          {inputConfig.image ? <img src={typeof inputConfig.image === 'string' ? inputConfig.image : inputConfig.image.src || inputConfig.image} alt={inputConfig.name} className="w-full h-full object-contain drop-shadow-2xl" /> : <span className="text-2xl">{inputConfig.icon}</span>}
+                        <div className="w-14 h-14 md:w-18 md:h-18 bg-black/40 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner group-hover:border-sky-500/30 transition-colors">
+                          {inputConfig.image ? <AtlasIcon name={inputConfig.image} size={64} /> : <span className="text-2xl">{inputConfig.icon}</span>}
                         </div>
                         <div className="flex flex-col items-center">
                            <div className="text-white font-black text-lg tabular-nums leading-none mb-1">{recipe.inputAmount}</div>
@@ -151,7 +151,7 @@ function RefineryWindow({ stats, onClose, onStartSmelting, onCollectSmelting }: 
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-14 h-14 md:w-18 md:h-18 bg-sky-500/10 rounded-2xl flex items-center justify-center border border-sky-500/20 shadow-lg p-3 group-hover:bg-sky-500/20 transition-colors relative">
                            <div className="absolute inset-0 bg-sky-500/10 animate-pulse rounded-2xl" />
-                           {outputConfig.image ? <img src={typeof outputConfig.image === 'string' ? outputConfig.image : outputConfig.image.src || outputConfig.image} alt={outputConfig.name} className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_10px_rgba(56,189,248,0.5)]" /> : <span className="text-2xl relative z-10">{outputConfig.icon}</span>}
+                           {outputConfig.image ? <AtlasIcon name={outputConfig.image} size={64} /> : <span className="text-2xl relative z-10">{outputConfig.icon}</span>}
                         </div>
                         <div className="flex flex-col items-center">
                            <h4 className="text-white font-black text-sm md:text-base tracking-tighter leading-tight uppercase truncate max-w-[100px] text-center">{recipe.name}</h4>
@@ -210,11 +210,7 @@ function RefineryWindow({ stats, onClose, onStartSmelting, onCollectSmelting }: 
                       <div className="flex items-center gap-4">
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border shadow-inner transition-colors ${isFinished ? 'bg-emerald-500/20 border-emerald-500/40' : 'bg-black/40 border-white/5'}`}>
                            {outputConfig?.image ? (
-                             <img 
-                               src={typeof outputConfig.image === 'string' ? outputConfig.image : outputConfig.image.src || outputConfig.image} 
-                               alt={outputConfig.name} 
-                               className={`w-10 h-10 object-contain drop-shadow-xl ${isFinished ? 'animate-bounce' : ''}`} 
-                             />
+                             <AtlasIcon name={outputConfig.image} size={40} className={isFinished ? 'animate-bounce' : ''} />
                            ) : (
                              <span className="text-2xl">{outputConfig?.icon || '⚙️'}</span>
                            )}

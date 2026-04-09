@@ -112,9 +112,10 @@ function updateEntitySpriteFromSoA(idx: number, soa: any, player: any, container
     
     if (mobDef) {
         const texture = textures[mobDef.imagePath] || PIXI.Texture.WHITE;
+        body.tint = 0xffffff; // 엔티티 정의가 있으면 항상 틴트 초기화 (빨간 상자 방지)
+        
         if (body.texture !== texture) {
             body.texture = texture;
-            body.tint = 0xffffff; // 기존의 빨간색 틴트 제거
             // 텍스처가 바뀌면 스프라이트 크기를 엔티티 설정에 맞춰 재조정
             body.width = ew;
             body.height = eh;
@@ -327,7 +328,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
   if (!isPlayer) {
     const hpBar = new PIXI.Graphics();
     hpBar.label = 'hpBar';
-    hpBar.y = -TILE_SIZE * 0.35; // -18 -> TILE_SIZE 기준 비례
+    hpBar.y = 0; // updateHPBarFromSoA에서 entH 기준으로 내부 위치 계산
     container.addChild(hpBar);
 
     if (entity.type === 'boss') {
@@ -337,7 +338,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
       });
       nameTag.label = 'nameTag';
       nameTag.anchor.set(0.5, 0.5);
-      nameTag.position.set(entW / 2, -TILE_SIZE * 0.7); // -35 -> TILE_SIZE 기준 비례
+      nameTag.position.set(entW / 2, -18); // 머리 위로 더 가깝게
       container.addChild(nameTag);
     }
 
@@ -347,7 +348,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
     });
     indicator.label = 'attackIndicator';
     indicator.anchor.set(0.5, 0.5);
-    indicator.position.set(entW / 2, -TILE_SIZE * 0.7); // -35 -> TILE_SIZE 기준 비례
+    indicator.position.set(entW / 2, -14); // 머리 위로 더 가깝게
     indicator.visible = false;
     container.addChild(indicator);
   }
@@ -385,7 +386,9 @@ function updateHPBarFromSoA(idx: number, soa: any, player: any, container: PIXI.
   const hp = soa.hp[idx];
   const maxHp = soa.maxHp[idx];
   const entW = soa.width[idx] || TILE_SIZE;
+  const entH = soa.height[idx] || TILE_SIZE;
 
+  // 플레이어와의 거리에 따라 표시 여부 결정 (가까이 있거나 데미지를 입었을 때만)
   const dx = player.pos.x * TILE_SIZE - ex;
   const dy = player.pos.y * TILE_SIZE - ey;
   const distSq = dx * dx + dy * dy;
@@ -394,23 +397,29 @@ function updateHPBarFromSoA(idx: number, soa: any, player: any, container: PIXI.
   hpBar.visible = shouldShowHP;
   if (!shouldShowHP) return;
 
-  const barW = entW * 0.9;
-  const barH = 5;
-  const barX = (entW - barW) / 2;
-  const currentRatio = Math.max(0, hp / maxHp);
+  // 광물 채굴 UI 스타일과 동일하게 구성 (하단 배치)
+  const barW = entW - 12;
+  const barH = 6;
+  const barX = 6;
+  const barY = entH - barH - 4; // 타일 하단에서 4px 위
+  const currentRatio = Math.max(0, Math.min(1, hp / maxHp));
   
-  // 인덱스 기반 보간 캐시 사용 (간소화: 여기서는 즉시 반영하거나 별도 배열 관리 가능)
   hpBar.clear();
-  hpBar.roundRect(barX - 1, -1, barW + 2, barH + 2, 4);
-  hpBar.fill({ color: 0x09090b, alpha: 0.8 });
-
-  let color = 0x10b981;
-  if (currentRatio < 0.25) color = 0xef4444;
-  else if (currentRatio < 0.5) color = 0xf59e0b;
+  
+  // 체력바 배경 (광물 스타일 재사용)
+  hpBar
+    .roundRect(barX - 1, barY - 1, barW + 2, barH + 2, 2)
+    .fill({ color: 0x09090b, alpha: 0.8 })
+    .stroke({ color: 0xffffff, alpha: 0.3, width: 1, alignment: 0 });
 
   if (currentRatio > 0) {
-    hpBar.roundRect(barX, 0, barW * currentRatio, barH, 2);
-    hpBar.fill({ color });
+    let hpColor = 0x10b981; // Emerald
+    if (currentRatio < 0.25) hpColor = 0xef4444; // Rose
+    else if (currentRatio < 0.5) hpColor = 0xf59e0b; // Amber
+
+    hpBar
+      .roundRect(barX, barY, barW * currentRatio, barH, 1)
+      .fill({ color: hpColor });
   }
 }
 
