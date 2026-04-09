@@ -1,8 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
+import { DRILLS } from '@/shared/config/drillData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
+import { 
+  getNextLevelExp, 
+  getMasteryMultiplier, 
+  getUnlockedSlotCount,
+  createInitialEquipmentState 
+} from '@/shared/lib/masteryUtils';
+import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
