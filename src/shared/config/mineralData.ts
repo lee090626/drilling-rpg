@@ -132,7 +132,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 3000,
     baseHealth: 3000,
     defense: 450,
-    image: null,
+    image: 'sapphire_icon',
     tileImage: 'sapphire_tile',
   },
   {
@@ -220,7 +220,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: Infinity,
     defense: 0,
-    tileImage: 'lava_tile',
+    tileImage: 'wall_tile', // TODO: lava 에셋 추가 필요
   },
   {
     key: 'portal' as any,
@@ -232,7 +232,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: Infinity,
     defense: 0,
-    tileImage: 'portal_tile',
+    tileImage: 'dungeon_bricks_tile', // TODO: portal 에셋 추가 필요
   },
   {
     key: 'dungeon_bricks' as any,
@@ -268,7 +268,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 10000,
     defense: 0,
-    tileImage: 'lava_tile', // Fallback
+    tileImage: 'wall_tile', // Fallback (TODO: lava 에셋 추가 필요)
   },
   {
     key: 'boss_skin' as any,
@@ -280,7 +280,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 0,
     baseHealth: 40000,
     defense: 0,
-    tileImage: 'lava_tile', // Fallback
+    tileImage: 'wall_tile', // Fallback (TODO: lava 에셋 추가 필요)
   }
 ];
 

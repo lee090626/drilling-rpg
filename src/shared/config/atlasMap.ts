@@ -133,6 +133,15 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1853,
     "atlasHeight": 2023
   },
+  "sapphire_icon": {
+    "atlasIndex": 0,
+    "x": 1971,
+    "y": 1917,
+    "width": 46,
+    "height": 64,
+    "atlasWidth": 2047,
+    "atlasHeight": 2048
+  },
   "dirt_tile": {
     "atlasIndex": 0,
     "x": 1435,
@@ -143,13 +152,13 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasHeight": 2048
   },
   "stone_tile": {
-    "atlasIndex": 2,
-    "x": 1361,
-    "y": 1892,
+    "atlasIndex": 1,
+    "x": 1749,
+    "y": 1863,
     "width": 128,
     "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
+    "atlasWidth": 2044,
+    "atlasHeight": 2042
   },
   "coal_tile": {
     "atlasIndex": 0,
@@ -162,7 +171,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
   },
   "iron_tile": {
     "atlasIndex": 2,
-    "x": 1763,
+    "x": 1495,
     "y": 1892,
     "width": 128,
     "height": 127,
@@ -198,7 +207,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
   },
   "ruby_tile": {
     "atlasIndex": 1,
-    "x": 1749,
+    "x": 1481,
     "y": 1863,
     "width": 128,
     "height": 128,
@@ -207,7 +216,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
   },
   "sapphire_tile": {
     "atlasIndex": 1,
-    "x": 1883,
+    "x": 1615,
     "y": 1863,
     "width": 128,
     "height": 128,
@@ -215,17 +224,17 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasHeight": 2042
   },
   "uranium_tile": {
-    "atlasIndex": 2,
-    "x": 1495,
-    "y": 1892,
+    "atlasIndex": 1,
+    "x": 1883,
+    "y": 1863,
     "width": 128,
     "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
+    "atlasWidth": 2044,
+    "atlasHeight": 2042
   },
   "obsidian_tile": {
     "atlasIndex": 1,
-    "x": 1481,
+    "x": 1347,
     "y": 1863,
     "width": 128,
     "height": 128,
@@ -234,30 +243,12 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
   },
   "wall_tile": {
     "atlasIndex": 2,
-    "x": 1629,
+    "x": 1361,
     "y": 1892,
     "width": 128,
     "height": 128,
     "atlasWidth": 2047,
     "atlasHeight": 2028
-  },
-  "portal_tile": {
-    "atlasIndex": 1,
-    "x": 1615,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
-  },
-  "lava_tile": {
-    "atlasIndex": 0,
-    "x": 1033,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
   },
   "dungeon_bricks_tile": {
     "atlasIndex": 0,

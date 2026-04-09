@@ -19,6 +19,7 @@ export const ATLAS_FILE_MAPPING = {
   diamond_icon: 'DiamondIcon.png',
   emerald_icon: 'EmeraldIcon.png',
   ruby_icon: 'RubyIcon.png',
+  sapphire_icon: 'SapphireIcon.png',
 
   // --- Tiles ---
   dirt_tile: 'dirt.png',
@@ -33,8 +34,6 @@ export const ATLAS_FILE_MAPPING = {
   uranium_tile: 'uranium.png',
   obsidian_tile: 'obsidian.png',
   wall_tile: 'wall.png',
-  portal_tile: 'portal.png',
-  lava_tile: 'lava.png',
   dungeon_bricks_tile: 'dungeon_bricks.png',
 
   // --- Drills ---
