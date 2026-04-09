@@ -120,7 +120,7 @@
         "y": 0.5
       }
     },
-    "irontest.png": {
+    "obsidian.png": {
       "frame": {
         "x": 1347,
         "y": 1863,
@@ -144,7 +144,7 @@
         "y": 0.5
       }
     },
-    "obsidian.png": {
+    "ruby.png": {
       "frame": {
         "x": 1481,
         "y": 1863,
@@ -168,7 +168,7 @@
         "y": 0.5
       }
     },
-    "portal.png": {
+    "sapphire.png": {
       "frame": {
         "x": 1615,
         "y": 1863,
@@ -192,7 +192,7 @@
         "y": 0.5
       }
     },
-    "ruby.png": {
+    "stone.png": {
       "frame": {
         "x": 1749,
         "y": 1863,
@@ -216,7 +216,7 @@
         "y": 0.5
       }
     },
-    "sapphire.png": {
+    "uranium.png": {
       "frame": {
         "x": 1883,
         "y": 1863,

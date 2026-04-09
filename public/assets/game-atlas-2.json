@@ -96,7 +96,7 @@
         "y": 0.5
       }
     },
-    "stone.png": {
+    "wall.png": {
       "frame": {
         "x": 1361,
         "y": 1892,
@@ -120,57 +120,9 @@
         "y": 0.5
       }
     },
-    "uranium.png": {
-      "frame": {
-        "x": 1495,
-        "y": 1892,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "wall.png": {
-      "frame": {
-        "x": 1629,
-        "y": 1892,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "iron.png": {
       "frame": {
-        "x": 1763,
+        "x": 1495,
         "y": 1892,
         "w": 128,
         "h": 127
