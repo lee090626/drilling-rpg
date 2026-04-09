@@ -1,7 +1,7 @@
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { getTileColor } from '@/shared/lib/tileUtils';
-import { getNextLevelExp, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getNextLevelExp, createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
@@ -160,18 +160,20 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     if (dropCount > 1) createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE - 10, `x${dropCount} Drops!`, '#a855f7');
     if (!player.stats.discoveredMinerals.includes(type)) player.stats.discoveredMinerals.push(type);
 
-    // 숙련도 처리
-    let equipmentState = player.stats.equipmentStates[player.stats.equippedDrillId];
-    if (!equipmentState) {
-      equipmentState = createInitialEquipmentState(player.stats.equippedDrillId);
-      player.stats.equipmentStates[player.stats.equippedDrillId] = equipmentState;
+    // 숙련도 처리 (장비 대신 타일 타입 기반)
+    if (!player.stats.tileMastery) player.stats.tileMastery = {};
+    let tileMastery = player.stats.tileMastery[type as string];
+    if (!tileMastery) {
+      tileMastery = createInitialMasteryState(type as string);
+      player.stats.tileMastery[type as string] = tileMastery;
     }
-    equipmentState.exp += 10;
-    const nextExp = getNextLevelExp(equipmentState.level);
-    if (equipmentState.exp >= nextExp) {
-      equipmentState.level++;
-      equipmentState.exp -= nextExp;
-      createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `Mastery Level Up: ${equipmentState.level}!!`, '#eab308');
+    
+    tileMastery.exp += 10;
+    const nextExp = getNextLevelExp(tileMastery.level);
+    if (tileMastery.exp >= nextExp) {
+      tileMastery.level++;
+      tileMastery.exp -= nextExp;
+      createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `${type.toUpperCase()} Mastery Level Up: ${tileMastery.level}!!`, '#eab308');
     }
   }
 

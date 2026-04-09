@@ -4,10 +4,12 @@ import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
+import { MINERALS } from '@/shared/config/mineralData';
 import { 
   getNextLevelExp, 
   getMasteryMultiplier, 
   getUnlockedSlotCount,
+  createInitialMasteryState,
   createInitialEquipmentState 
 } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
@@ -88,7 +90,9 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-y-auto pr-2 custom-scrollbar pb-6">
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-6 space-y-8">
+        {/* TOP SECTION: 3 COLUMN GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {/* COLUMN 1: COMBAT & MINING */}
         <div className="space-y-4">
           <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
@@ -186,7 +190,8 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
             </div>
           </div>
 
-          <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 flex-1 flex flex-col min-h-0">
+          {/* ARTIFACTS SECTION - Taking more space now */}
+          <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col min-h-[300px] flex-1">
             <h4 className="text-[10px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2 flex justify-between items-center">
               <span>Unlocked Artifacts</span>
               <span className="text-purple-500">{stats.artifacts.length}</span>
@@ -286,36 +291,16 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
               </div>
             </div>
 
-            {/* MASTERY & EXP SECTION */}
+            {/* REMOVED MASTERY & EXP SECTION FROM DRILL */}
             <div className="w-full mt-4 md:mt-6 space-y-4 border-t border-zinc-800/50 pt-4 md:pt-6">
-              <div className="text-left space-y-1.5 md:space-y-2">
-                <div className="flex justify-between items-end">
-                  <div className="text-[9px] text-zinc-500 font-bold tracking-widest">
-                    Mastery Level
-                  </div>
-                  <div className="text-xs md:text-sm font-black text-[#eab308]">
-                    Lv.{equipmentState.level}
-                  </div>
-                </div>
-                <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
-                  <div 
-                    className="h-full bg-[#eab308] rounded-full transition-all duration-1000"
-                    style={{ width: `${expPercent}%` }}
-                  />
-                </div>
-                <div className="text-[8px] text-zinc-600 font-bold text-right">
-                  {equipmentState.exp} / {nextExp} EXP
-                </div>
-              </div>
-
               <div className="text-left">
                 <div className="text-[9px] text-zinc-500 font-bold mb-2 tracking-widest flex justify-between items-center">
                   <span>Skill Rune Slots</span>
-                  <span className="text-zinc-600 font-black">{getUnlockedSlotCount(equipmentState.level, equippedDrill.maxSkillSlots)} / {equippedDrill.maxSkillSlots || 0}</span>
+                  <span className="text-zinc-600 font-black">{equippedDrill.maxSkillSlots || 0} / {equippedDrill.maxSkillSlots || 0}</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {Array.from({ length: equippedDrill.maxSkillSlots || 0 }).map((_, i) => {
-                    const isUnlocked = i < getUnlockedSlotCount(equipmentState.level, equippedDrill.maxSkillSlots);
+                    const isUnlocked = true; // ALL SLOTS UNLOCKED BY DEFAULT OR DRILL PROPERTY
                     const slottedRuneId = (equipmentState.slottedRunes || [])[i];
                     
                     return (
@@ -360,6 +345,78 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+        {/* BOTTOM SECTION: TILE MASTERY (FULL WIDTH) */}
+        <div className="bg-[#1e1e1f] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-emerald-500/0 via-emerald-500/50 to-emerald-500/0" />
+          
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">⛏️</span>
+              <h3 className="text-lg md:text-[22px] font-black text-white tracking-tighter uppercase italic">
+                Tile Mastery <span className="text-emerald-500 ml-2">Progress</span>
+              </h3>
+            </div>
+            <div className="px-4 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-[10px] font-black text-emerald-400 tracking-widest">
+              DISCOVERED: {stats.discoveredMinerals.length}
+            </div>
+          </div>
+
+          {stats.discoveredMinerals.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+              {stats.discoveredMinerals.map((tileKey, idx) => {
+                const mineral = MINERALS.find(m => m.key === tileKey);
+                const mastery = (stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey);
+                const nextExp = getNextLevelExp(mastery.level);
+                const expPercent = Math.min(100, (mastery.exp / nextExp) * 100);
+                const masteryMult = getMasteryMultiplier(mastery.level);
+
+                return (
+                  <div key={idx} className="bg-zinc-950/50 p-4 rounded-2xl border border-zinc-800 hover:border-emerald-500/30 hover:bg-emerald-500/2transition-all group">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-zinc-800 shadow-inner group-hover:scale-110 transition-transform">
+                        {mineral?.image ? (
+                          <AtlasIcon name={mineral.image} size={32} />
+                        ) : (
+                          <span className="text-lg">{mineral?.icon || '❓'}</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-end gap-1 mb-1">
+                          <span className="text-[11px] font-black text-zinc-300 italic truncate uppercase">{mineral?.name || tileKey}</span>
+                          <span className="text-[10px] font-black text-emerald-500 shrink-0">LV.{mastery.level}</span>
+                        </div>
+                        <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                          <div 
+                            className="h-full bg-linear-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000" 
+                            style={{ width: `${expPercent}%` }} 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-1.5 pt-3 border-t border-zinc-800/50">
+                      <div className="flex justify-between items-center text-[9px] font-black tracking-widest uppercase">
+                        <span className="text-zinc-500">Damage Buff</span>
+                        <span className="text-emerald-400">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[8px] font-bold tabular-nums">
+                        <span className="text-zinc-600">EXPERIENCE</span>
+                        <span className="text-zinc-400">{mastery.exp} <span className="text-zinc-700">/</span> {nextExp}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-20 flex flex-col items-center justify-center bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800 opacity-30">
+              <span className="text-4xl mb-4">🔦</span>
+              <span className="text-xs font-black tracking-widest uppercase">Start mining to unlock Tile Mastery!</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

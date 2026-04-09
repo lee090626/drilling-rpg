@@ -105,16 +105,16 @@ export interface ResearchNode {
 }
 
 /**
- * 특정 장비의 강화 및 스킬 장착 상태를 관리합니다.
+ * 특정 지층(타일)이나 장비의 숙련도 상태를 관리합니다.
  */
-export interface EquipmentState {
-  /** 장비 ID */
+export interface MasteryState {
+  /** 대상 ID (타일 타입 또는 장비 ID) */
   id: string;
-  /** 장착된 스킬룬의 인스턴스 ID 목록 (인덱스는 슬롯 위치를 의미함) */
-  slottedRunes: (string | null)[];
-  /** 현재 장비가 획득한 경험치 */
+  /** 장착된 스킬룬의 인스턴스 ID 목록 (장비일 경우에만 사용) */
+  slottedRunes?: (string | null)[];
+  /** 현재 획득한 경험치 */
   exp: number;
-  /** 장비의 숙련도 레벨 */
+  /** 현재 숙련도 레벨 */
   level: number;
 }
 
@@ -278,7 +278,10 @@ export interface PlayerStats {
   dimension: number;
   
   /** 각 드릴별 숙련도 및 스킬 장착 상태 관리 */
-  equipmentStates: { [drillId: string]: EquipmentState };
+  equipmentStates: { [drillId: string]: MasteryState };
+
+  /** 각 타일 종류별 숙련도 관리 */
+  tileMastery: { [tileType: string]: MasteryState };
   
   /** 해금된 연구(스킬트리) ID 목록 */
   unlockedResearchIds: string[];

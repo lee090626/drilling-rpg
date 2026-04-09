@@ -130,6 +130,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         dimension: 0,
         equipmentStates: {},
         unlockedResearchIds: ['root'],
+        tileMastery: {},
       },
       pos: { x: 15, y: 8 },
       velocity: { x: 0, y: 0 },

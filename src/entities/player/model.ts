@@ -55,6 +55,7 @@ export const createInitialPlayer = (seed: number): Player => ({
     encounteredBossIds: [],
     dimension: 0,
     equipmentStates: {},
+    tileMastery: {},
     unlockedResearchIds: ['root'],
   },
   pos: { x: 15, y: 8 }, // 보스 센터(x=15) 근처에서 시작

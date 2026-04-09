@@ -1,4 +1,4 @@
-import { Drill, EquipmentState } from '../types/game';
+import { Drill, MasteryState } from '../types/game';
 import { DRILLS } from '../config/drillData';
 
 /**
@@ -32,15 +32,22 @@ export const getUnlockedSlotCount = (level: number, maxSlots: number = 0): numbe
 };
 
 /**
- * 특정 장비의 초기 상태 생성
+ * 특정 장비나 타일의 초기 숙련도 상태 생성
  */
-export const createInitialEquipmentState = (drillId: string): EquipmentState => {
-  const drill = DRILLS[drillId];
-  const maxSlots = drill?.maxSkillSlots || 0;
+export const createInitialMasteryState = (id: string, maxSlots: number = 0): MasteryState => {
   return {
-    id: drillId,
+    id,
     exp: 0,
     level: 1,
-    slottedRunes: new Array(maxSlots).fill(null), // 슬롯 수만큼 null로 초기화
+    slottedRunes: maxSlots > 0 ? new Array(maxSlots).fill(null) : undefined,
   };
+};
+
+/**
+ * 특정 장비의 초기 상태 생성 (기존 호환성 유지를 위해 래핑)
+ */
+export const createInitialEquipmentState = (drillId: string): MasteryState => {
+  const drill = DRILLS[drillId];
+  const maxSlots = drill?.maxSkillSlots || 0;
+  return createInitialMasteryState(drillId, maxSlots);
 };

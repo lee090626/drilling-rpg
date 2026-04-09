@@ -1,7 +1,7 @@
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
 import { MINERALS } from '@/shared/config/mineralData';
-import { getMasteryMultiplier, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getMasteryMultiplier, createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 
@@ -26,9 +26,9 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
   const attackInterval = currentDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus));
 
-  // 2. 숙련도 배율 계산
-  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
-  const masteryMult = getMasteryMultiplier(equipmentState.level);
+  // 2. 숙련도 배율 계산 (장비 대신 타일 타입 기반)
+  const tileMastery = (stats.tileMastery && stats.tileMastery[targetTileType]) || createInitialMasteryState(targetTileType);
+  const masteryMult = getMasteryMultiplier(tileMastery.level);
   
   // 3. 룬 보너스 및 치명타 계산
   const runeAttackBonus = getTotalRuneStat(stats, 'power');

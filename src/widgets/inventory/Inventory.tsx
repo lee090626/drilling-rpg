@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { PlayerStats, TileType } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
-import { getNextLevelExp, getUnlockedSlotCount, createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { getNextLevelExp, getUnlockedSlotCount, createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { DRONES } from '@/shared/config/droneData';
 import { MINERALS } from '@/shared/config/mineralData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
@@ -61,8 +61,8 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
   );
   /** 현재 장착된 드릴 정보 및 숙련도 데이터 계산 */
   const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
-  const unlockedSlots = getUnlockedSlotCount(equipmentState.level, equippedDrill.maxSkillSlots);
+  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialMasteryState(stats.equippedDrillId, equippedDrill.maxSkillSlots);
+  const unlockedSlots = equippedDrill.maxSkillSlots || 0; // Decoupled from mastery level
 
   /** 모든 드릴에 현재 장착 중인 룬 인스턴스 ID 목록 */
   const equippedRuneIds = new Set<string>();
@@ -291,17 +291,17 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                         {/* MASTERY & EXP IN INVENTORY */}
                         <div className="space-y-4 mb-6">
                           {(() => {
-                            const equipmentState = stats.equipmentStates[drillId] || createInitialEquipmentState(drillId);
+                            const equipmentState = stats.equipmentStates[drillId] || createInitialMasteryState(drillId, drill.maxSkillSlots);
                             const nextExp = getNextLevelExp(equipmentState.level);
                             const expPercent = Math.min(100, (equipmentState.exp / nextExp) * 100);
-                            const unlockedSlots = getUnlockedSlotCount(equipmentState.level, drill.maxSkillSlots);
+                            const unlockedSlots = drill.maxSkillSlots || 0; // Decoupled
 
                             return (
                               <>
-                                  <div className="space-y-2">
+                                  <div className="space-y-2 opacity-20 pointer-events-none">
                                     <div className="flex justify-between items-end">
-                                      <span className="text-xs text-zinc-400 font-bold tracking-widest">Mastery Lv.{equipmentState.level}</span>
-                                      <span className="text-xs text-zinc-500 font-bold tabular-nums">{Math.floor(expPercent)}%</span>
+                                      <span className="text-xs text-zinc-400 font-bold tracking-widest italic">Drill Mastery (Removed)</span>
+                                      <span className="text-xs text-zinc-500 font-bold tabular-nums">0%</span>
                                     </div>
                                     <div className="h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-900">
                                       <div 

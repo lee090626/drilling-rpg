@@ -119,6 +119,7 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
       const drillId = stats.equippedDrillId;
       const state = stats.equipmentStates[drillId];
       if (state) {
+        if (!state.slottedRunes) state.slottedRunes = [];
         const prevIdx = state.slottedRunes.indexOf(runeInstanceId);
         if (prevIdx !== -1) state.slottedRunes[prevIdx] = null;
         state.slottedRunes[slotIndex] = runeInstanceId;
@@ -128,7 +129,7 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
 
     case 'unequipRune': {
       const state = stats.equipmentStates[data.drillId];
-      if (state && state.slottedRunes[data.slotIndex]) state.slottedRunes[data.slotIndex] = null;
+      if (state && state.slottedRunes && state.slottedRunes[data.slotIndex]) state.slottedRunes[data.slotIndex] = null;
       break;
     }
 

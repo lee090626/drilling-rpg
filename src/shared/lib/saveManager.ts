@@ -104,6 +104,7 @@ export const saveManager = {
         if (!s.refinerySlots) s.refinerySlots = 1;
         if (!s.activeSmeltingJobs) s.activeSmeltingJobs = [];
         if (!s.inventoryRunes) s.inventoryRunes = [];
+        if (!s.tileMastery) s.tileMastery = {};
         
         // 인벤토리 누락 아이템 보정
         if (s.inventory) {

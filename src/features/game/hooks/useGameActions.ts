@@ -8,7 +8,7 @@ import { REFINERY_RECIPES } from '@/shared/config/refineryData';
 import { RESEARCH_NODES } from '@/shared/config/researchData';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { getDroneData } from '@/shared/config/droneData';
-import { createInitialEquipmentState } from '@/shared/lib/masteryUtils';
+import { createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
