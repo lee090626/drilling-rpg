@@ -1,0 +1,56 @@
+# 🤖 AI 개발 및 협업 가이드 (AI Development Guide)
+
+이 문서는 AI 어시스턴트(Antigravity)가 이 프로젝트를 개발하고 유지보수할 때 준수해야 할 핵심 지침을 정의합니다.
+
+---
+
+## 1. 📂 아키텍처 준수 (FSD & ECS)
+
+프로젝트는 **FSD (Feature-Sliced Design)** 구조와 **ECS (Entity Component System)** 패턴을 엄격히 따릅니다.
+
+- **FSD 계층**: `app`, `widgets`, `features`, `entities`, `shared` 레이어 간의 참조 규칙을 절대적으로 준수합니다.
+- **ECS 로직**: 게임 로직 수정 시 `src/features/game/ecs` 내부의 `systems`와 `components` 구조를 파괴하지 않도록 주의합니다.
+- **Shared 레이어**: 모든 레이어에서 공통으로 쓰이는 데이터 구성(Config)이나 UI(Shared UI)는 `src/shared`에 위치해야 합니다.
+
+## 2. ✍️ 주석 가이드 (Documentation & Comments)
+
+AI는 코드 작성 시 다음과 같은 주석 규칙을 따릅니다.
+
+- **JSDoc 사용**: 모든 공개 함수, 인터페이스, 컴포넌트에는 JSDoc 형식의 주석을 작성합니다.
+  ```typescript
+  /**
+   * 아이템을 장착하고 통계를 갱신합니다.
+   * @param itemId {string} 장착할 아이템의 ID
+   * @param slotIndex {number} 장착할 슬롯 번호
+   */
+  ```
+- **논리적 구획 주석**: 긴 함수나 복잡한 로직 블록은 한글 주석을 사용하여 가독성을 높입니다.
+- **Self-Documenting Code**: 변수명과 함수명은 그 자체로 의도가 드러나도록 작성하고, 주석은 '무엇(What)'보다 '왜(Why)'에 집중합니다.
+
+## 3. 🌿 커밋 컨벤션 (Commit Guide)
+
+커밋은 항상 **Conventional Commits** 형식을 따르며, 한글을 사용하여 사용자에게 친절하게 설명합니다.
+
+- **형식**: `<type>(<scope>): <한글 설명>`
+- **타입 예시**:
+  - `feat`: 새로운 기능 (예: 아틀라스 이전 완료)
+  - `fix`: 버그 수정 (예: 인벤토리 중포 선언 수정)
+  - `refactor`: 코드 구조 개선 (예: 아틀라스 좌표 동적 로딩화)
+  - `docs`: 문서 수정 (예: 자산 가이드 업데이트)
+  - `perf`: 성능 최적화
+
+## 4. 🎨 UI 및 스타일링 규칙
+
+- **Tailwind CSS 4**: 인라인 스타일을 지양하고 Tailwind 유틸리티 클래스를 사용합니다.
+- **Rich Aesthetics**: 사용자에게 프리미엄 느낌을 줄 수 있는 그라데이션, 애니메이션(`animate-in`), 유리 효과(`backdrop-blur`)를 적극 활용합니다.
+- **Atlas System**: 모든 UI 아이콘은 `AtlasIcon` 컴포넌트를 통해 중앙 집중식 아틀라스 에셋을 활용해야 합니다. 개별 이미지 임포트는 지양합니다.
+
+## 5. 🚀 자동화 및 도구 활용
+
+- **Script 활용**: 아틀라스 좌표 갱신 등 반복 작업은 `npm run update:atlas-map`과 같은 내장 스크립트를 우선적으로 사용합니다.
+- **Lint Check**: 모든 작업 완료 후 `npm run lint` 등을 통해 코드 품질을 검증합니다.
+
+---
+
+> [!TIP]
+> **AI 메모**: 새로운 기능을 제안할 때는 항상 기존 아키텍처와의 정합성을 먼저 검토하고, `implementation_plan.md`를 통해 사용자에게 먼저 승인을 받습니다.

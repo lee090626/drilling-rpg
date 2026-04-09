@@ -1,6 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
-import { PlayerStats, Position } from '@/shared/types/game';
+import { PlayerStats } from '@/shared/types/game';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 interface ElevatorProps {

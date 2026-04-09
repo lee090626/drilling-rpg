@@ -2,14 +2,14 @@ import { atlasMap, AtlasIconName } from '@/shared/config/atlasMap';
 
 interface Props {
   name: AtlasIconName;
-  alt: string;
+  alt?: string;
   size?: number; // pixel size
 }
 
 /**
  * 게임의 여러 WebP 아틀라스 시트에서 특정 이미지를 추출하여 렌더링하는 범용 아이콘 컴포넌트입니다.
  */
-export const AtlasIcon: React.FC<Props> = ({ name, alt, size = 32 }) => {
+export const AtlasIcon: React.FC<Props> = ({ name, alt = '', size = 32 }) => {
   const meta = atlasMap[name];
   if (!meta) return <div style={{ width: size, height: size, backgroundColor: '#333' }} />;
 
@@ -50,3 +50,5 @@ export const AtlasIcon: React.FC<Props> = ({ name, alt, size = 32 }) => {
     </div>
   );
 };
+
+export default AtlasIcon;

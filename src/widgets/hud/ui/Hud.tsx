@@ -5,7 +5,6 @@ import { getDimensionConfig } from '@/shared/config/dimensionData';
 import { getDrillData } from '@/shared/config/drillData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 
-// 실무형 에셋 관리: 직접 임포트 방식 적용
 import { AtlasIcon } from './AtlasIcon';
 import { atlasMap } from '@/shared/config/atlasMap';
 // Icons are now sourced from the texture atlas via AtlasIcon
@@ -52,7 +51,7 @@ const Hud: React.FC<HudProps> = React.memo(({
     { label: 'Status', key: 'C', iconKey: 'status', onClick: onOpenStatus, color: '#eab308' },
     { label: 'Inventory', key: 'I', iconKey: 'inventory', onClick: onOpenInventory, color: '#f59e0b' },
     { label: 'Book', key: 'B', iconKey: 'book', onClick: onOpenEncyclopedia, color: '#a855f7' },
-    { label: 'Setting', key: 'S', iconKey: 'setting', onClick: onOpenSettings, color: '#94a3b8' },
+    { label: 'Setting', key: 'S', iconKey: 'settings', onClick: onOpenSettings, color: '#94a3b8' },
     { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
   ], [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide]);
 
