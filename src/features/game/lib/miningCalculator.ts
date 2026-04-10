@@ -21,12 +21,14 @@ export interface DamageResult {
 export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string): DamageResult => {
   const currentDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
   const researchBonuses = getResearchBonuses(stats);
+  const masteryBonuses = getMasteryBonuses(stats);
   
-  // 1. 공격 속도 계산 (연구 속도 보너스 + 룬 속도 보너스)
+  // 1. 공격 속도 계산 (연구 속도 보너스 + 룬 속도 보너스 + 마스터리 속도 보너스)
   const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
-  const attackInterval = currentDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus));
+  const totalSpeedBonusMult = Math.min(0.95, researchBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult);
+  const attackInterval = currentDrill.cooldownMs * (1 - totalSpeedBonusMult);
 
-  // 2. 숙련도 배율 계산 (장비 대신 타일 타입 기반)
+  // 2. 숙련도 배율 계산 (기본 숙련도 레벨 보너스)
   const tileMastery = (stats.tileMastery && stats.tileMastery[targetTileType]) || createInitialMasteryState(targetTileType);
   const masteryMult = getMasteryMultiplier(tileMastery.level);
   
@@ -37,9 +39,16 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   const critDamage = 1.5 + getTotalRuneStat(stats, 'critDmg'); 
 
   const drillPower = currentDrill.basePower;
-  const masteryBonus = Math.round(drillPower * (masteryMult - 1));
+  const levelMasteryBonus = Math.round(drillPower * (masteryMult - 1));
   
-  let totalPower = stats.power + drillPower + masteryBonus + Math.floor(runeAttackBonus) + researchBonuses.power;
+  // --- 최종 위력 계산 (고정값 합산 후 배율 적용) ---
+  // 기초값 = 플레이어 기본 + 드릴 + 숙련도 레벨 보너스 + 마스터리 고정 특성 + 룬 고정 특성
+  const basePower = stats.power + drillPower + levelMasteryBonus + masteryBonuses.miningPower + Math.floor(runeAttackBonus);
+  
+  // 배율 보완 (연구 배율 + 마스터리 배율)
+  const totalPowerMult = 1 + researchBonuses.power + masteryBonuses.miningPowerMult;
+  
+  let totalPower = Math.floor(basePower * totalPowerMult);
   
   // 상태 이상에 따른 위력 변조 (BUFF_POWER: 1.5배, WEAKEN: 0.7배)
   if (stats.activeEffects) {

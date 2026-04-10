@@ -1,7 +1,7 @@
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { getTileColor } from '@/shared/lib/tileUtils';
-import { getNextLevelExp, createInitialMasteryState } from '@/shared/lib/masteryUtils';
+import { getNextLevelExp, createInitialMasteryState, getMasteryBonuses } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
@@ -12,13 +12,41 @@ import { showToast } from './toastSystem';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 
 /**
+ * 플레이어의 영구 스탯(체력, 이속 등)을 마스터리 및 연구 보너스에 맞춰 동기화합니다.
+ */
+function syncPermanentStats(player: any) {
+  const masteryBonuses = getMasteryBonuses(player.stats);
+  const researchBonuses = getResearchBonuses(player.stats);
+
+  // 1. 최대 체력 동기화: (기본 100 + 마스터리고정) * (1 + 마스터리배율)
+  const baseHp = 100 + masteryBonuses.maxHp;
+  const finalMaxHp = Math.floor(baseHp * (1 + masteryBonuses.maxHpMult));
+  
+  // 현재 체력 비율 유지하며 최대 체력 갱신
+  const hpRatio = player.stats.maxHp > 0 ? player.stats.hp / player.stats.maxHp : 1;
+  player.stats.maxHp = finalMaxHp;
+  player.stats.hp = Math.floor(finalMaxHp * hpRatio);
+
+  // 2. 이동 속도 동기화: (기본 100 + 마스터리고정) * (1 + 연구배율 + 마스터리배율)
+  const baseMoveSpeed = 100 + masteryBonuses.moveSpeed;
+  const totalMoveSpeedMult = 1 + (researchBonuses.moveSpeed - 1) + masteryBonuses.moveSpeedMult;
+  player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
+}
+
+/**
  * 플레이어의 채굴 로직을 관리하는 메인 시스템입니다.
  * 내부적으로 대미지 계산기, 드론 시스템, 보스 시스템을 호출합니다.
  */
 export const miningSystem = (world: GameWorld, now: number) => {
   const { player, tileMap, intent } = world;
 
-  // 1. 채굴 대상 타일 업데이트 (하이라이트용)
+  // 1. 초기 스탯 동기화 및 마스터리 보너스 적용
+  if (!player._statsSynced) {
+    syncPermanentStats(player);
+    player._statsSynced = true;
+  }
+
+  // 2. 채굴 대상 타일 업데이트 (하이라이트용)
   updateMiningTarget(world);
 
   // 2. 플레이어 채굴 수행
@@ -140,8 +168,11 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
   // 아이템 드롭 및 숙련도
   if (player.stats.inventory[type as any] !== undefined) {
     const researchBonuses = getResearchBonuses(player.stats);
-    // researchBonuses.luck의 기본값이 1이므로, 1을 뺀 추가 보너스만 취합
-    const luck = getTotalRuneStat(player.stats, 'luck') + (researchBonuses.luck - 1);
+    const masteryBonuses = getMasteryBonuses(player.stats);
+    
+    // 행운 적용: 기본 행운 + 연구 + 마스터리(고정/배율)
+    const luck = getTotalRuneStat(player.stats, 'luck') + (researchBonuses.luck - 1) + masteryBonuses.luck + masteryBonuses.luckMult;
+    
     let dropCount = 1;
     let remLuck = luck;
     while (remLuck >= 1) { dropCount++; remLuck--; }
@@ -152,7 +183,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
           id: `item_${Date.now()}_${Math.random()}`,
           type,
           x: x * TILE_SIZE + TILE_SIZE / 2,
-          y: y * TILE_SIZE - 5, // 타일 상단에서 살짝 위로 생성하여 끼임 방지
+          y: y * TILE_SIZE - 5,
           vx: (Math.random() - 0.5) * 8,
           vy: -6 - Math.random() * 4,
           life: 0
@@ -162,7 +193,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     if (dropCount > 1) createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE - 10, `x${dropCount} Drops!`, '#a855f7');
     if (!player.stats.discoveredMinerals.includes(type)) player.stats.discoveredMinerals.push(type);
 
-    // 숙련도 처리 (장비 대신 타일 타입 기반)
+    // 숙련도 처리 (가공된 아이템 제외)
     if (!player.stats.tileMastery) player.stats.tileMastery = {};
     let tileMastery = player.stats.tileMastery[type as string];
     if (!tileMastery) {
@@ -170,7 +201,10 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
       player.stats.tileMastery[type as string] = tileMastery;
     }
     
-    tileMastery.exp += Math.floor(10 * researchBonuses.masteryExp);
+    // 마스터리 경험치 획득량: 기본 10 * 연구 배율 * (1 + 마스터리 배율)
+    const expGain = Math.floor(10 * researchBonuses.masteryExp * (1 + masteryBonuses.masteryExpMult));
+    tileMastery.exp += expGain;
+    
     const nextExp = getNextLevelExp(tileMastery.level);
     if (tileMastery.exp >= nextExp) {
       tileMastery.level++;
@@ -178,35 +212,21 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
       showToast(`${type.toUpperCase()} Mastery Level Up: ${tileMastery.level}!!`, 'success');
 
       // 마스터리 돌파 특성 해금 체크
+      let anyNewPerk = false;
       MASTERY_PERKS.forEach(perk => {
         if (perk.tileType === type && perk.requiredLevel === tileMastery.level) {
           if (!player.stats.unlockedMasteryPerks.includes(perk.id)) {
             player.stats.unlockedMasteryPerks.push(perk.id);
             showToast(`✨ Breakthrough! [${perk.name}] unlocked!`, 'success');
             createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 40, `✨ ${perk.name} UNLOCKED!`, '#fbbf24');
+            anyNewPerk = true;
           }
         }
       });
-    }
 
-    // --- 흙(Dirt) 타일 파괴 시 특성 효과 발동 ---
-    if (type === 'dirt') {
-      const perks = player.stats.unlockedMasteryPerks;
-      
-      // Lv.50 또는 Lv.150 이속 증가 (상위 특성이 우선)
-      if (perks.includes('perk_dirt_150')) {
-        player.buffs.speedBoostUntil = Date.now() + 1500;
-        player.buffs.speedBoostMultiplier = 1.4;
-      } else if (perks.includes('perk_dirt_50')) {
-        player.buffs.speedBoostUntil = Date.now() + 1500;
-        player.buffs.speedBoostMultiplier = 1.2;
-      }
-
-      // Lv.100 체력 회복
-      if (perks.includes('perk_dirt_100') && Math.random() < 0.01) {
-        const recoverAmount = 1;
-        player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + recoverAmount);
-        createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `+${recoverAmount} HP`, '#4ade80');
+      // 새로운 특성이 해금되었으면 플레이어의 영구 스탯 즉시 동기화
+      if (anyNewPerk) {
+        syncPermanentStats(player);
       }
     }
   }

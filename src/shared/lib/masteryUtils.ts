@@ -1,5 +1,6 @@
-import { Drill, MasteryState } from '../types/game';
+import { Drill, MasteryState, PlayerStats } from '../types/game';
 import { DRILLS } from '../config/drillData';
+import { MASTERY_PERKS } from '../config/masteryPerks';
 
 /**
  * 숙련도 레벨에 따른 다음 레벨 필요 경험치 계산
@@ -9,10 +10,69 @@ export const getNextLevelExp = (level: number): number => {
 };
 
 /**
- * 숙련도 레벨에 따른 스탯 멀티플라이어 계산 (레벨당 1%씩 강해짐)
+ * 숙련도 레벨에 따른 스탯 멀티플라이어 계산 (레벨당 2%씩 강해짐)
  */
 export const getMasteryMultiplier = (level: number): number => {
   return 1 + (level - 1) * 0.02;
+};
+
+/**
+ * 해금된 마스터리 돌파 특성들을 기반으로 플레이어의 총 보너스 수치를 계산합니다.
+ */
+export const getMasteryBonuses = (stats: PlayerStats) => {
+  const bonuses = {
+    miningPower: 0,
+    miningPowerMult: 0,
+    miningSpeedMult: 0,
+    moveSpeed: 0,
+    moveSpeedMult: 0,
+    maxHp: 0,
+    maxHpMult: 0,
+    luck: 0,
+    luckMult: 0,
+    goldBonusMult: 0,
+    masteryExpMult: 0,
+  };
+
+  if (!stats.unlockedMasteryPerks) return bonuses;
+
+  stats.unlockedMasteryPerks.forEach(perkId => {
+    const perk = MASTERY_PERKS.find(p => p.id === perkId);
+    if (!perk) return;
+
+    perk.effects.forEach(effect => {
+      switch (effect.type) {
+        case 'miningPower':
+          if (effect.isMultiplier) bonuses.miningPowerMult += effect.value;
+          else bonuses.miningPower += effect.value;
+          break;
+        case 'miningSpeed':
+          // 채굴 속도는 배율 위주로 적용
+          bonuses.miningSpeedMult += effect.value;
+          break;
+        case 'moveSpeed':
+          if (effect.isMultiplier) bonuses.moveSpeedMult += effect.value;
+          else bonuses.moveSpeed += effect.value;
+          break;
+        case 'maxHp':
+          if (effect.isMultiplier) bonuses.maxHpMult += effect.value;
+          else bonuses.maxHp += effect.value;
+          break;
+        case 'luck':
+          if (effect.isMultiplier) bonuses.luckMult += effect.value;
+          else bonuses.luck += effect.value;
+          break;
+        case 'goldBonus':
+          bonuses.goldBonusMult += effect.value;
+          break;
+        case 'masteryExp':
+          bonuses.masteryExpMult += effect.value;
+          break;
+      }
+    });
+  });
+
+  return bonuses;
 };
 
 /**
