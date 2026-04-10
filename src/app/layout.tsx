@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: 'Drilling RPG | Web-based Deep Mining Action & Exploration',
   description: 'Explore the endless abyss in Drilling RPG. A free-to-play web-based top-down mining action survival game. Gather minerals, craft items, upgrade your drill, and defeat giant bosses.',

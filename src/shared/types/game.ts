@@ -291,6 +291,8 @@ export interface PlayerStats {
 
   /** [상태 이상] 현재 적용 중인 상태 효과 목록 */
   activeEffects?: ActiveEffect[];
+  /** [튜토리얼] 이미 트리거된 가이드 ID 목록 */
+  tutorialFlags?: Record<string, boolean>;
 }
 
 /**
