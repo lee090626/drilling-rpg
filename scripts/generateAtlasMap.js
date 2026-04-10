@@ -3,89 +3,107 @@ const path = require('path');
 
 // 매핑 정보를 직접 가져옵니다 (TS 파일을 읽기 위해 간단한 파싱이나 직접 정의 사용)
 // 여기서는 실수를 줄이기 위해 아까 만든 src/shared/config/atlasFiles.ts의 내용을 기반으로 정의합니다.
-const ATLAS_FILE_MAPPING = {
-  gold: 'MoneyIcon.webp',
-  status: 'StatusIcon.webp',
-  inventory: 'InventoryIcon.webp',
-  book: 'BookIcon.webp',
-  settings: 'SettingsIcon.webp',
-  dirt_icon: 'DirtIcon.png',
-  stone_icon: 'StoneIcon.png',
-  coal_icon: 'CoalIcon.png',
-  iron_icon: 'IronIcon.png',
-  gold_icon: 'GoldIcon.png',
-  diamond_icon: 'DiamondIcon.png',
-  emerald_icon: 'EmeraldIcon.png',
-  ruby_icon: 'RubyIcon.png',
-  sapphire_icon: 'SapphireIcon.png',
-  dirt_tile: 'dirt.png',
-  stone_tile: 'stone.png',
-  coal_tile: 'coal.png',
-  iron_tile: 'iron.png',
-  gold_tile: 'gold.png',
-  diamond_tile: 'diamond.png',
-  emerald_tile: 'emerald.png',
-  ruby_tile: 'ruby.png',
-  sapphire_tile: 'sapphire.png',
-  uranium_tile: 'uranium.png',
-  obsidian_tile: 'obsidian.png',
-  wall_tile: 'wall.png',
-  dungeon_bricks_tile: 'dungeon_bricks.png',
-  rusty_drill: 'RustyDrill.png',
-  stone_drill: 'StoneDrill.png',
-  iron_drill: 'IronDrill.png',
-  gold_drill: 'GoldDrill.png',
-  diamond_drill: 'DiamondDrill.png',
-  emerald_drill: 'EmeralDrill.png',
-  attack_rune: 'AttackRune.png',
-  speed_rune: 'MiningSpeedRune.png',
-  move_rune: 'MoveSpeedRune.png',
-  luck_rune: 'LuckRune.png',
-  crit_rate_rune: 'CritRateRune.png',
-  crit_dmg_rune: 'CritDmgRune.png',
+/**
+ * 파일명(예: PascalCase.png)을 snake_case ID로 변환합니다.
+ */
+function toSnakeCase(str) {
+  const fileName = path.parse(str).name;
+  return fileName
+    .replace(/([A-Z])/g, "_$1")
+    .toLowerCase()
+    .replace(/^_/, "");
+}
+
+/**
+ * 자동 변환 규칙에서 벗어나는 특수 매핑 정보입니다.
+ */
+const SPECIAL_OVERRIDES = {
+  // --- UI Icons ---
+  'MoneyIcon.webp': 'gold',
+  'StatusIcon.webp': 'status',
+  'InventoryIcon.webp': 'inventory',
+  'BookIcon.webp': 'book',
+  'SettingsIcon.webp': 'settings',
+
+  // --- Runes ---
+  'MiningSpeedRune.png': 'speed_rune',
+  'MoveSpeedRune.png': 'move_rune',
+  'LuckRune.png': 'luck_rune',
+
+  // --- Minerals/Tiles ---
+  'dirt.png': 'dirt_tile',
+  'stone.png': 'stone_tile',
+  'coal.png': 'coal_tile',
+  'iron.png': 'iron_tile',
+  'gold.png': 'gold_tile',
+  'diamond.png': 'diamond_tile',
+  'emerald.png': 'emerald_tile',
+  'ruby.png': 'ruby_tile',
+  'sapphire.png': 'sapphire_tile',
+  'uranium.png': 'uranium_tile',
+  'obsidian.png': 'obsidian_tile',
+  'wall.png': 'wall_tile',
+  'dungeon_bricks.png': 'dungeon_bricks_tile',
+
+  // --- Typo Correction (하위 호환성) ---
+  'EmeralDrill.png': 'emerald_drill',
 };
 
 const ASSETS_DIR = path.join(__dirname, '../public/assets');
-const OUTPUT_FILE = path.join(__dirname, '../src/shared/config/atlasMap.ts');
+const ATLAS_MAP_FILE = path.join(__dirname, '../src/shared/config/atlasMap.ts');
+const ATLAS_FILES_FILE = path.join(__dirname, '../src/shared/config/atlasFiles.ts');
 
 function generate() {
-  console.log('Generating Atlas Map...');
+  console.log('Generating Atlas Map Automatically...');
   
   const atlasMap = {};
+  const fileMapping = {};
   const atlasFiles = fs.readdirSync(ASSETS_DIR).filter(f => f.startsWith('game-atlas-') && f.endsWith('.json'));
   
-  for (const [id, fileName] of Object.entries(ATLAS_FILE_MAPPING)) {
-    let found = false;
-    
-    for (const atlasJsonFile of atlasFiles) {
-      const atlasIndex = parseInt(atlasJsonFile.match(/game-atlas-(\d+)\.json/)[1]);
-      const content = JSON.parse(fs.readFileSync(path.join(ASSETS_DIR, atlasJsonFile), 'utf-8'));
-      
-      if (content.frames[fileName]) {
-        const frame = content.frames[fileName].frame;
-        const metaSize = content.meta.size;
-        
-        atlasMap[id] = {
-          atlasIndex,
-          x: frame.x,
-          y: frame.y,
-          width: frame.w,
-          height: frame.h,
-          atlasWidth: metaSize.w,
-          atlasHeight: metaSize.h
-        };
-        found = true;
-        break;
-      }
-    }
-    
-    if (!found) {
-      console.warn(`Warning: Could not find frame for "${id}" (file: ${fileName}) in any atlas JSON.`);
+  // 1. 모든 아틀라스 JSON을 스캔하여 프레임 수집
+  for (const atlasJsonFile of atlasFiles) {
+    const atlasIndex = parseInt(atlasJsonFile.match(/game-atlas-(\d+)\.json/)[1]);
+    const content = JSON.parse(fs.readFileSync(path.join(ASSETS_DIR, atlasJsonFile), 'utf-8'));
+    const metaSize = content.meta.size;
+
+    for (const fileName of Object.keys(content.frames)) {
+      // ID 결정 (예외 매핑 우선, 없으면 자동 스네이크 케이스 변환)
+      const id = SPECIAL_OVERRIDES[fileName] || toSnakeCase(fileName);
+      const frame = content.frames[fileName].frame;
+
+      fileMapping[id] = fileName;
+      atlasMap[id] = {
+        atlasIndex,
+        x: frame.x,
+        y: frame.y,
+        width: frame.w,
+        height: frame.h,
+        atlasWidth: metaSize.w,
+        atlasHeight: metaSize.h
+      };
     }
   }
 
-  const fileContent = `// [자동 생성됨] 이 파일은 scripts/generateAtlasMap.js 스크립트에 의해 생성되었습니다.
-// 직접 수정하지 마세요. 대신 src/shared/config/atlasFiles.ts를 수정하고 스크립트를 실행하세요.
+  // 2. atlasFiles.ts 생성 (알파벳 순 정렬)
+  const sortedIds = Object.keys(fileMapping).sort();
+  const fileMappingStr = sortedIds.map(id => `  ${id}: '${fileMapping[id]}',`).join('\n');
+  
+  const atlasFilesContent = `// [자동 생성됨] 이 파일은 scripts/generateAtlasMap.js 스크립트에 의해 생성되었습니다.
+// 에셋이 추가되면 이 파일이 자동으로 업데이트됩니다.
+
+export const ATLAS_FILE_MAPPING = {
+${fileMappingStr}
+} as const;
+
+export type AtlasIconName = keyof typeof ATLAS_FILE_MAPPING;
+`;
+
+  fs.writeFileSync(ATLAS_FILES_FILE, atlasFilesContent);
+  console.log(`Success! Atlas files mapping written to ${ATLAS_FILES_FILE}`);
+
+  // 3. atlasMap.ts 생성
+  const atlasMapContent = `// [자동 생성됨] 이 파일은 scripts/generateAtlasMap.js 스크립트에 의해 생성되었습니다.
+// 에셋이 추가되면 이 파일이 자동으로 업데이트됩니다.
 
 export interface AtlasMetadata {
   atlasIndex: number;
@@ -104,8 +122,8 @@ export type { AtlasIconName };
 export const atlasMap: Record<AtlasIconName, AtlasMetadata> = ${JSON.stringify(atlasMap, null, 2)};
 `;
 
-  fs.writeFileSync(OUTPUT_FILE, fileContent);
-  console.log(`Success! Atlas map written to ${OUTPUT_FILE}`);
+  fs.writeFileSync(ATLAS_MAP_FILE, atlasMapContent);
+  console.log(`Success! Atlas map written to ${ATLAS_MAP_FILE}`);
 }
 
 generate();

@@ -1,56 +1,57 @@
-/**
- * 하위 호환성을 위해 유지하는 아이콘 이름(ID)과
- * 실제 아틀라스 JSON 내의 프레임 파일명 간의 매핑 정보입니다.
- */
+// [자동 생성됨] 이 파일은 scripts/generateAtlasMap.js 스크립트에 의해 생성되었습니다.
+// 에셋이 추가되면 이 파일이 자동으로 업데이트됩니다.
+
 export const ATLAS_FILE_MAPPING = {
-  // --- UI Icons ---
-  gold: 'MoneyIcon.webp',
-  status: 'StatusIcon.webp',
-  inventory: 'InventoryIcon.webp',
-  book: 'BookIcon.webp',
-  settings: 'SettingsIcon.webp',
-
-  // --- Mineral Icons ---
-  dirt_icon: 'DirtIcon.png',
-  stone_icon: 'StoneIcon.png',
-  coal_icon: 'CoalIcon.png',
-  iron_icon: 'IronIcon.png',
-  gold_icon: 'GoldIcon.png',
-  diamond_icon: 'DiamondIcon.png',
-  emerald_icon: 'EmeraldIcon.png',
-  ruby_icon: 'RubyIcon.png',
-  sapphire_icon: 'SapphireIcon.png',
-
-  // --- Tiles ---
-  dirt_tile: 'dirt.png',
-  stone_tile: 'stone.png',
-  coal_tile: 'coal.png',
-  iron_tile: 'iron.png',
-  gold_tile: 'gold.png',
-  diamond_tile: 'diamond.png',
-  emerald_tile: 'emerald.png',
-  ruby_tile: 'ruby.png',
-  sapphire_tile: 'sapphire.png',
-  uranium_tile: 'uranium.png',
-  obsidian_tile: 'obsidian.png',
-  wall_tile: 'wall.png',
-  dungeon_bricks_tile: 'dungeon_bricks.png',
-
-  // --- Drills ---
-  rusty_drill: 'RustyDrill.png',
-  stone_drill: 'StoneDrill.png',
-  iron_drill: 'IronDrill.png',
-  gold_drill: 'GoldDrill.png',
-  diamond_drill: 'DiamondDrill.png',
-  emerald_drill: 'EmeralDrill.png', // Note: original asset typo
-
-  // --- Runes ---
   attack_rune: 'AttackRune.png',
-  speed_rune: 'MiningSpeedRune.png',
-  move_rune: 'MoveSpeedRune.png',
-  luck_rune: 'LuckRune.png',
-  crit_rate_rune: 'CritRateRune.png',
+  base_tileset: 'BaseTileset.png',
+  book: 'BookIcon.webp',
+  boss_core: 'boss_core.png',
+  boss_skin: 'boss_skin.png',
+  coal_icon: 'CoalIcon.png',
+  coal_tile: 'coal.png',
   crit_dmg_rune: 'CritDmgRune.png',
+  crit_rate_rune: 'CritRateRune.png',
+  diamond_drill: 'DiamondDrill.png',
+  diamond_icon: 'DiamondIcon.png',
+  diamond_tile: 'diamond.png',
+  dirt_icon: 'DirtIcon.png',
+  dirt_tile: 'dirt.png',
+  dungeon_bricks_tile: 'dungeon_bricks.png',
+  emerald_drill: 'EmeralDrill.png',
+  emerald_icon: 'EmeraldIcon.png',
+  emerald_tile: 'emerald.png',
+  gold: 'MoneyIcon.webp',
+  gold_drill: 'GoldDrill.png',
+  gold_icon: 'GoldIcon.png',
+  gold_tile: 'gold.png',
+  inventory: 'InventoryIcon.webp',
+  iron_drill: 'IronDrill.png',
+  iron_icon: 'IronIcon.png',
+  iron_tile: 'iron.png',
+  luck_rune: 'LuckRune.png',
+  mechanic: 'Mechanic.png',
+  merchant: 'Merchant.png',
+  move_rune: 'MoveSpeedRune.png',
+  obsidian_tile: 'obsidian.png',
+  oros_face: 'OrosFace.png',
+  pebble_golem: 'PebbleGolem.png',
+  player: 'Player.png',
+  refinery: 'Refinery.png',
+  ruby_icon: 'RubyIcon.png',
+  ruby_tile: 'ruby.png',
+  rusty_drill: 'RustyDrill.png',
+  sapphire_icon: 'SapphireIcon.png',
+  sapphire_tile: 'sapphire.png',
+  settings: 'SettingsIcon.webp',
+  speed_rune: 'MiningSpeedRune.png',
+  status: 'StatusIcon.webp',
+  steel_scale_turtle: 'SteelScaleTurtle.png',
+  stone_drill: 'StoneDrill.png',
+  stone_icon: 'StoneIcon.png',
+  stone_tile: 'stone.png',
+  thief_mole: 'ThiefMole.png',
+  uranium_tile: 'uranium.png',
+  wall_tile: 'wall.png',
 } as const;
 
 export type AtlasIconName = keyof typeof ATLAS_FILE_MAPPING;
