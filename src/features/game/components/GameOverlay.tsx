@@ -13,6 +13,7 @@ import RefineryWindow from '@/widgets/refinery/RefineryWindow';
 import Laboratory from '@/widgets/laboratory/Laboratory';
 import GuideWindow from '@/widgets/guide/GuideWindow';
 import ToastContainer from '@/shared/ui/ToastContainer';
+import { useGameStore } from '@/shared/lib/store';
 
 interface GameOverlayProps {
   worldRef: React.MutableRefObject<GameWorld>;
@@ -35,6 +36,8 @@ export default function GameOverlay({
 }: GameOverlayProps) {
   const world = worldRef.current;
   const { ui, player } = world;
+  const showInteractionPrompt = useGameStore((state) => state.ui.showInteractionPrompt);
+  const activeInteractionType = useGameStore((state) => state.ui.activeInteractionType);
   const currentStats = stats || player.stats;
 
   const { toggleModal, handleClose } = uiActions;
@@ -119,6 +122,15 @@ export default function GameOverlay({
       )}
       
       <ToastContainer />
+
+      {/* Interaction Prompt Overlay */}
+      {showInteractionPrompt && activeInteractionType && (
+        <div className="absolute left-1/2 bottom-32 md:bottom-40 lg:bottom-44 -translate-x-1/2 z-30 animate-in slide-in-from-bottom-4 fade-in duration-300 pointer-events-none">
+            <div className="flex items-center px-10 justify-center w-15 h-10 bg-emerald-500 text-black font-black rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+              <span className="text-base">Space</span>
+            </div>
+        </div>
+      )}
     </div>
   );
 }

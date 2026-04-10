@@ -16,8 +16,15 @@ interface GameState {
   };
   /** 토스트 알림 큐 */
   toasts: import('../types/game').ToastMessage[];
+  /** UI 상태 (상호작용 안내 등) */
+  ui: {
+    showInteractionPrompt: boolean;
+    activeInteractionType: string | null;
+  };
   /** 통계 데이터 업데이트 */
   updateStats: (stats: Partial<PlayerStats>) => void;
+  /** UI 상태 업데이트 */
+  updateUI: (ui: Partial<GameState['ui']>) => void;
   /** 설정 업데이트 */
   updateSettings: (settings: Partial<GameState['settings']>) => void;
   /** 초기 데이터 설정 */
@@ -34,9 +41,17 @@ export const useGameStore = create<GameState>((set) => ({
     screenShake: true,
     highPerformance: false,
   },
+  ui: {
+    showInteractionPrompt: false,
+    activeInteractionType: null,
+  },
   
   updateStats: (newStats) => set((state) => ({
     stats: state.stats ? { ...state.stats, ...newStats } : (newStats as PlayerStats),
+  })),
+
+  updateUI: (newUi) => set((state) => ({
+    ui: { ...state.ui, ...newUi }
   })),
 
   updateSettings: (newSettings) => set((state) => ({

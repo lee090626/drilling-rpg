@@ -11,7 +11,7 @@ export function useGameWorker(
   isReadyRef: React.MutableRefObject<boolean>,
   loadAssetsAndTransfer: (sendToWorker: (type: string, payload?: any, transfer?: Transferable[]) => void) => void,
   handleTravelDimension: () => void,
-  handleOpenGuide: (target: any) => void
+  handleOpenModal: (target: any) => void
 ) {
   const workerRef = useRef<Worker | null>(null);
 
@@ -51,7 +51,8 @@ export function useGameWorker(
         }
       } else if (type === 'SYNC_UI' && payload) {
         // Zustand Update
-        useGameStore.getState().updateStats(payload.stats);
+        if (payload.stats) useGameStore.getState().updateStats(payload.stats);
+        if (payload.ui) useGameStore.getState().updateUI(payload.ui);
       } else if (type === 'ENGINE_READY') {
         setIsEngineReady(true);
         console.log('[Main] Engine is ready to render!');
@@ -71,7 +72,10 @@ export function useGameWorker(
         alert(`Dimension ${payload.dimension}에 도착했습니다!`);
       } else if (type === 'TUTORIAL_TRIGGER') {
         // 워커로부터 튜토리얼 발생 신호를 받으면 가이드 창을 엶
-        handleOpenGuide('isGuideOpen');
+        handleOpenModal('isGuideOpen');
+      } else if (type === 'OPEN_MODAL' && payload) {
+        // 워커에서 상호작용 성공 시 모달 오픈 신호를 보냄
+        handleOpenModal(payload.target);
       } else if (type === 'SHOW_TOAST' && payload) {
         // 워커로부터 토스트 알림 요청을 받음
         useGameStore.getState().addToast(payload.message, payload.type, payload.duration);
@@ -103,7 +107,7 @@ export function useGameWorker(
       globalWorker = null; // 다음 Mount 시 새 Worker가 생성되도록 초기화
       clearTimeout(timeoutId);
     };
-  }, [isClient, loadAssetsAndTransfer, sendToWorker, handleTravelDimension, handleOpenGuide]);
+  }, [isClient, loadAssetsAndTransfer, sendToWorker, handleTravelDimension, handleOpenModal]);
 
   return { sendToWorker, globalWorker };
 }
