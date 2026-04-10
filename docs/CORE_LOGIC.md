@@ -58,3 +58,13 @@ Drilling RPG의 모든 게임 엔진 로직은 워커 스레드(`game.worker.ts`
 7.  **Combat System**: 공격 판정 및 데미지 계산.
 8.  **Effect System**: 파티클 및 화면 흔들림 계산.
 9.  **Render System**: 최종 상태를 버퍼에 기록.
+
+---
+
+## 5. ECS 데이터 전송 레이아웃 (Data Layout)
+
+워커 스레드에서 메인 스레드로 전송되는 렌더링 버퍼(`Float32Array`)는 엔티티 수량에 비례하여 크기가 고정되며, 다음과 같은 SoA 기반 스트라이드 구조를 가집니다.
+
+- **Header (Index 0~15)**: `Entity Count`, `Timestamp`, 월드 카메라 좌표, 플레이어 위치, 화면 흔들림(Shake) 강도 등 전역 상태 기록.
+- **Body (Index 16~, Stride 8)**: 각 엔티티마다 8개의 슬롯을 점유합니다.
+    - 슬롯: `[Entity ID, Pos X, Pos Y, Rotation, Sprite ID, State, Type, Animation]`

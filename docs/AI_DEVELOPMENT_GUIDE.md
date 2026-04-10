@@ -62,6 +62,20 @@ AI는 작업의 투명성과 이력 관리를 위해 다음과 같은 GitHub 워
   - 관련 이슈 번호를 명시하여 (`Closes #1`) 자동 링크가 되도록 합니다.
   - 시각적 변경이 있는 경우 스크린샷이나 녹화본 경로를 포함합니다.
 
+## 7. 📝 코딩 및 네이밍 규칙 (Coding & Naming Conventions)
+
+개인 프로젝트의 일관성을 유지하기 위해 AI는 다음 규칙을 절대적으로 준수합니다.
+
+- **디렉토리**: 소문자 및 `kebab-case` (예: `test-benchmark`, `game-engine`)
+- **일반 로직 파일 (.ts)**: `camelCase` (예: `physicsSystem.ts`, `mineralData.ts`)
+- **React 컴포넌트 파일 (.tsx)**: `PascalCase` (예: `InventoryWindow.tsx`, `GameEngine.tsx`)
+- **Next.js 라우팅 특수 파일**: 소문자 (예: `page.tsx`, `layout.tsx`)
+- **함수 및 변수**: `camelCase` (`handleUpgrade`, `totalGold`)
+- **타입 및 인터페이스**: `PascalCase` (`interface PlayerStats`), 객체 구조 정의 시 `interface` 우선 사용
+- **상수**: `SCREAMING_SNAKE_CASE` (`MAX_ENTITIES`)
+- **타입 가이드라인**: `any` 타입 사용을 지양하고, 불확실할 경우 `unknown`을 사용한 후 타입 가드를 거칩니다. TypeScript `enum` 대신 `const enum` 또는 `union types`를 권장합니다.
+- **스타일 가이드**: 조기 리턴(Early Return) 패턴을 적극 사용합니다.
+
 ---
 
 > [!TIP]

@@ -73,11 +73,13 @@ graph TD
 
 ---
 
-## 5. 데이터 흐름 및 동기화
+## 5. 데이터 흐름 및 상태 동기화 (State & Sync)
 
-1.  **Input**: 메인 스레드에서 수집된 키 입력 및 조이스틱 데이터는 즉시 워커로 전송됩니다.
-2.  **Triple Buffering Sync**: 워커는 매 프레임 가시 영역 내의 엔티티 SoA 데이터를 `Interleaved Float32Array`에 패킹하여 메인으로 보냅니다. 메인 스레드는 이를 보간(Interpolation)하여 144Hz 이상의 부드러운 화면을 구현합니다.
-3.  **UI Throttled Sync**: 인벤토리, 레벨 등 저빈도 UI 데이터는 5Hz(200ms) 주기로 Zustand 스토어를 통해 동기화됩니다.
+게임의 모든 상태는 성격에 따라 메인 스레드(`Zustand`)와 워커 스레드(`ECS`) 두 곳으로 나뉘며 `postMessage` 프로토콜을 통해 비동기 통신합니다.
+
+1.  **Input 및 Action**: 메인 스레드에서 수집된 키 입력 및 비즈니스 액션(구매, 장착 등)은 워커로 전송되어 엔진에서 유효성을 검증하고 최종 상태를 결정합니다.
+2.  **고성능 렌더링 동기화**: 워커는 매 프레임 엔티티 SoA 데이터를 `Interleaved Float32Array`(트리플 버퍼링)에 패킹하여 메인으로 보냅니다.
+3.  **UI 동기화 (Throttling)**: HP, 골드 등 저빈도 UI 통계(`PlayerStats`)는 5Hz(200ms) 주기로 Zustand 스토어를 통해 동기화되어 React 리렌더링 부하를 최소화합니다.
 
 ---
 

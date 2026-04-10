@@ -46,16 +46,16 @@
 
 ## 🚀 시작하기 (Getting Started)
 
-### **기본 실행**
+프로젝트를 로컬에서 실행하기 위한 단계입니다. 에셋 관련 추가 작업이 필요하다면 `docs/ASSET_GUIDE.md`를 참고하세요.
+
 ```bash
-# 의존성 설치
+# 1. 의존성 설치
 npm install
 
-# 에셋 최적화 및 좌표 동기화 (최초 실행 시 필수)
+# 2. 에셋 최적화 및 좌표 동기화 (최초 실행 시 필수)
 npm run optimize:atlas
-npm run update:atlas-map
 
-# 개발 서버 실행
+# 3. 개발 서버 실행
 npm run dev
 ```
 
@@ -67,11 +67,11 @@ npm run dev
 
 프로젝트의 심층적인 구조와 개발 가이드는 `docs/` 디렉토리에서 확인할 수 있습니다.
 
-- [📖 용어 사전 (Glossary)](docs/GLOSSARY.md)
-- [🏛️ 시스템 아키텍처 (Architecture)](docs/ARCHITECTURE.md)
-- [⚙️ 게임 엔진 로직 (Engine)](docs/ENGINE.md)
-- [💾 ECS 데이터 명세 (Data Layout)](docs/ECS_DATA_LAYOUT.md)
-- [👷 개발자 가이드 (Development)](docs/DEVELOPMENT.md)
+- [📖 용어 사전](docs/GLOSSARY.md)
+- [🏛️ 시스템 아키텍처](docs/ARCHITECTURE.md)
+- [⚙️ 핵심 게임 로직](docs/CORE_LOGIC.md)
+- [🎨 렌더링 파이프라인](docs/RENDERING_PIPELINE.md)
+- [🤖 AI 개발 가이드](docs/AI_DEVELOPMENT_GUIDE.md)
 
 ---
 
