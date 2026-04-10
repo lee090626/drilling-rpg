@@ -8,36 +8,36 @@ export const tutorialSystem = (world: GameWorld) => {
   const { player } = world;
   const { stats } = player;
 
-  // 튜토리얼 트리거 상태 관리 (이미 트리거된 가이드는 무시)
+  // 튜토리얼 트리거 상태 관리
   // stats 객체에 tutorialFlags 필드가 없을 수 있으므로 안전하게 처리
   if (!stats.tutorialFlags) {
     (stats as any).tutorialFlags = {};
   }
 
-  const flags = (stats as any).tutorialFlags;
+  const tFlags = (stats as any).tutorialFlags;
 
   // 1. 환영 인사 및 조작법 (게임 시작 즉시)
-  if (!flags.welcome && stats.maxDepthReached < 5) {
+  if (!tFlags.welcome && stats.maxDepthReached < 5) {
+    tFlags.welcome = true;
     triggerGuide(world, 'guide_welcome');
-    flags.welcome = true;
   }
 
   // 2. 첫 광물 채굴 시 (인벤토리 및 제련 안내)
-  if (!flags.first_mining && stats.discoveredMinerals.length >= 1) {
+  if (!tFlags.first_mining && stats.discoveredMinerals.length >= 1) {
+    tFlags.first_mining = true;
     triggerGuide(world, 'guide_mining');
-    flags.first_mining = true;
   }
 
   // 3. 일정 깊이 도달 (업그레이드 및 연구 안내)
-  if (!flags.deeper_depth && stats.maxDepthReached >= 50) {
+  if (!tFlags.deeper_depth && stats.maxDepthReached >= 50) {
+    tFlags.deeper_depth = true;
     triggerGuide(world, 'guide_upgrade');
-    flags.deeper_depth = true;
   }
   
   // 4. 아이템 가공 (제련) 시작 시 가이드
-  if (!flags.first_smelt && stats.activeSmeltingJobs.length > 0) {
+  if (!tFlags.first_smelt && stats.activeSmeltingJobs.length > 0) {
+    tFlags.first_smelt = true;
     triggerGuide(world, 'guide_refinery');
-    flags.first_smelt = true;
   }
 };
 
@@ -45,9 +45,11 @@ export const tutorialSystem = (world: GameWorld) => {
  * 메인 스레드로 가이드 트리거 메시지를 전송합니다.
  */
 function triggerGuide(world: GameWorld, guideId: string) {
-  console.log(`[Worker] Tutorial milestone reached: ${guideId}`);
-  self.postMessage({
-    type: 'TUTORIAL_TRIGGER',
-    payload: { guideId }
-  });
+  // 메인 스레드의 UI 가이드를 트리거함
+  if (typeof self !== 'undefined' && self.postMessage) {
+    self.postMessage({
+      type: 'TUTORIAL_TRIGGER',
+      payload: { guideId: guideId }
+    });
+  }
 }

@@ -22,31 +22,33 @@ export const statusSystem = (world: GameWorld, now: number) => {
     if (isExpired) return false;
 
     // --- 개별 효과 로직 (도트 대미지 등) ---
-    const elapsed = now - effect.startTime;
+    // startTime이 없을 경우를 대비하여 방어 코드 추가
+    const startTime = effect.startTime || now;
+    const elapsed = now - startTime;
     
     // BURN (화상): 0.5초마다 최대 HP의 2% 대미지
     if (effect.type === 'BURN') {
       const interval = 500;
-      const prevTicks = Math.floor((elapsed - 16.6) / interval); 
+      const prevTicks = Math.floor((elapsed - 20) / interval); 
       const currentTicks = Math.floor(elapsed / interval);
       
       if (currentTicks > prevTicks && currentTicks > 0) {
         const damage = Math.max(1, Math.floor(player.stats.maxHp * 0.02));
         player.stats.hp -= damage;
-        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, `-${damage}`, '#f97316');
+        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, "-" + damage, '#f97316');
       }
     }
 
     // POISON (독): 1초마다 고정 대미지 (차원 비례)
     if (effect.type === 'POISON') {
       const interval = 1000;
-      const prevTicks = Math.floor((elapsed - 16.6) / interval);
+      const prevTicks = Math.floor((elapsed - 20) / interval);
       const currentTicks = Math.floor(elapsed / interval);
       
       if (currentTicks > prevTicks && currentTicks > 0) {
         const damage = 5 + (player.stats.dimension * 2);
         player.stats.hp -= damage;
-        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, `-${damage}`, '#a855f7');
+        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, "-" + damage, '#a855f7');
       }
     }
 

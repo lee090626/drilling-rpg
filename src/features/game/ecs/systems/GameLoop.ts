@@ -193,6 +193,10 @@ export class GameLoop {
       console.error('[Worker Loop Error]', err);
     }
 
-    requestAnimationFrame(this.loop);
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(this.loop);
+    } else {
+      setTimeout(() => this.loop(performance.now()), 16);
+    }
   };
 }
