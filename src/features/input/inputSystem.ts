@@ -22,37 +22,37 @@ export const inputSystem = (world: GameWorld) => {
   const keys = world.keys;
   const mobile = world.mobileJoystick;
 
-  // 1. 세로 이동 입력 (우선순위 높음)
-  if (keys['arrowup'] || keys['w'] || keys['ArrowUp']) {
+  // 1. Vertical Movement (e.code)
+  if (keys['ArrowUp'] || keys['KeyW']) {
     world.intent.moveY = -1;
-  } else if (keys['arrowdown'] || keys['s'] || keys['ArrowDown']) {
+  } else if (keys['ArrowDown'] || keys['KeyS']) {
     world.intent.moveY = 1;
   }
-  // 모바일 조이스틱 세로 처리 (임계값 0.4 설정)
+  // Mobile joystick (y threshold 0.4)
   else if (mobile.active && Math.abs(mobile.y) > 0.4 && Math.abs(mobile.y) > Math.abs(mobile.x)) {
     world.intent.moveY = mobile.y > 0 ? 1 : -1;
   }
 
-  // 2. 가로 이동 입력
-  if (keys['arrowleft'] || keys['a'] || keys['ArrowLeft']) {
+  // 2. Horizontal Movement (e.code)
+  if (keys['ArrowLeft'] || keys['KeyA']) {
     world.intent.moveX = -1;
-  } else if (keys['arrowright'] || keys['d'] || keys['ArrowRight']) {
+  } else if (keys['ArrowRight'] || keys['KeyD']) {
     world.intent.moveX = 1;
   }
-  // 모바일 조이스틱 가로 처리
+  // Mobile joystick
   else if (mobile.active && Math.abs(mobile.x) > 0.4 && Math.abs(mobile.x) > Math.abs(mobile.y)) {
     world.intent.moveX = mobile.x > 0 ? 1 : -1;
   }
 
-  // 상하좌우 4방향 이동만 허용 (대각선 이동 방지)
+  // cardinal direction only
   if (world.intent.moveY !== 0) {
     world.intent.moveX = 0;
   }
 
-  // 3. 상호작용 의도 (스페이스바) 및 유물 사용 (Q)
-  if (keys[' '] || keys['Spacebar']) {
+  // 3. Action intent (Space) and Artifact usage (KeyQ)
+  if (keys['Space']) {
     world.intent.action = 'interact';
-  } else if (keys['q']) {
+  } else if (keys['KeyQ']) {
     world.intent.action = 'artifact';
   }
 };

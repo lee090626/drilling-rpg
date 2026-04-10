@@ -4,12 +4,12 @@ import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '@/shared/config/constants';
 import { renderEntities } from './entityRenderer';
 import { createHitFlashFilter, createRadialLightMask } from '../../lib/pixiEffects';
 
-// 타일 스프라이트 캐시 (좌표키 -> Sprite)
+// Tile sprite cache (coordinate key -> Sprite)
 const tileSpriteCache = new Map<string, PIXI.Sprite>();
 const tilePool: PIXI.Sprite[] = [];
 
 /**
- * PixiJS를 사용하여 게임의 모든 시각적 요소를 화면에 그리는 시스템입니다.
+ * System that renders all visual elements using PixiJS.
  */
 export const renderSystem = (
   world: GameWorld, 
@@ -30,11 +30,10 @@ export const renderSystem = (
   const { player, tileMap, entities, assets, shake } = world;
   const { stage, tileLayer, staticLayer, entityLayer, effectLayer, lightLayer, uiLayer } = layers;
 
-  // 1. 카메라 제어 (중앙 정렬 및 셰이크 효과)
+  // 1. Camera Control (centering and shake)
   const shakeX = (Math.random() - 0.5) * shake * 2;
   const shakeY = (Math.random() - 0.5) * shake * 2;
   
-  // Pixi 스테이지 좌표 업데이트 (중앙 정렬 방식)
   const centerX = app.screen.width / 2;
   const centerY = app.screen.height / 2;
   
@@ -44,13 +43,12 @@ export const renderSystem = (
     centerY - (player.visualPos.y * TILE_SIZE + TILE_SIZE / 2) * CAMERA_SCALE + shakeY
   );
 
-  // 2. 타일 렌더링 (뷰포트 최적화)
-  const startTileX = Math.floor(player.visualPos.x - 20); // 15 -> 20 (시야 확대 대응)
+  // 2. Tile Rendering (viewport optimization)
+  const startTileX = Math.floor(player.visualPos.x - 20);
   const endTileX = Math.ceil(player.visualPos.x + 20);
-  const startTileY = Math.floor(player.visualPos.y - 15); // 12 -> 15
+  const startTileY = Math.floor(player.visualPos.y - 15);
   const endTileY = Math.ceil(player.visualPos.y + 15);
 
-  // 현재 화면에 필요한 타일 키 세트
   const visibleTileKeys = new Set<string>();
 
   for (let y = startTileY; y <= endTileY; y++) {
@@ -58,10 +56,9 @@ export const renderSystem = (
       let textureKey = '';
       let isBaseTile = false;
 
-      // 1. 베이스 캠프 레이아웃 렌더링 (지상 영역)
+      // 1. Base Camp Layout (surface area)
       if (y >= 0 && y < BASE_DEPTH && world.baseLayout) {
         const row = world.baseLayout[y];
-        // x 좌표 보정: baseLayout이 0부터 시작한다고 가정 (width: 30)
         if (row && x >= 0 && x < row.length) {
           const tileId = row[x];
           textureKey = `tile_base_${tileId}`;
@@ -69,7 +66,7 @@ export const renderSystem = (
         }
       }
 
-      // 2. 지하 타일 또는 베이스 캠프 타일 결정
+      // 2. Underground Tiles
       const tile = !isBaseTile ? tileMap.getTile(x, y) : null;
       if (!isBaseTile && (!tile || tile.type === 'empty')) continue;
       
@@ -78,9 +75,9 @@ export const renderSystem = (
       visibleTileKeys.add(key);
 
       if (!tileSpriteCache.has(key)) {
-        // 풀에서 가져오거나 새로 생성
         let sprite = tilePool.pop() || new PIXI.Sprite();
-        sprite.texture = textures[renderTextureKey] || PIXI.Texture.WHITE;
+        // Fallback texture lookup
+        sprite.texture = textures[renderTextureKey] || textures[renderTextureKey.replace('tile_', '')] || PIXI.Texture.WHITE;
         sprite.width = TILE_SIZE;
         sprite.height = TILE_SIZE;
         sprite.position.set(x * TILE_SIZE, y * TILE_SIZE);
@@ -92,7 +89,7 @@ export const renderSystem = (
     }
   }
 
-  // 화면 밖으로 나간 타일 스프라이트 회수 (Pooling)
+  // Pooled sprite recycling
   for (const [key, sprite] of tileSpriteCache.entries()) {
     if (!visibleTileKeys.has(key)) {
       tileLayer.removeChild(sprite);
@@ -101,18 +98,14 @@ export const renderSystem = (
     }
   }
 
-  // 0. 플레이어 및 일반 엔티티 렌더링
+  // Main render pass
   renderEntities(world, layers, now, textures);
+  updateDroppedItems(world, layers, textures);
   updateMiningTarget(world, layers);
   updateParticlesAndTexts(world, layers);
-
-  // 5. 동적 조명 효과 (LightingFilter GPU 처리)
   updateLighting(world, layers, app, now, lightingFilter);
 };
 
-/**
- * 파티클 및 플로팅 텍스트 업데이트
- */
 const particleSpritePool: PIXI.Graphics[] = [];
 const activeParticleSprites = new Map<any, PIXI.Graphics>();
 const textSpritePool: PIXI.Text[] = [];
@@ -122,7 +115,7 @@ function updateParticlesAndTexts(world: GameWorld, layers: any) {
   const { effectLayer } = layers;
   const { particles, floatingTexts } = world;
 
-  // 파티클 처리
+  // Particles
   particles.forEach((p, i) => {
     let sprite = activeParticleSprites.get(p);
     if (p.active) {
@@ -142,17 +135,16 @@ function updateParticlesAndTexts(world: GameWorld, layers: any) {
     }
   });
 
-  // 플로팅 텍스트 처리
+  // Floating Texts
   floatingTexts.forEach((ft, i) => {
     let sprite = activeTextSprites.get(ft);
     if (ft.active) {
       const isCrit = ft.text.includes('Crit');
-      const isGold = ft.text.includes('G') || ft.color === '#fbbf24'; // Gold color
+      const isGold = ft.text.includes('G') || ft.color === '#fbbf24';
       const isBlock = ft.text === 'BLOCK!';
       
       if (!sprite) {
         sprite = textSpritePool.pop() || new PIXI.Text({ text: ft.text });
-        
         sprite.style.fontFamily = 'Russo One';
         sprite.style.fontWeight = '900';
         sprite.style.align = 'center';
@@ -161,27 +153,25 @@ function updateParticlesAndTexts(world: GameWorld, layers: any) {
         activeTextSprites.set(ft, sprite);
       }
       
-      // 재사용 시에도 스타일/텍스트 최신화
       sprite.text = ft.text;
       
-      // 프리미엄 색상 및 스타일 적용
       if (isCrit) {
-        sprite.style.fill = 0xf87171; // Red
+        sprite.style.fill = 0xf87171;
         sprite.style.fontSize = 28;
         sprite.style.stroke = { color: 0x000000, width: 4 };
         sprite.style.dropShadow = { alpha: 0.6, blur: 5, color: 0x000000, distance: 4, angle: Math.PI / 6 };
       } else if (isGold) {
-        sprite.style.fill = 0xfacc15; // Gold Yellow
+        sprite.style.fill = 0xfacc15;
         sprite.style.fontSize = 20;
         sprite.style.stroke = { color: 0x422006, width: 3 };
         sprite.style.dropShadow = { alpha: 0.4, blur: 3, color: 0x000000, distance: 2, angle: Math.PI / 6 };
       } else if (isBlock) {
-        sprite.style.fill = 0x3b82f6; // Blue (사용자 요청)
+        sprite.style.fill = 0x3b82f6;
         sprite.style.fontSize = 22;
         sprite.style.stroke = { color: 0x1e3a8a, width: 3 };
         sprite.style.dropShadow = { alpha: 0.3, blur: 2, color: 0x000000, distance: 2, angle: Math.PI / 6 };
       } else {
-        sprite.style.fill = 0xffffff; // White
+        sprite.style.fill = 0xffffff;
         sprite.style.fontSize = 18;
         sprite.style.stroke = { color: 0x000000, width: 3 };
         sprite.style.dropShadow = false;
@@ -190,8 +180,7 @@ function updateParticlesAndTexts(world: GameWorld, layers: any) {
       sprite.alpha = ft.life;
       sprite.position.set(ft.x, ft.y);
       
-      // 데미지 팝업 애니메이션 (포물선과 어울리는 펄스)
-      const t = 1.0 - ft.life; // 0.0 ~ 1.0
+      const t = 1.0 - ft.life;
       const pop = Math.sin(t * Math.PI) * 0.4;
       const scale = (0.8 + pop) * (isCrit ? 1.5 : 1);
       sprite.scale.set(scale);
@@ -203,9 +192,6 @@ function updateParticlesAndTexts(world: GameWorld, layers: any) {
   });
 }
 
-/**
- * 채굴 타겟팅 표시 업데이트
- */
 function updateMiningTarget(world: GameWorld, layers: any) {
   const { uiLayer } = layers;
   const { intent, tileMap } = world;
@@ -227,14 +213,12 @@ function updateMiningTarget(world: GameWorld, layers: any) {
     const tile = tileMap.getTile(intent.miningTarget.x, intent.miningTarget.y);
     const hasTileHealth = tile && tile.maxHealth > 0 && tile.type !== 'empty' && tile.type !== 'wall' && tile.type !== 'portal';
 
-    // Pixi v8 표준 순서: 도형 선언 -> 스타일(선/면) 적용
     targetRect
       .rect(tx + 1, ty + 1, TILE_SIZE - 2, TILE_SIZE - 2)
       .fill({ color: 0xef4444, alpha: 0.15 })
       .stroke({ color: 0xef4444, width: 2, alignment: 0 });
 
     if (hasTileHealth) {
-      // 체력바 렌더링 (대상 타일 하단)
       const barW = TILE_SIZE - 12;
       const barH = 6;
       const barX = tx + 6;
@@ -242,17 +226,17 @@ function updateMiningTarget(world: GameWorld, layers: any) {
       
       const ratio = Math.max(0, Math.min(1, tile.health / tile.maxHealth));
 
-      // 체력바 배경
+      // Healthbar background
       targetRect
         .roundRect(barX - 1, barY - 1, barW + 2, barH + 2, 2)
         .fill({ color: 0x09090b, alpha: 0.8 })
         .stroke({ color: 0xffffff, alpha: 0.3, width: 1, alignment: 0 });
 
-      // 체력바 본체
+      // Healthbar fill
       if (ratio > 0) {
-        let hpColor = 0x10b981; // Emerald
-        if (ratio < 0.25) hpColor = 0xef4444; // Rose
-        else if (ratio < 0.5) hpColor = 0xf59e0b; // Amber
+        let hpColor = 0x10b981;
+        if (ratio < 0.25) hpColor = 0xef4444;
+        else if (ratio < 0.5) hpColor = 0xf59e0b;
 
         targetRect
           .roundRect(barX, barY, barW * ratio, barH, 1)
@@ -266,18 +250,14 @@ function updateMiningTarget(world: GameWorld, layers: any) {
   }
 }
 
-/**
- * 드랍된 아이템 렌더링 업데이트
- */
 const itemSpriteMap = new Map<number, PIXI.Sprite>();
 
 function updateDroppedItems(world: GameWorld, layers: any, textures: any) {
   const { effectLayer } = layers;
   const { droppedItems } = world;
   
-  const currentItemIds = new Set(droppedItems.map(item => (item as any).id || (item.x + item.y))); // 임시 ID
+  const currentItemIds = new Set(droppedItems.map(item => (item as any).id || (item.x + item.y)));
 
-  // 기존 스프라이트 중 더 이상 존재하지 않는 아이템 제거
   for (const [id, sprite] of itemSpriteMap.entries()) {
     if (!currentItemIds.has(id)) {
       effectLayer.removeChild(sprite);
@@ -291,10 +271,11 @@ function updateDroppedItems(world: GameWorld, layers: any, textures: any) {
     let sprite = itemSpriteMap.get(id);
     
     if (!sprite) {
-      const texture = textures[`item_${item.type}`] || PIXI.Texture.WHITE;
+      // Texture lookup (multi-pattern support)
+      const texture = textures[`${item.type}_icon`] || textures[`item_${item.type}`] || textures[item.type] || PIXI.Texture.WHITE;
       sprite = new PIXI.Sprite(texture);
       sprite.anchor.set(0.5, 0.5);
-      const itemSize = TILE_SIZE * 0.5; // 30 -> TILE_SIZE 비례
+      const itemSize = TILE_SIZE * 0.5;
       sprite.width = itemSize;
       sprite.height = itemSize;
       effectLayer.addChild(sprite);
@@ -305,38 +286,31 @@ function updateDroppedItems(world: GameWorld, layers: any, textures: any) {
   });
 }
 
-/**
- * [PixiJS v8] GPU 기반의 고성능 동적 조명 시스템
- */
 function updateLighting(world: GameWorld, layers: any, app: PIXI.Application, now: number, lightingFilter: any) {
   if (!lightingFilter) return;
 
   const { player, droppedItems } = world;
-
-  // 조광 계산을 위한 광원 데이터 수집 (Max 16)
   const lights: number[] = [];
   
-  // 1. 플레이어 조명
+  // 1. Player light
   const flicker = Math.sin(now / 150) * 3;
   lights.push(
     player.visualPos.x * TILE_SIZE + TILE_SIZE / 2, 
     player.visualPos.y * TILE_SIZE + TILE_SIZE / 2, 
     TILE_SIZE * 5.5 + flicker, 
-    1.0 // Intensity
+    1.0
   );
 
-  // 2. 주변 환경 광원 (드랍된 아이템 등 - 예: 용암 파편)
+  // 2. Environmental lights
   droppedItems.forEach(item => {
-    if (lights.length < 64 && (item.type === 'iron' || item.type === 'gold')) { // TEMP: 예시 광원
+    if (lights.length < 64 && (item.type === 'iron' || item.type === 'gold')) {
         lights.push(item.x, item.y, TILE_SIZE * 2, 0.5);
     }
   });
 
-  // 어둠 농도 계산 (깊이에 따라 깊어짐)
   const depthFactor = Math.min(1.0, player.stats.depth / 800);
   const darkness = 0.45 + (depthFactor * 0.5);
 
-  // 필터 유니폼 업데이트
   lightingFilter.updateUniforms(
     darkness,
     layers.stage.scale.x,

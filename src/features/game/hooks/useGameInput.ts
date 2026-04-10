@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import { GameWorld } from '@/entities/world/model';
 
 const SHORTCUTS: Record<string, keyof GameWorld['ui']> = {
-  'i': 'isInventoryOpen',
-  'c': 'isStatusOpen',
-  'b': 'isEncyclopediaOpen',
-  'v': 'isElevatorOpen',
-  'r': 'isLaboratoryOpen',
-  'h': 'isGuideOpen',
-  's': 'isSettingsOpen'
+  'KeyI': 'isInventoryOpen',
+  'KeyC': 'isStatusOpen',
+  'KeyB': 'isEncyclopediaOpen',
+  'KeyV': 'isElevatorOpen',
+  'KeyR': 'isLaboratoryOpen',
+  'KeyH': 'isGuideOpen',
+  'KeyS': 'isSettingsOpen'
 };
 
 export function useGameInput(
@@ -19,43 +19,44 @@ export function useGameInput(
   handleClose: (modal: keyof GameWorld['ui']) => void,
   sendToWorker: (type: string, payload?: any) => void
 ) {
-  // 입력 상태를 캐싱하여 React 리렌더링을 방지 (Ref 활용)
   const keyStateRef = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
+      // Ignore game shortcuts if system modifiers (Cmd, Ctrl, Alt) are active
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const code = e.code;
       
-      if (key === 'escape') {
+      if (code === 'Escape') {
         if (isAnyModalOpen()) closeAllModals();
         else handleOpen('isSettingsOpen');
         return;
       }
 
-      const target = SHORTCUTS[key];
+      const target = SHORTCUTS[code];
       if (target) {
         if (isAnyModalOpen()) {
-           if (worldRef.current.ui[target]) handleClose(target);
+          if (worldRef.current.ui[target]) handleClose(target);
         } else {
-           handleOpen(target);
+          handleOpen(target);
         }
         return;
       }
-      
 
       if (isAnyModalOpen()) return;
       
-      if (!keyStateRef.current[key]) {
-        keyStateRef.current[key] = true;
-        sendToWorker('INPUT', { keys: { [key]: true } });
+      if (!keyStateRef.current[code]) {
+        keyStateRef.current[code] = true;
+        sendToWorker('INPUT', { keys: { [code]: true } });
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      if (keyStateRef.current[key]) {
-        keyStateRef.current[key] = false;
-        sendToWorker('INPUT', { keys: { [key]: false } });
+      const code = e.code;
+      if (keyStateRef.current[code]) {
+        keyStateRef.current[code] = false;
+        sendToWorker('INPUT', { keys: { [code]: false } });
       }
     };
 

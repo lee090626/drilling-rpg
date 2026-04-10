@@ -4,42 +4,43 @@ import { TILE_SIZE } from '@/shared/config/constants';
 import { createParticles } from '@/shared/lib/effectUtils';
 import { showToast } from './toastSystem';
 
-// 아이템 획득 합산 관리를 위한 버퍼 상태 (모듈 레벨)
+// Buffer for item pickup aggregation
 const pickupBuffer: Record<string, number> = {};
 let lastPickupEventTime = 0;
-const AGGREGATION_WINDOW = 500; // 0.5초 동안 수집
+const AGGREGATION_WINDOW = 1200; // 1.2s aggregation window
 
 /**
- * 게임 내 비주얼 효과(파티클, 플로팅 텍스트)의 생명 주기와 물리적 변화를 관리하는 시스템입니다.
+ * System managing visual effects (particles, floating text) and physics lifecycle.
  */
 export const effectSystem = (world: GameWorld, deltaTime: number) => {
   const { particles, floatingTexts } = world;
   const now = Date.now();
 
-  // 0. 아이템 합산 토스트 처리
+  // 0. Handle item acquisition aggregation toast
   if (lastPickupEventTime > 0 && now - lastPickupEventTime > AGGREGATION_WINDOW) {
     const entries = Object.entries(pickupBuffer);
     if (entries.length > 0) {
-      // 가장 많이 획득한 아이템 위주로 메시지 구성 (또는 전체 나열)
       const message = entries
         .map(([type, count]) => `${type.toUpperCase()} x${count}`)
         .join(', ');
       
       showToast(`${message} Acquired!`, 'info', 2000);
       
-      // 버퍼 초기화
-      for (const key in pickupBuffer) delete pickupBuffer[key];
+      // Reset buffer
+      for (const key in pickupBuffer) {
+        delete pickupBuffer[key];
+      }
       lastPickupEventTime = 0;
     }
   }
 
-  // 0. 화면 흔들림(Shake) 감쇄
+  // 0. Shake reduction
   if (world.shake > 0) {
     world.shake *= Math.pow(0.8, deltaTime / 16.6);
     if (world.shake < 0.1) world.shake = 0;
   }
 
-  // 1. 파티클(파편) 업데이트
+  // 1. Particle update
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
     if (!p.active) continue;
@@ -55,7 +56,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     }
   }
 
-  // 2. 플로팅 텍스트 업데이트
+  // 2. Floating text update
   for (let i = 0; i < floatingTexts.length; i++) {
     const ft = floatingTexts[i];
     if (!ft.active) continue;
@@ -95,7 +96,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     }
   }
 
-  // 3. 드랍된 아이템(물리 및 자석 효과) 업데이트
+  // 3. Dropped item update
   for (let i = world.droppedItems.length - 1; i >= 0; i--) {
     const item = world.droppedItems[i];
     const dtSeconds = deltaTime / 1000;
@@ -137,19 +138,19 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
       const pickupRadius = hasMagnet ? 80 : 30;
 
       if (dist < pickupRadius) {
-        // 1. 인벤토리에 추가
+        // Collect
         if (world.player.stats.inventory[item.type] !== undefined) {
           world.player.stats.inventory[item.type]++;
         }
         
-        // 2. 합산 버퍼에 기록 및 파티클 생성
+        // Record for aggregation
         pickupBuffer[item.type] = (pickupBuffer[item.type] || 0) + 1;
         lastPickupEventTime = now;
         
-        // 획득 시 플레이어 위치에 반짝임 효과
-        createParticles(world, px - TILE_SIZE/2, py - TILE_SIZE/2, '#ffffff', 4);
+        // Visual feedback
+        createParticles(world, px - TILE_SIZE / 2, py - TILE_SIZE / 2, '#ffffff', 4);
         
-        // 3. 배열에서 제거
+        // Remove from world
         world.droppedItems.splice(i, 1);
         continue;
       } else {

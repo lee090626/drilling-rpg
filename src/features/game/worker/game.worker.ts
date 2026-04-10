@@ -4,18 +4,18 @@ import { LightingFilter } from '@/features/game/lib/LightingFilter';
 import { GameLoop } from '@/features/game/ecs/systems/GameLoop';
 import { handlePlayerAction } from '@/features/game/ecs/systems/ActionSystem';
 
-// PixiJS v8 Web Worker 지원을 위한 어댑터 설정
+// PixiJS v8 Web Worker adapter setup
 PIXI.DOMAdapter.set(PIXI.WebWorkerAdapter);
 
 /**
- * [Pixi Engine] GameEngineInstance 클래스
- * - 워커 내부에서 의존성 묶음 역할을 하며(DI), 메인 스레드와의 통신(Message Router)만 담당합니다.
+ * GameEngineInstance class
+ * Handles dependency injection and message routing within the worker.
  */
 class GameEngineInstance {
   world: GameWorld;
   pixiApp: PIXI.Application | null = null;
   
-  // Pixi 레이어 구조
+  // Pixi layer structure
   layers: {
     stage: PIXI.Container;
     tileLayer: PIXI.Container;
@@ -29,11 +29,9 @@ class GameEngineInstance {
   textures: { [key: string]: PIXI.Texture } = {};
   lightingFilter: LightingFilter | null = null;
   
-  // 트리플 버퍼 풀
   private readonly BUFFER_SIZE = (16 + 5000 * 8) * 4;
   bufferPool: ArrayBuffer[] = [];
 
-  // 메인 게임 루프 의존성
   private gameLoop: GameLoop | null = null;
 
   constructor() {
@@ -43,7 +41,7 @@ class GameEngineInstance {
     }
   }
 
-  /** 새로운 캔버스 제어권을 할당받음 및 Pixi 초기화 */
+  /** Initialize Pixi with new OffscreenCanvas */
   async setCanvas(newCanvas: OffscreenCanvas) {
     if (this.pixiApp) {
       this.pixiApp.destroy(true, { children: true, texture: true });
@@ -58,8 +56,6 @@ class GameEngineInstance {
       antialias: true,
       preference: 'webgl'
     });
-
-    console.log('[Worker] PixiJS Application initialized with OffscreenCanvas.');
 
     const stage = new PIXI.Container();
     const tileLayer = new PIXI.Container();
@@ -83,7 +79,6 @@ class GameEngineInstance {
 
     this.layers = { stage, tileLayer, staticLayer, entityLayer, effectLayer, lightLayer, uiLayer };
 
-    // 루프에 의존성 갱신
     if (this.gameLoop) {
       this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
     }
@@ -94,7 +89,6 @@ class GameEngineInstance {
   }
 
   async init(payload: any) {
-    console.log('[Worker] Initializing world...');
     const seed = payload.seed || 12345;
     const currentAssets = this.world.assets;
     const currentLayout = this.world.baseLayout;
@@ -111,7 +105,6 @@ class GameEngineInstance {
       this.world.player.pos = position;
       this.world.player.visualPos = { ...position };
       this.world.tileMap.deserialize(tileMap, stats.mapSeed, stats.dimension);
-      console.log('[Worker] Save data loaded.');
     }
 
     if (payload.offscreen) {
@@ -128,7 +121,6 @@ class GameEngineInstance {
         this.bufferPool
       );
       this.gameLoop.start();
-      console.log('[Worker] Loop started. Sending ENGINE_READY.');
       self.postMessage({ type: 'ENGINE_READY' });
     } else {
       this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
@@ -137,7 +129,6 @@ class GameEngineInstance {
 
   async updateAssetsFromAtlas(payload: any) {
     if (!this.world) return;
-    console.log('[Worker] Converting Atlas to Pixi Textures...');
     const { atlasData, layout, entities } = payload;
     
     this.world.baseLayout = layout;
@@ -151,17 +142,18 @@ class GameEngineInstance {
       await spritesheet.parse();
 
       for (const [name, texture] of Object.entries(spritesheet.textures)) {
-        PIXI.Assets.cache.set(name, texture);
-        PIXI.Assets.cache.set(`/${name}`, texture);
-        PIXI.Assets.cache.set(`./${name}`, texture);
-
         this.textures[name] = texture;
-        const cleanName = name.replace(/\.(png|webp)$/, '');
+        
+        // Normalized keys (lowercase, no extension)
+        const cleanName = name.replace(/\.(png|webp)$/i, '').toLowerCase();
+        this.textures[cleanName] = texture;
+        
+        // Prefix/Suffix support (tile_, item_, _icon)
         this.textures[`tile_${cleanName}`] = texture;
-
-        if (name.endsWith('Icon.png')) {
-          const itemName = cleanName.replace('Icon', '').toLowerCase();
+        if (cleanName.includes('icon')) {
+          const itemName = cleanName.replace('icon', '').replace(/[_]/g, '');
           this.textures[`item_${itemName}`] = texture;
+          this.textures[itemName] = texture;
         }
 
         if (name === 'Player.png') this.textures['player'] = texture;
@@ -191,12 +183,10 @@ class GameEngineInstance {
       }
     }
     
-    // 루프에 의존성 갱신
     if (this.gameLoop) {
       this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
     }
     
-    console.log(`[Worker] Atlas optimization complete. ${Object.keys(this.textures).length} textures cached.`);
     self.postMessage({ type: 'ENGINE_READY' });
   }
 
@@ -216,12 +206,10 @@ class GameEngineInstance {
   }
 
   handleAction(payload: any) {
-    // 순수 분리된 Action System으로 위임 (의존성 제공)
     handlePlayerAction(this.world, payload);
   }
 }
 
-// 싱글톤 인스턴스 생성
 const engine = new GameEngineInstance();
 
 self.addEventListener('message', (e: MessageEvent) => {

@@ -103,7 +103,7 @@ export function useGameWorker(
       globalWorker = null; // 다음 Mount 시 새 Worker가 생성되도록 초기화
       clearTimeout(timeoutId);
     };
-  }, [isClient, loadAssetsAndTransfer, sendToWorker, handleTravelDimension]);
+  }, [isClient, loadAssetsAndTransfer, sendToWorker, handleTravelDimension, handleOpenGuide]);
 
   return { sendToWorker, globalWorker };
 }
