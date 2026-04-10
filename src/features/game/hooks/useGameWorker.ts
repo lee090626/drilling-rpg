@@ -72,6 +72,9 @@ export function useGameWorker(
       } else if (type === 'TUTORIAL_TRIGGER') {
         // 워커로부터 튜토리얼 발생 신호를 받으면 가이드 창을 엶
         handleOpenGuide('isGuideOpen');
+      } else if (type === 'SHOW_TOAST' && payload) {
+        // 워커로부터 토스트 알림 요청을 받음
+        useGameStore.getState().addToast(payload.message, payload.type, payload.duration);
       }
     };
 
