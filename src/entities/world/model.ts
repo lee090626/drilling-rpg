@@ -143,6 +143,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         speedBoostUntil: 0,
         speedBoostMultiplier: 1.0,
       },
+      _statsSynced: false,
     },
     entities: new EntityManager(5000),
     staticEntities: [],

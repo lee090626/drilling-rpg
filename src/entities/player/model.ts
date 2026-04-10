@@ -25,6 +25,8 @@ export interface Player {
     /** 이동 속도 배율 (예: 1.2 = 20% 증가) */
     speedBoostMultiplier: number;
   };
+  /** 스탯 동기화 여부 (런타임 전용 플래그) */
+  _statsSynced?: boolean;
 }
 
 /**
@@ -76,4 +78,5 @@ export const createInitialPlayer = (seed: number): Player => ({
     speedBoostUntil: 0,
     speedBoostMultiplier: 1.0,
   },
+  _statsSynced: false,
 });
