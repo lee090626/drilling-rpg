@@ -1,24 +1,46 @@
 import { GameWorld } from '@/entities/world/model';
 import { MINERALS } from '@/shared/config/mineralData';
 import { TILE_SIZE } from '@/shared/config/constants';
+import { createParticles } from '@/shared/lib/effectUtils';
+import { showToast } from './toastSystem';
+
+// Buffer for item pickup aggregation
+const pickupBuffer: Record<string, number> = {};
+let lastPickupEventTime = 0;
+const AGGREGATION_WINDOW = 1200; // 1.2s aggregation window
 
 /**
- * 게임 내 비주얼 효과(파티클, 플로팅 텍스트)의 생명 주기와 물리적 변화를 관리하는 시스템입니다.
- * 
- * @param world - 게임 월드 상태 객체
- * @param deltaTime - 지난 프레임과의 시간 차이 (밀리초)
+ * System managing visual effects (particles, floating text) and physics lifecycle.
  */
 export const effectSystem = (world: GameWorld, deltaTime: number) => {
   const { particles, floatingTexts } = world;
+  const now = Date.now();
 
-  // 0. 화면 흔들림(Shake) 감쇄 (삭제된 로직 복원)
+  // 0. Handle item acquisition aggregation toast
+  if (lastPickupEventTime > 0 && now - lastPickupEventTime > AGGREGATION_WINDOW) {
+    const entries = Object.entries(pickupBuffer);
+    if (entries.length > 0) {
+      const message = entries
+        .map(([type, count]) => `${type.toUpperCase()} x${count}`)
+        .join(', ');
+      
+      showToast(`${message} Acquired!`, 'info', 2000);
+      
+      // Reset buffer
+      for (const key in pickupBuffer) {
+        delete pickupBuffer[key];
+      }
+      lastPickupEventTime = 0;
+    }
+  }
+
+  // 0. Shake reduction
   if (world.shake > 0) {
-    // 0.8배로 감쇄하여 더욱 짧고 깔끔한 진동 느낌을 줌
     world.shake *= Math.pow(0.8, deltaTime / 16.6);
     if (world.shake < 0.1) world.shake = 0;
   }
 
-  // 1. 파티클(파편) 업데이트
+  // 1. Particle update
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
     if (!p.active) continue;
@@ -26,30 +48,27 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     const dtFactor = deltaTime / 16.6;
     p.x += p.vx * dtFactor;
     p.y += p.vy * dtFactor;
-    p.vy += 0.2 * dtFactor; // 중력 가속도 적용
-    p.life -= 0.02 * dtFactor; // 프레임 레이트에 따른 수명 소모 조절
+    p.vy += 0.2 * dtFactor;
+    p.life -= 0.02 * dtFactor;
     
-    // 수명이 다한 파티클 비활성화 (풀반환)
     if (p.life <= 0) {
       p.active = false;
     }
   }
 
-  // 2. 플로팅 텍스트(데미지 표시 등) 업데이트
+  // 2. Floating text update
   for (let i = 0; i < floatingTexts.length; i++) {
     const ft = floatingTexts[i];
     if (!ft.active) continue;
 
     const dtFactor = deltaTime / 16.6;
     
-    // 포물선 이동 (vx, vy 적용)
     if (ft.vx !== undefined && ft.vy !== undefined) {
       ft.x += ft.vx * dtFactor;
       ft.y += ft.vy * dtFactor;
-      ft.vy += 0.25 * dtFactor; // 중력 적용
-      ft.vx *= 0.98; // 공기 저항
+      ft.vy += 0.25 * dtFactor;
+      ft.vx *= 0.98;
       
-      // 자석 효과: 자원/골드 텍스트는 일정 시간 후 플레이어에게 끌려감
       const isResource = ft.text.includes('G') || ft.text.includes('+');
       if (isResource && ft.life < 0.7) {
         const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
@@ -63,52 +82,43 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
           const force = 0.15 * dtFactor;
           ft.vx += (dx / dist) * force;
           ft.vy += (dy / dist) * force;
-          ft.life -= 0.01 * dtFactor; // 빨리 획득되는 느낌을 위해 수명 추가 소모
+          ft.life -= 0.01 * dtFactor;
         }
       }
     } else {
-      // 기본 직선 이동 (하위 호환)
       ft.y -= 1 * dtFactor;
     }
     
-    ft.life -= 0.012 * dtFactor; // 서서히 투명해지며 소멸 (약간 더 빠르게)
+    ft.life -= 0.012 * dtFactor;
 
-    // 수명이 다한 텍스트 비활성화 (풀반환)
     if (ft.life <= 0) {
       ft.active = false;
     }
   }
 
-  // 3. 드랍된 아이템(물리 및 자석 효과) 업데이트
+  // 3. Dropped item update
   for (let i = world.droppedItems.length - 1; i >= 0; i--) {
     const item = world.droppedItems[i];
     const dtSeconds = deltaTime / 1000;
     
-    // 생명 주기 증가
     item.life += dtSeconds;
 
     if (item.life < 0.5) {
-      // 0.5초 전: 물리 튕김 적용
-      item.vy += 0.4; // 중력
-      
+      item.vy += 0.4;
       const nextX = item.x + item.vx;
       const nextY = item.y + item.vy;
 
-      // 바닥 충돌 체크 (하단 중앙 기준)
       const tileX = Math.floor(nextX / TILE_SIZE);
       const tileY = Math.floor(nextY / TILE_SIZE);
       const tile = world.tileMap.getTile(tileX, tileY);
 
       if (tile && tile.type !== 'empty' && tile.type !== 'portal' && tile.type !== 'wall') {
-        // 바닥과 부딪히면 튕김
-        item.vy = -item.vy * 0.4; // 반발 계수
-        item.vx *= 0.8; // 바닥 마찰
-        
-        // 블록 내부로 パ고들지 않도록 y 보정
+        item.vy = -item.vy * 0.4;
+        item.vx *= 0.8;
         if (Math.abs(item.vy) > 0.5) {
           item.y = tileY * TILE_SIZE - 1;
         } else {
-          item.vy = 0; // 너무 튕기는 게 줄어들면 멈춤
+          item.vy = 0;
           item.y += item.vy; 
         }
         item.x += item.vx;
@@ -117,7 +127,6 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
         item.y = nextY;
       }
     } else {
-      // 0.5초 이후: 플레이어에게 자석처럼 끌려감
       const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
       const py = world.player.visualPos.y * TILE_SIZE + TILE_SIZE / 2;
       
@@ -125,31 +134,32 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
       const dy = py - item.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // 자석 드론이 장착되어 있으면 획득 및 끌어당기는 범위가 크게 증가
       const hasMagnet = world.player.stats.equippedDroneId === 'magnet_drone';
       const pickupRadius = hasMagnet ? 80 : 30;
 
-      if (dist < pickupRadius) { // 획득 거리
-        // 1. 인벤토리에 추가
+      if (dist < pickupRadius) {
+        // Collect
         if (world.player.stats.inventory[item.type] !== undefined) {
           world.player.stats.inventory[item.type]++;
         }
-        // 2. 알림 텍스트 표시 (요청에 의해 제거됨)
         
-        // 3. 배열에서 제거
+        // Record for aggregation
+        pickupBuffer[item.type] = (pickupBuffer[item.type] || 0) + 1;
+        lastPickupEventTime = now;
+        
+        // Visual feedback
+        createParticles(world, px - TILE_SIZE / 2, py - TILE_SIZE / 2, '#ffffff', 4);
+        
+        // Remove from world
         world.droppedItems.splice(i, 1);
         continue;
       } else {
-        // 플레이어를 향해 가속 (가속도 적용)
         const accel = hasMagnet ? 4.0 : 1.5;
         item.vx += (dx / dist) * accel;
         item.vy += (dy / dist) * accel;
-        
-        // 공기 저항/마찰력(Damping)을 주어 궤도 뱅글뱅글(Orbit) 무한 루프 현상 방지
         item.vx *= 0.85;
         item.vy *= 0.85;
 
-        // 최대 속도 제한
         const maxSpeed = hasMagnet ? 25 : 15;
         const speed = Math.sqrt(item.vx * item.vx + item.vy * item.vy);
         if (speed > maxSpeed) {

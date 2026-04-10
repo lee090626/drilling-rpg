@@ -8,6 +8,7 @@ import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 import { droneSystem } from './droneSystem';
+import { showToast } from './toastSystem';
 
 /**
  * 플레이어의 채굴 로직을 관리하는 메인 시스템입니다.
@@ -173,7 +174,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     if (tileMastery.exp >= nextExp) {
       tileMastery.level++;
       tileMastery.exp -= nextExp;
-      createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `${type.toUpperCase()} Mastery Level Up: ${tileMastery.level}!!`, '#eab308');
+      showToast(`${type.toUpperCase()} Mastery Level Up: ${tileMastery.level}!!`, 'success');
     }
   }
 

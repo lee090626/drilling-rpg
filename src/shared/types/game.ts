@@ -296,6 +296,25 @@ export interface PlayerStats {
 }
 
 /**
+ * 토스트 알림의 유형을 정의합니다.
+ */
+export type ToastType = 'success' | 'info' | 'warning' | 'error';
+
+/**
+ * 화면에 표시될 토스트 알림 메시지 정보입니다.
+ */
+export interface ToastMessage {
+  /** 유니크 ID */
+  id: string;
+  /** 표시될 메시지 */
+  message: string;
+  /** 알림 타입 */
+  type: ToastType;
+  /** 표시 지속 시간 (ms, 기본 3000) */
+  duration?: number;
+}
+
+/**
  * 상태 이상의 종류를 정의합니다.
  */
 export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE';

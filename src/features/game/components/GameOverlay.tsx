@@ -12,6 +12,7 @@ import Encyclopedia from '@/widgets/encyclopedia/Encyclopedia';
 import RefineryWindow from '@/widgets/refinery/RefineryWindow';
 import Laboratory from '@/widgets/laboratory/Laboratory';
 import GuideWindow from '@/widgets/guide/GuideWindow';
+import ToastContainer from '@/shared/ui/ToastContainer';
 
 interface GameOverlayProps {
   worldRef: React.MutableRefObject<GameWorld>;
@@ -116,7 +117,8 @@ export default function GameOverlay({
            </div>
         </div>
       )}
-
+      
+      <ToastContainer />
     </div>
   );
 }

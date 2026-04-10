@@ -14,12 +14,18 @@ interface GameState {
     screenShake: boolean;
     highPerformance: boolean;
   };
+  /** 토스트 알림 큐 */
+  toasts: import('../types/game').ToastMessage[];
   /** 통계 데이터 업데이트 */
   updateStats: (stats: Partial<PlayerStats>) => void;
   /** 설정 업데이트 */
   updateSettings: (settings: Partial<GameState['settings']>) => void;
   /** 초기 데이터 설정 */
-  setStats: (stats: PlayerStats) => void;
+  setStats: (stats: import('../types/game').PlayerStats) => void;
+  /** 토스트 추가 */
+  addToast: (message: string, type: import('../types/game').ToastType, duration?: number) => void;
+  /** 토스트 제거 */
+  removeToast: (id: string) => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -38,6 +44,16 @@ export const useGameStore = create<GameState>((set) => ({
   })),
 
   setStats: (stats) => set({ stats }),
+  
+  toasts: [],
+  addToast: (message, type, duration = 3000) => set((state) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    const newToast = { id, message, type, duration };
+    return { toasts: [...state.toasts, newToast] };
+  }),
+  removeToast: (id) => set((state) => ({
+    toasts: state.toasts.filter((t) => t.id !== id),
+  })),
 }));
 
 /**
