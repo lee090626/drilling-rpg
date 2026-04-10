@@ -11,6 +11,7 @@ export const getResearchBonuses = (stats: PlayerStats) => {
     moveSpeed: 1,   // 기본 1 (배수)
     luck: 1,        // 기본 1 (배수)
     goldBonus: 1,   // 기본 1 (배수)
+    masteryExp: 1,  // 기본 1 (배수)
   };
 
   if (!stats.unlockedResearchIds) return bonuses;
@@ -34,6 +35,9 @@ export const getResearchBonuses = (stats: PlayerStats) => {
         break;
       case 'goldBonus':
         bonuses.goldBonus += node.effect.value;
+        break;
+      case 'masteryExp':
+        bonuses.masteryExp += node.effect.value;
         break;
     }
   });

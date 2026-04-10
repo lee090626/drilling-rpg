@@ -5,7 +5,7 @@ import { DRILLS } from '../config/drillData';
  * 숙련도 레벨에 따른 다음 레벨 필요 경험치 계산
  */
 export const getNextLevelExp = (level: number): number => {
-  return Math.floor(100 * Math.pow(1.2, level - 1));
+  return Math.floor(100 + Math.pow(1.13, level - 1));
 };
 
 /**

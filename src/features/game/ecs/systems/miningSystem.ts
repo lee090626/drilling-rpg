@@ -170,7 +170,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
       player.stats.tileMastery[type as string] = tileMastery;
     }
     
-    tileMastery.exp += 10;
+    tileMastery.exp += Math.floor(10 * researchBonuses.masteryExp);
     const nextExp = getNextLevelExp(tileMastery.level);
     if (tileMastery.exp >= nextExp) {
       tileMastery.level++;
