@@ -44,8 +44,20 @@ export const physicsSystem = (world: GameWorld, now: number) => {
     const hasSpeedBuff = player.stats.activeEffects.some(e => e.type === 'BUFF_SPEED');
     if (hasSpeedBuff) statusSpeedMult *= 1.5;
   }
+  
+  // 마스터리 돌파: 일시적 속도 버프 처리
+  let masterySpeedMult = 1.0;
+  if (now < player.buffs.speedBoostUntil) {
+    masterySpeedMult = player.buffs.speedBoostMultiplier;
+  }
 
-  const divisor = (baseSpeedMult * drillSpeedMult * statusSpeedMult + runeSpeedMult) || 1;
+  // 마스터리 돌파: 영구 속도 보너스 (Dirt Lv.200)
+  let permanentSpeedMult = 1.0;
+  if (player.stats.unlockedMasteryPerks?.includes('perk_dirt_200')) {
+    permanentSpeedMult = 1.1; // 10% 증가
+  }
+
+  const divisor = (baseSpeedMult * drillSpeedMult * statusSpeedMult * masterySpeedMult * permanentSpeedMult + runeSpeedMult) || 1;
   const MOVEMENT_DELAY = MOVEMENT_DELAY_MS / divisor; 
   
   // 시각적 보간 속도 설정

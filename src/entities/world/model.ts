@@ -131,6 +131,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         equipmentStates: {},
         unlockedResearchIds: ['root'],
         tileMastery: {},
+        unlockedMasteryPerks: [],
       },
       pos: { x: 15, y: 8 },
       velocity: { x: 0, y: 0 },
@@ -138,6 +139,10 @@ export const createInitialWorld = (seed: number): GameWorld => {
       isDrilling: false,
       lastHitTime: 0,
       lastAttackTime: 0,
+      buffs: {
+        speedBoostUntil: 0,
+        speedBoostMultiplier: 1.0,
+      },
     },
     entities: new EntityManager(5000),
     staticEntities: [],

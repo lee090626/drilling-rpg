@@ -402,6 +402,32 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                         <span className="text-zinc-500">Damage Buff</span>
                         <span className="text-emerald-400">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
                       </div>
+                      
+                      {/* BREAKTHROUGH BADGES */}
+                      <div className="flex justify-between items-center gap-1 mt-1">
+                        {[50, 100, 150, 200].map(level => {
+                          const isUnlocked = mastery.level >= level;
+                          const perkId = `perk_${tileKey}_${level}`;
+                          const hasPerk = stats.unlockedMasteryPerks?.includes(perkId);
+                          
+                          return (
+                            <div 
+                              key={level}
+                              className={`
+                                flex-1 flex items-center justify-center h-5 rounded-md border text-[8px] font-bold transition-all
+                                ${isUnlocked 
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]' 
+                                  : 'bg-zinc-900 border-zinc-800 text-zinc-600'
+                                }
+                              `}
+                              title={`${level} Breakthrough: ${tileKey === 'dirt' ? (level === 50 ? 'Speed+' : level === 100 ? 'HP Recov' : level === 150 ? 'Speed++' : 'Global Speed') : 'Locked'}`}
+                            >
+                              {isUnlocked ? '✨' : level}
+                            </div>
+                          );
+                        })}
+                      </div>
+
                       <div className="flex justify-between items-center text-[8px] font-bold tabular-nums">
                         <span className="text-zinc-600">EXPERIENCE</span>
                         <span className="text-zinc-400">{mastery.exp} <span className="text-zinc-700">/</span> {nextExp}</span>

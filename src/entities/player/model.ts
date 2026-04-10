@@ -18,6 +18,13 @@ export interface Player {
   lastHitTime: number;
   /** 마지막 공격 시간 */
   lastAttackTime: number;
+  /** 런타임 버프 및 일시적 상태 관리 */
+  buffs: {
+    /** 이동 속도 증가 만료 시간 (타임스탬프) */
+    speedBoostUntil: number;
+    /** 이동 속도 배율 (예: 1.2 = 20% 증가) */
+    speedBoostMultiplier: number;
+  };
 }
 
 /**
@@ -57,6 +64,7 @@ export const createInitialPlayer = (seed: number): Player => ({
     equipmentStates: {},
     tileMastery: {},
     unlockedResearchIds: ['root'],
+    unlockedMasteryPerks: [],
   },
   pos: { x: 15, y: 8 }, // 보스 센터(x=15) 근처에서 시작
   velocity: { x: 0, y: 0 },
@@ -64,4 +72,8 @@ export const createInitialPlayer = (seed: number): Player => ({
   isDrilling: false,
   lastHitTime: 0,
   lastAttackTime: 0,
+  buffs: {
+    speedBoostUntil: 0,
+    speedBoostMultiplier: 1.0,
+  },
 });

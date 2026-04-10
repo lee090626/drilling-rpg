@@ -9,6 +9,7 @@ import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
 import { droneSystem } from './droneSystem';
 import { showToast } from './toastSystem';
+import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 
 /**
  * 플레이어의 채굴 로직을 관리하는 메인 시스템입니다.
@@ -175,6 +176,38 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
       tileMastery.level++;
       tileMastery.exp -= nextExp;
       showToast(`${type.toUpperCase()} Mastery Level Up: ${tileMastery.level}!!`, 'success');
+
+      // 마스터리 돌파 특성 해금 체크
+      MASTERY_PERKS.forEach(perk => {
+        if (perk.tileType === type && perk.requiredLevel === tileMastery.level) {
+          if (!player.stats.unlockedMasteryPerks.includes(perk.id)) {
+            player.stats.unlockedMasteryPerks.push(perk.id);
+            showToast(`✨ Breakthrough! [${perk.name}] unlocked!`, 'success');
+            createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 40, `✨ ${perk.name} UNLOCKED!`, '#fbbf24');
+          }
+        }
+      });
+    }
+
+    // --- 흙(Dirt) 타일 파괴 시 특성 효과 발동 ---
+    if (type === 'dirt') {
+      const perks = player.stats.unlockedMasteryPerks;
+      
+      // Lv.50 또는 Lv.150 이속 증가 (상위 특성이 우선)
+      if (perks.includes('perk_dirt_150')) {
+        player.buffs.speedBoostUntil = Date.now() + 1500;
+        player.buffs.speedBoostMultiplier = 1.4;
+      } else if (perks.includes('perk_dirt_50')) {
+        player.buffs.speedBoostUntil = Date.now() + 1500;
+        player.buffs.speedBoostMultiplier = 1.2;
+      }
+
+      // Lv.100 체력 회복
+      if (perks.includes('perk_dirt_100') && Math.random() < 0.01) {
+        const recoverAmount = 1;
+        player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + recoverAmount);
+        createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 20, `+${recoverAmount} HP`, '#4ade80');
+      }
     }
   }
 
