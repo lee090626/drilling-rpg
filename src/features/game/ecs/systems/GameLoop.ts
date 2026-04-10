@@ -124,6 +124,7 @@ export class GameLoop {
           type: 'SYNC_UI',
           payload: {
             stats: this.world.player.stats,
+            ui: this.world.ui,
           }
         });
       }
