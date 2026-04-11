@@ -11,15 +11,13 @@ import {
   getUnlockedSlotCount,
   createInitialMasteryState,
   createInitialEquipmentState,
-  getMasteryBonuses 
 } from '@/shared/lib/masteryUtils';
-import { getTotalRuneStat } from '@/shared/lib/runeUtils';
-import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 import { createPortal } from 'react-dom';
 import { AtlasIconName } from '@/shared/config/atlasMap';
+import { useStatusStats } from './useStatusStats';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -39,89 +37,24 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
     y: number 
   } | null>(null);
 
-  const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
-  const masteryMult = getMasteryMultiplier(equipmentState.level);
-  
-  // Unified Stat Calculations
-  const researchBonuses = getResearchBonuses(stats);
-  const masteryBonuses = getMasteryBonuses(stats);
-  const runePowerBonus = Math.floor(getTotalRuneStat(stats, 'power'));
-  const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
-  const runeCritRate = getTotalRuneStat(stats, 'critRate');
-  const runeCritDmg = getTotalRuneStat(stats, 'critDmg');
-  const runeLuck = getTotalRuneStat(stats, 'luck');
-  const runeMoveSpeed = getTotalRuneStat(stats, 'moveSpeed');
-
-  const baseAttack = equippedDrill.basePower;
-  const levelMasteryBonus = Math.round(baseAttack * (masteryMult - 1));
-  
-  // POWER Calculation
-  const basePower = stats.power + baseAttack + levelMasteryBonus + masteryBonuses.miningPower + runePowerBonus;
-  const powerMult = 1 + researchBonuses.power + masteryBonuses.miningPowerMult;
-  const finalPower = Math.floor(basePower * powerMult);
-
-  // CRIT/SPEED
-  const finalCritRate = runeCritRate + (researchBonuses.critRate || 0);
-  const finalCritDmg = 1.5 + runeCritDmg;
-  const totalSpeedBonusMult = Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult);
-  const finalMiningInterval = Math.round(equippedDrill.cooldownMs * (1 - totalSpeedBonusMult));
-
-  // MOVE SPEED
-  const baseSpeedStat = stats.moveSpeed || 100;
-  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed * (1 + masteryBonuses.moveSpeedMult);
-  const drillSpeedMult = equippedDrill.moveSpeedMult || 1;
-  const finalMoveSpeedMult = (baseSpeedMult * drillSpeedMult + ((runeMoveSpeed + masteryBonuses.moveSpeed) * 0.01)) || 1;
-
-  // LUCK
-  // runeLuck은 여전히 소수점이므로 *100을 통해 스케일을 맞춥니다.
-  const finalLuck = Math.floor((runeLuck * 100) + masteryBonuses.luck + researchBonuses.luck);
-
-  // Stat Breakdown Definitions
-  const statBreakdowns: Record<string, { label: string, value: string | number, color?: string }[]> = {
-    power: [
-      { label: 'Base Stats', value: stats.power },
-      { label: `Drill (${equippedDrill.name})`, value: baseAttack },
-      { label: 'Drill Mastery', value: `+${levelMasteryBonus}`, color: 'text-emerald-400' },
-      { label: 'Mastery Perks', value: `+${masteryBonuses.miningPower}`, color: 'text-emerald-500' },
-      { label: 'Skill Rune', value: `+${runePowerBonus}`, color: 'text-purple-400' },
-      { label: 'Power Multiplier', value: `x${powerMult.toFixed(2)}`, color: 'text-blue-400' },
-    ],
-    hp: [
-      { label: 'Base Health', value: 100 },
-      { label: 'Mastery Perks', value: `+${masteryBonuses.maxHp}`, color: 'text-emerald-500' },
-      { label: 'HP Multiplier', value: `x${(1 + researchBonuses.maxHpMult + masteryBonuses.maxHpMult).toFixed(2)}`, color: 'text-blue-400' },
-    ],
-    critRate: [
-      { label: 'Base Crit Rate', value: '0.0%' },
-      { label: 'Rune Bonus', value: `+${(runeCritRate * 100).toFixed(1)}%`, color: 'text-purple-400' },
-      { label: 'Research', value: `+${((researchBonuses.critRate || 0) * 100).toFixed(1)}%`, color: 'text-blue-400' },
-    ],
-    moveSpeed: [
-      { label: 'Base Speed', value: '100%' },
-      { label: 'Drill Multiplier', value: `x${(equippedDrill.moveSpeedMult || 1.0).toFixed(2)}`, color: 'text-zinc-400' },
-      { label: 'Research Bonus', value: `x${researchBonuses.moveSpeed.toFixed(2)}`, color: 'text-blue-400' },
-      { label: 'Mastery Perks', value: `+${masteryBonuses.moveSpeed}%`, color: 'text-emerald-500' },
-      { label: 'Rune Bonus', value: `+${runeMoveSpeed}%`, color: 'text-purple-400' },
-    ],
-    critDmg: [
-      { label: 'Base Damage', value: '150%' },
-      { label: 'Rune Bonus', value: `+${(runeCritDmg * 100).toFixed(0)}%`, color: 'text-purple-400' },
-      { label: 'Research', value: `+${((researchBonuses.critDmg || 0) * 100).toFixed(0)}%`, color: 'text-blue-400' },
-    ],
-    miningSpeed: [
-      { label: 'Drill Base', value: `${equippedDrill.cooldownMs}ms` },
-      { label: 'Mastery Perks', value: `-${(masteryBonuses.miningSpeedMult * 100).toFixed(0)}%`, color: 'text-emerald-500' },
-      { label: 'Rune Reduction', value: `-${(runeSpeedBonus * 100).toFixed(0)}%`, color: 'text-purple-400' },
-      { label: 'Research Speed', value: `-${(researchBonuses.miningSpeed * 100).toFixed(0)}%`, color: 'text-blue-400' },
-    ],
-    luck: [
-      { label: 'Base Luck', value: '+0' },
-      { label: 'Mastery Perks', value: `+${masteryBonuses.luck.toFixed(0)}`, color: 'text-emerald-500' },
-      { label: 'Rune Bonus', value: `+${(runeLuck * 100).toFixed(0)}`, color: 'text-purple-400' },
-      { label: 'Research', value: `+${(researchBonuses.luck).toFixed(0)}`, color: 'text-blue-400' },
-    ]
-  };
+  const {
+    equippedDrill,
+    equipmentState,
+    levelMasteryBonus,
+    finalPower,
+    finalCritRate,
+    finalCritDmg,
+    finalMiningInterval,
+    finalMoveSpeedMult,
+    finalLuck,
+    runePowerBonus,
+    runeSpeedBonus,
+    runeCritRate,
+    runeCritDmg,
+    runeLuck,
+    runeMoveSpeed,
+    statBreakdowns,
+  } = useStatusStats(stats);
 
   const handleStatHover = (e: React.MouseEvent, id: string, name: string) => {
     const rect = e.currentTarget.getBoundingClientRect();
