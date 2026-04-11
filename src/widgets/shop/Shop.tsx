@@ -8,6 +8,7 @@ import { DRILLS } from '@/shared/config/drillData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
+import { useGachaAnimation, RESOURCE_PRICES, RARITY_COLORS } from './useGachaAnimation';
 
 /**
  * 상점 컴포넌트의 Props 인터페이스입니다.
@@ -35,69 +36,16 @@ function Shop({
   const [activeTab, setActiveTab] = useState<'minerals' | 'runes'>('minerals');
   const [sellAmounts, setSellAmounts] = useState<Record<string, number>>({});
   
-  // 가챠 연출용 상태
-  const [gachaState, setGachaState] = useState<'idle' | 'drawing' | 'result'>('idle');
-  const [gachaResults, setGachaResults] = useState<{ runeId: string, rarity: string }[]>([]);
-  const [isMultiDraw, setIsMultiDraw] = useState(false);
-  const [prevRuneCount, setPrevRuneCount] = useState(0);
-  const [rouletteItems, setRouletteItems] = useState<{runeId: string, rarity: string}[]>([]);
-  const [startRouletteAnim, setStartRouletteAnim] = useState(false);
-
-  const performExtraction = (tierIndex: number, count: number = 1) => {
-    const cost = (500 * Math.pow(2, tierIndex)) * count;
-    if (stats.goldCoins < cost) return;
-
-    const currentCount = stats.inventoryRunes.length;
-    setPrevRuneCount(currentCount);
-    setIsMultiDraw(count > 1);
-    onSummonRune(tierIndex, count);
-    
-    setGachaState('drawing');
-    
-    if (count === 1) {
-      // 단일 뽑기: 룰렛 연출
-      const availableRunes = Object.values(SKILL_RUNES);
-      const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Radiant', 'Legendary', 'Mythic'];
-      const items = Array.from({ length: 60 }, () => ({
-        runeId: availableRunes[Math.floor(Math.random() * availableRunes.length)].id,
-        rarity: rarities[Math.floor(Math.random() * 3)]
-      }));
-      setRouletteItems(items);
-      setStartRouletteAnim(false);
-      
-      setTimeout(() => setStartRouletteAnim(true), 50);
-      setTimeout(() => checkResults(currentCount + count), 5500);
-    } else {
-      // 다중 뽑기: 빠른 연출
-      setTimeout(() => checkResults(currentCount + count), 1500);
-    }
-  };
-
-  const checkResults = (expectedTotal: number) => {
-    // 최신 인벤토리에서 새로 추가된 룬들 추출
-    const newRunes = stats.inventoryRunes.slice(prevRuneCount);
-    setGachaResults(newRunes.map(r => ({ runeId: r.runeId, rarity: r.rarity })));
-    setGachaState('result');
-    setStartRouletteAnim(false);
-  };
-  
-  /** 광물별 판매 가격 매핑 */
-  const resourcePrices = MINERALS.reduce((acc, mineral) => {
-    acc[mineral.key] = mineral.basePrice;
-    return acc;
-  }, {} as Record<string, number>);
-
-  /** 등급별 색상 테마 정의 */
-  const rarityColors: Record<string, string> = {
-    Common: 'bg-zinc-900 border-zinc-700 text-zinc-400',
-    Uncommon: 'bg-emerald-950/30 border-emerald-900 text-emerald-400',
-    Rare: 'bg-blue-950/30 border-blue-900 text-blue-400',
-    Epic: 'bg-purple-950/30 border-purple-900 text-purple-400',
-    Radiant: 'bg-rose-950/30 border-rose-900 text-rose-400',
-    Legendary: 'bg-amber-950/30 border-amber-900/50 text-amber-400',
-    Mythic: 'bg-red-950/30 border-red-900/50 text-red-500',
-    Unique: 'bg-cyan-950/30 border-cyan-900/50 text-cyan-400',
-  };
+  // 가챠 연출 Hook
+  const {
+    gachaState,
+    gachaResults,
+    isMultiDraw,
+    rouletteItems,
+    startRouletteAnim,
+    performExtraction,
+    resetGacha,
+  } = useGachaAnimation(stats, onSummonRune);
 
   /** 보유 중인 룬 등급별 개수 집계 */
   const runeCounts = (stats.inventoryRunes || []).reduce((acc, rune) => {
@@ -184,7 +132,7 @@ function Shop({
               </div>
               
               <div className="grid grid-cols-1 gap-4 pb-12">
-                {Object.entries(resourcePrices).map(([res, price]) => {
+                {Object.entries(RESOURCE_PRICES).map(([res, price]) => {
                   const count = (stats.inventory as any)[res] || 0;
                   if (count <= 0) return null;
                   
@@ -402,7 +350,7 @@ function Shop({
                 
                 <div className="flex flex-wrap gap-3">
                   {Object.entries(runeCounts).map(([rarity, count]) => (
-                    <div key={rarity} className={`px-5 py-3 border rounded-2xl flex items-center gap-4 transition-all shadow-xl backdrop-blur-md ${rarityColors[rarity] || 'bg-zinc-900 border-zinc-700 text-zinc-500'}`}>
+                    <div key={rarity} className={`px-5 py-3 border rounded-2xl flex items-center gap-4 transition-all shadow-xl backdrop-blur-md ${RARITY_COLORS[rarity] || 'bg-zinc-900 border-zinc-700 text-zinc-500'}`}>
                       <div className="w-2 h-2 rounded-full bg-current opacity-40 animate-pulse" />
                       <span className="text-sm font-black tracking-widest uppercase">{rarity}</span>
                       <div className="w-px h-4 bg-white/10" />
@@ -428,8 +376,7 @@ function Shop({
           className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500"
           onClick={() => {
             if (gachaState === 'result') {
-              setGachaState('idle');
-              setGachaResults([]);
+              resetGacha();
             }
           }}
         >
@@ -487,7 +434,7 @@ function Shop({
                       />
                     </div>
                     <div className="flex flex-col items-center">
-                       <span className={`px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black tracking-widest uppercase border backdrop-blur-md mb-1 ${rarityColors[res.rarity] || 'text-white border-white'}`}>
+                       <span className={`px-3 py-1 rounded-full text-[8px] md:text-[10px] font-black tracking-widest uppercase border backdrop-blur-md mb-1 ${RARITY_COLORS[res.rarity] || 'text-white border-white'}`}>
                         {res.rarity}
                       </span>
                       <span className="text-xs md:text-sm font-black text-white/90 text-center drop-shadow-md truncate max-w-[120px]">
