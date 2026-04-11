@@ -95,6 +95,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
 
           if (actualDamage > 0 || text === 'BLOCK!') {
             entities.soa.hp[idx] -= actualDamage;
+            entities.markDirty(idx);
             createFloatingText(world, ex, ey - 30, text, color);
           }
           

@@ -31,6 +31,9 @@ export interface EntitySoA {
   spriteIndex: Uint16Array;
   width: Float32Array;
   height: Float32Array;
+
+  // Sync optimization
+  dirtyFlags: Uint8Array;   // 0: clean, 1: dirty
 }
 
 /** 
@@ -64,6 +67,7 @@ export class EntityManager {
       spriteIndex: new Uint16Array(capacity),
       width: new Float32Array(capacity),
       height: new Float32Array(capacity),
+      dirtyFlags: new Uint8Array(capacity),
     };
   }
 
@@ -90,6 +94,7 @@ export class EntityManager {
     this.soa.vx[index] = 0;
     this.soa.vy[index] = 0;
     this.soa.state[index] = 0; // Idle
+    this.soa.dirtyFlags[index] = 1; // Mark as dirty on creation
     
     return handle;
   }
@@ -127,7 +132,25 @@ export class EntityManager {
       this.soa.spriteIndex[index] = this.soa.spriteIndex[lastIndex];
       this.soa.width[index] = this.soa.width[lastIndex];
       this.soa.height[index] = this.soa.height[lastIndex];
+      this.soa.dirtyFlags[index] = 1; // Mark as dirty when swapped
     }
+  }
+
+  /** Dirty flag 관리 */
+  public markDirty(index: number) {
+    if (index >= 0 && index < this.soa.count) {
+      this.soa.dirtyFlags[index] = 1;
+    }
+  }
+
+  public clearDirty(index: number) {
+    if (index >= 0 && index < this.soa.count) {
+      this.soa.dirtyFlags[index] = 0;
+    }
+  }
+
+  public isDirty(index: number): boolean {
+    return index >= 0 && index < this.soa.count && this.soa.dirtyFlags[index] === 1;
   }
 
   /** 특정 ID를 가진 엔티티가 활성화되어 있는지 확인 */
@@ -146,5 +169,28 @@ export class EntityManager {
   /** 핸들로부터 현재 인덱스 획득 */
   public getIndex(handle: EntityHandle): number {
     return handle & 0xFFFF;
+  }
+
+  /** 모든 엔티티 데이터 초기화 (차원 이동 시) */
+  public clear() {
+    this.soa.count = 0;
+    this.soa.generation.fill(0);
+    this.soa.type.fill(0);
+    this.soa.state.fill(0);
+    this.soa.x.fill(0);
+    this.soa.y.fill(0);
+    this.soa.vx.fill(0);
+    this.soa.vy.fill(0);
+    this.soa.hp.fill(0);
+    this.soa.maxHp.fill(0);
+    this.soa.attack.fill(0);
+    this.soa.speed.fill(0);
+    this.soa.lastAttackTime.fill(0);
+    this.soa.monsterDefIndex.fill(0);
+    this.soa.spriteIndex.fill(0);
+    this.soa.width.fill(0);
+    this.soa.height.fill(0);
+    this.soa.dirtyFlags.fill(0);
+    this.idMap.clear();
   }
 }

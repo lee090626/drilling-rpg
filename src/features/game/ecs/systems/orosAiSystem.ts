@@ -27,27 +27,32 @@ export const orosAiSystem = (world: GameWorld, now: number) => {
     // 여기서는 간단히 현재 위치를 기준으로 하지만, '제자리' 원칙을 위해 로컬 변수나 추가 필드 필요.
 
     if (elapsed < 3000) {
-      // 1. IDLE (3초)
-      soa.state[i] = 0; // Idle
+      if (soa.state[i] !== 0) {
+        soa.state[i] = 0;
+        entities.markDirty(i);
+      }
     } else if (elapsed < 4000) {
-      // 2. READY (1초) - 눈 빛남 및 진동 예고
-      soa.state[i] = 1; // Ready
+      if (soa.state[i] !== 1) {
+        soa.state[i] = 1;
+        entities.markDirty(i);
+      }
       world.shake = Math.max(world.shake, 2);
     } else if (elapsed < 5000) {
-      // 3. JUMP (1초) - 하늘로 솟구침
-      soa.state[i] = 2; // Jump
-      // 시각적 높이 조절은 Renderer에서 수행하거나 Y값을 직접 변경 (수직 점프)
-      // 여기서는 시스템 로직이므로 실제 충돌 판정 위치는 하늘 위로 간주
+      if (soa.state[i] !== 2) {
+        soa.state[i] = 2;
+        entities.markDirty(i);
+      }
     } else if (elapsed < 5500) {
-      // 4. FALL (0.5초) - 급강하
-      soa.state[i] = 3; // Fall
+      if (soa.state[i] !== 3) {
+        soa.state[i] = 3;
+        entities.markDirty(i);
+      }
     } else if (elapsed < 6000) {
-      // 5. SLAM (0.5초) - 착지 및 충격파 발생
-      if (soa.state[i] !== 4) { // 착지 순간 1회 실행
-        soa.state[i] = 4; // Slam
-        world.shake = 15; // 강한 진동
+      if (soa.state[i] !== 4) {
+        soa.state[i] = 4;
+        entities.markDirty(i);
+        world.shake = 15;
         
-        // 충격파 범위 체크 (중앙 기준 8타일 반경)
         const bx = soa.x[i] + (soa.width[i] || TILE_SIZE) / 2;
         const by = soa.y[i] + (soa.height[i] || TILE_SIZE) / 2;
         const px = player.pos.x * TILE_SIZE;
@@ -55,14 +60,15 @@ export const orosAiSystem = (world: GameWorld, now: number) => {
         
         const dist = Math.sqrt((bx - px) ** 2 + (by - py) ** 2);
         if (dist < TILE_SIZE * 8) {
-          // 플레이어 스턴 부여 (2초)
           applyStatusEffect(world, { type: 'STUN', vfxId: 'stars' }, 2000);
           createFloatingText(world, px, py - 40, 'STUNNED!', '#fbbf24');
         }
       }
     } else {
-      // 6. COOLDOWN (2초)
-      soa.state[i] = 0;
+      if (soa.state[i] !== 0) {
+        soa.state[i] = 0;
+        entities.markDirty(i);
+      }
     }
   }
 };

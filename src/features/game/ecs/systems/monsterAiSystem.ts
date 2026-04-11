@@ -28,12 +28,21 @@ export const monsterAiSystem = (world: GameWorld, now: number) => {
 
     if (distSq < CHASE_RANGE * CHASE_RANGE) {
       if (distSq < ATTACK_RANGE * ATTACK_RANGE) {
-        entities.soa.state[i] = 2; // 2: attack
+        if (entities.soa.state[i] !== 2) {
+          entities.soa.state[i] = 2; // 2: attack
+          entities.markDirty(i);
+        }
       } else {
-        entities.soa.state[i] = 0; // 0: idle
+        if (entities.soa.state[i] !== 0) {
+          entities.soa.state[i] = 0; // 0: idle
+          entities.markDirty(i);
+        }
       }
     } else {
-      entities.soa.state[i] = 0;
+      if (entities.soa.state[i] !== 0) {
+        entities.soa.state[i] = 0;
+        entities.markDirty(i);
+      }
     }
   }
 };
