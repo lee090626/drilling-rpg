@@ -16,6 +16,8 @@ import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
+import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
+import { createPortal } from 'react-dom';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -25,6 +27,7 @@ interface StatusWindowProps {
 }
 
 function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: StatusWindowProps) {
+  const [hoveredPerk, setHoveredPerk] = React.useState<{ id: string, name: string, desc: string, x: number, y: number } | null>(null);
   const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
   
   const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
@@ -365,7 +368,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           </div>
 
           {stats.discoveredMinerals.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {stats.discoveredMinerals.map((tileKey, idx) => {
                 const mineral = MINERALS.find(m => m.key === tileKey);
                 const mastery = (stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey);
@@ -374,21 +377,21 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                 const masteryMult = getMasteryMultiplier(mastery.level);
 
                 return (
-                  <div key={idx} className="bg-zinc-950/50 p-4 rounded-2xl border border-zinc-800 hover:border-emerald-500/30 hover:bg-emerald-500/2transition-all group">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-zinc-800 shadow-inner group-hover:scale-110 transition-transform">
+                  <div key={idx} className="bg-zinc-950/50 p-6 rounded-3xl border border-zinc-800 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all group">
+                    <div className="flex items-center gap-5 mb-5">
+                      <div className="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 shadow-inner group-hover:scale-110 transition-transform">
                         {mineral?.image ? (
-                          <AtlasIcon name={mineral.image} size={32} />
+                          <AtlasIcon name={mineral.image} size={48} />
                         ) : (
-                          <span className="text-lg">{mineral?.icon || '❓'}</span>
+                          <span className="text-2xl">{mineral?.icon || '❓'}</span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-end gap-1 mb-1">
-                          <span className="text-[11px] font-black text-zinc-300 italic truncate uppercase">{mineral?.name || tileKey}</span>
-                          <span className="text-[10px] font-black text-emerald-500 shrink-0">LV.{mastery.level}</span>
+                        <div className="flex justify-between items-end gap-2 mb-2">
+                          <span className="text-sm font-black text-zinc-300 italic truncate uppercase tracking-tighter">{mineral?.name || tileKey}</span>
+                          <span className="text-xs font-black text-emerald-500 shrink-0">LV.{mastery.level}</span>
                         </div>
-                        <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
+                        <div className="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
                           <div 
                             className="h-full bg-linear-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000" 
                             style={{ width: `${expPercent}%` }} 
@@ -397,32 +400,46 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                       </div>
                     </div>
                     
-                    <div className="flex flex-col gap-1.5 pt-3 border-t border-zinc-800/50">
-                      <div className="flex justify-between items-center text-[9px] font-black tracking-widest uppercase">
-                        <span className="text-zinc-500">Damage Buff</span>
-                        <span className="text-emerald-400">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
+                    <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800/50">
+                      <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase">
+                        <span className="text-zinc-500 italic">Damage Buff</span>
+                        <span className="text-emerald-400 text-xs">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
                       </div>
                       
                       {/* BREAKTHROUGH BADGES */}
-                      <div className="flex justify-between items-center gap-1 mt-1">
+                      <div className="flex justify-between items-center gap-1.5 mt-1">
                         {[50, 100, 150, 200].map(level => {
                           const isUnlocked = mastery.level >= level;
                           const perkId = `perk_${tileKey}_${level}`;
+                          const perk = MASTERY_PERKS.find(p => p.id === perkId);
                           const hasPerk = stats.unlockedMasteryPerks?.includes(perkId);
                           
                           return (
                             <div 
                               key={level}
                               className={`
-                                flex-1 flex items-center justify-center h-5 rounded-md border text-[8px] font-bold transition-all
+                                flex-1 flex items-center justify-center h-8 rounded-lg border text-[10px] font-black transition-all cursor-help
                                 ${isUnlocked 
-                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]' 
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]' 
                                   : 'bg-zinc-900 border-zinc-800 text-zinc-600'
                                 }
+                                ${hoveredPerk?.id === perkId ? 'scale-110 border-emerald-400! bg-emerald-500/20!' : ''}
                               `}
-                              title={`${level} Breakthrough: ${tileKey === 'dirt' ? (level === 50 ? 'Speed+' : level === 100 ? 'HP Recov' : level === 150 ? 'Speed++' : 'Global Speed') : 'Locked'}`}
+                              onMouseEnter={(e) => {
+                                if (perk) {
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setHoveredPerk({
+                                    id: perkId,
+                                    name: perk.name,
+                                    desc: perk.description,
+                                    x: rect.left + rect.width / 2,
+                                    y: rect.top - 10
+                                  });
+                                }
+                              }}
+                              onMouseLeave={() => setHoveredPerk(null)}
                             >
-                              {isUnlocked ? '✨' : level}
+                              {level}
                             </div>
                           );
                         })}
@@ -445,6 +462,33 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           )}
         </div>
       </div>
+
+      {/* PREMIUM FLOATING TOOLTIP OVERLAY */}
+      {hoveredPerk && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed z-1000000 pointer-events-none -translate-x-1/2 -translate-y-full transition-all duration-300 ease-out"
+          style={{ 
+            left: hoveredPerk.x, 
+            top: hoveredPerk.y,
+            opacity: 1
+          }}
+        >
+          <div className="bg-zinc-950/95 backdrop-blur-2xl border border-emerald-500/40 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(16,185,129,0.15)] min-w-[200px] max-w-[260px] ring-1 ring-white/10">
+            <div className="flex items-center gap-2 mb-2.5">
+              <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                <span className="text-[14px] text-emerald-400">✨</span>
+              </div>
+              <span className="text-xs font-black text-white tracking-widest">{hoveredPerk.name}</span>
+            </div>
+            <p className="text-[16px] text-zinc-400 font-medium leading-relaxed mb-3">
+              {hoveredPerk.desc}
+            </p>
+          </div>
+          {/* TOOLTIP ARROW */}
+          <div className="w-3 h-3 bg-zinc-950/95 border-r border-b border-emerald-500/30 absolute left-1/2 -translate-x-1/2 -bottom-1.5 rotate-45" />
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
