@@ -104,7 +104,7 @@ const Hud: React.FC<HudProps> = React.memo(({
           <div className="hidden md:flex bg-zinc-900/60 backdrop-blur-md border border-white/5 p-3 md:p-4 rounded-xl md:rounded-2xl items-center gap-3 md:gap-4 shadow-xl z-10 opacity-70 hover:opacity-100 transition-opacity">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-zinc-800 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 relative">
                   {equippedDrill?.image ? (
-                      <Image src={equippedDrill.image} alt="Drill" fill className="object-contain p-1" />
+                      <AtlasIcon name={equippedDrill.image} alt="Drill" size={40} className="object-contain p-1" />
                   ) : (
                       <div className="w-5 h-5 md:w-6 md:h-6 bg-white/10 rounded-full" />
                   )}

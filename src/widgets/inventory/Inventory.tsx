@@ -3,12 +3,14 @@
 import React, { useState, useMemo } from 'react';
 import { PlayerStats, TileType } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
-import { getNextLevelExp, getUnlockedSlotCount, createInitialMasteryState } from '@/shared/lib/masteryUtils';
-import { DRONES } from '@/shared/config/droneData';
+import { createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { MINERALS } from '@/shared/config/mineralData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
+import DrillCard from './DrillCard';
+import DroneCard from './DroneCard';
+import RuneEquipOverlay from './RuneEquipOverlay';
 
 /**
  * 인벤토리 컴포넌트의 Props 인터페이스입니다.
@@ -234,187 +236,25 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
         ) : activeTab === 'equipment' ? (
           <div className="flex-1 overflow-y-auto pb-10 custom-scrollbar pr-0 md:pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 pb-20">
-              {stats.ownedDrillIds?.map((drillId) => {
-                const drill = DRILLS[drillId];
-                if (!drill) return null;
-                const isEquipped = stats.equippedDrillId === drillId;
+              {stats.ownedDrillIds?.map((drillId) => (
+                <DrillCard
+                  key={drillId}
+                  drillId={drillId}
+                  isEquipped={stats.equippedDrillId === drillId}
+                  equipmentStates={stats.equipmentStates}
+                  onEquip={onEquip}
+                />
+              ))}
 
-                return (
-                  <div
-                    key={drillId}
-                    className={`p-4 md:p-8 rounded-2xl md:rounded-4xl border-2 transition-all flex flex-col group relative overflow-hidden ${
-                      isEquipped
-                        ? 'bg-[#252526] border-[#eab308] shadow-2xl'
-                        : 'bg-[#252526] border-zinc-800 opacity-60 hover:opacity-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-6 mb-8 text-left">
-                      <div className="w-28 h-28 md:w-36 md:h-36 bg-zinc-950 rounded-3xl flex items-center justify-center border border-zinc-900 shadow-inner overflow-hidden">
-                        {drill.image ? (
-                          <AtlasIcon name={drill.image} size={128} />
-                        ) : (
-                          <span className="text-6xl">{drill.icon}</span>
-                        )}
-                      </div>
-                      <div>
-                        <div
-                          className={`text-xs font-bold mb-2 tracking-widest ${isEquipped ? 'text-[#eab308]' : 'text-zinc-600'}`}
-                        >
-                          {isEquipped ? 'Equipped' : 'Storage'} • {drill.equipmentType}
-                        </div>
-                        <h4 className="text-3xl md:text-4xl font-black text-white tracking-tighter">
-                          {drill.name}
-                        </h4>
-                      </div>
-                    </div>
-
-                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-                          {[
-                            ['ATTACK', drill.basePower],
-                            ['SPEED', `${drill.cooldownMs}ms`],
-                            ['Mobility', drill.moveSpeedMult && drill.moveSpeedMult > 1 ? `+${Math.round((drill.moveSpeedMult - 1) * 100)}%` : 'BASIC'],
-                          ].map(([l, v]) => (
-                            <div
-                              key={l as string}
-                              className="bg-zinc-950 p-4 rounded-2xl text-center border border-zinc-900 shadow-inner"
-                            >
-                              <div className="text-[10px] md:text-xs text-zinc-500 font-bold mb-1 tracking-widest">
-                                {l}
-                              </div>
-                              <div className="text-sm md:text-lg font-black text-white">
-                                {v}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* MASTERY & EXP IN INVENTORY */}
-                        <div className="space-y-4 mb-6">
-                          {(() => {
-                            const equipmentState = stats.equipmentStates[drillId] || createInitialMasteryState(drillId, drill.maxSkillSlots);
-                            const nextExp = getNextLevelExp(equipmentState.level);
-                            const expPercent = Math.min(100, (equipmentState.exp / nextExp) * 100);
-                            const unlockedSlots = drill.maxSkillSlots || 0; // Decoupled
-
-                            return (
-                              <>
-                                  <div className="space-y-2 opacity-20 pointer-events-none">
-                                    <div className="flex justify-between items-end">
-                                      <span className="text-xs text-zinc-400 font-bold tracking-widest italic">Drill Mastery (Removed)</span>
-                                      <span className="text-xs text-zinc-500 font-bold tabular-nums">0%</span>
-                                    </div>
-                                    <div className="h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-900">
-                                      <div 
-                                        className="h-full bg-[#eab308] rounded-full transition-all duration-500"
-                                        style={{ width: `${expPercent}%` }}
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div className="flex justify-between items-center bg-zinc-950/50 p-4 rounded-2xl border border-zinc-900/50">
-                                    <span className="text-xs text-zinc-400 font-bold tracking-widest">Rune Slots</span>
-                                    <div className="flex gap-2">
-                                      {Array.from({ length: drill.maxSkillSlots || 0 }).map((_, i) => {
-                                        const isUnlocked = i < unlockedSlots;
-                                        const hasRune = (equipmentState.slottedRunes || [])[i];
-                                        return (
-                                          <div 
-                                            key={i} 
-                                            className={`w-8 h-8 rounded-xl border flex items-center justify-center text-sm ${
-                                              isUnlocked 
-                                                ? hasRune ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-transparent'
-                                                : 'bg-zinc-950 border-zinc-900 text-zinc-800 opacity-40'
-                                            }`}
-                                          >
-                                            {isUnlocked ? (hasRune ? '⚙️' : '') : '🔒'}
-                                          </div>
-                                        );
-                                      })}
-                                    {!(drill.maxSkillSlots) && (
-                                      <span className="text-sm text-zinc-700 italic">NONE</span>
-                                    )}
-                                  </div>
-                                </div>
-                              </>
-                            );
-                          })()}
-                        </div>
-
-                    <div className="mt-auto">
-                      {!isEquipped && (
-                          <button
-                            onClick={() => onEquip?.(drillId, 'drill')}
-                            className="w-full py-6 bg-zinc-100 text-zinc-950 hover:bg-white text-center font-black text-lg tracking-widest rounded-2xl shadow-xl active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50"
-                          >
-                            Equip
-                          </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* 드론 목록 추가 */}
-              {stats.ownedDroneIds?.map((droneId) => {
-                const drone = DRONES[droneId];
-                if (!drone) return null;
-                const isEquipped = stats.equippedDroneId === droneId;
-
-                return (
-                  <div
-                    key={droneId}
-                    className={`p-4 md:p-8 rounded-2xl md:rounded-4xl border-2 transition-all flex flex-col group relative overflow-hidden ${
-                      isEquipped
-                        ? 'bg-[#252526] border-[#eab308] shadow-2xl'
-                        : 'bg-[#252526] border-zinc-800 opacity-60 hover:opacity-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-6 mb-8 text-left">
-                      <div className="w-20 h-20 bg-zinc-950 rounded-2xl flex items-center justify-center text-5xl border border-zinc-900 shadow-inner overflow-hidden">
-                        {drone.icon}
-                      </div>
-                      <div>
-                        <div
-                          className={`text-xs font-bold mb-2 tracking-widest ${isEquipped ? 'text-[#eab308]' : 'text-zinc-600'}`}
-                        >
-                          {isEquipped ? 'Equipped' : 'Storage'} • DRONE
-                        </div>
-                        <h4 className="text-3xl md:text-4xl font-black text-white tracking-tighter">
-                          {drone.name}
-                        </h4>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                      <div className="bg-zinc-950 p-4 rounded-xl text-center border border-zinc-900 shadow-inner">
-                        <div className="text-[10px] md:text-xs text-zinc-500 font-bold mb-1 tracking-widest uppercase">Mineral Assist</div>
-                        <div className="text-sm md:text-xl font-black text-white">{drone.basePower}</div>
-                      </div>
-                      <div className="bg-zinc-950 p-4 rounded-xl text-center border border-zinc-900 shadow-inner">
-                        <div className="text-[10px] md:text-xs text-zinc-500 font-bold mb-1 tracking-widest uppercase">SPEED</div>
-                        <div className="text-sm md:text-xl font-black text-white">{drone.cooldownMs}ms</div>
-                      </div>
-                      {drone.specialEffect && (
-                         <div className="bg-zinc-950 p-4 rounded-xl text-center border border-zinc-900 shadow-inner">
-                           <div className="text-[10px] md:text-xs text-zinc-500 font-bold mb-1 tracking-widest uppercase">EFFECT</div>
-                           <div className="text-sm md:text-xl font-black text-emerald-400 capitalize">{drone.specialEffect}</div>
-                         </div>
-                      )}
-                    </div>
-
-                    <div className="mt-auto">
-                      {!isEquipped && (
-                          <button
-                            onClick={() => onEquip?.(droneId, 'drone')}
-                            className="w-full py-6 bg-zinc-100 text-zinc-950 hover:bg-white text-center font-black text-lg tracking-widest rounded-2xl shadow-xl active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50"
-                          >
-                            Equip
-                          </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {/* 드론 목록 */}
+              {stats.ownedDroneIds?.map((droneId) => (
+                <DroneCard
+                  key={droneId}
+                  droneId={droneId}
+                  isEquipped={stats.equippedDroneId === droneId}
+                  onEquip={onEquip}
+                />
+              ))}
             </div>
           </div>
         ) : (
@@ -499,61 +339,16 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
 
       {/* SLOT SELECTION OVERLAY */}
       {isEquippingRune && selectedRuneId && selectedRuneConfig && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md pointer-events-auto animate-in fade-in duration-300">
-          <div className="bg-[#1a1a1b] border-2 border-[#eab308] rounded-2xl md:rounded-4xl p-6 md:p-10 max-w-lg w-full shadow-2xl">
-            <h3 className="text-2xl font-black text-white mb-2 tracking-tighter text-center">Equip Rune</h3>
-            <p className="text-zinc-500 text-xs text-center mb-8 font-medium">Select target socket for {selectedRuneConfig.name}</p>
-            
-            <div className="flex justify-center gap-4 mb-10">
-              {Array.from({ length: equippedDrill.maxSkillSlots || 0 }).map((_, i) => {
-                const isUnlocked = i < unlockedSlots;
-                const currentRuneInstanceId = (equipmentState.slottedRunes || [])[i];
-                const currentRuneItem = stats.inventoryRunes?.find(g => g.id === currentRuneInstanceId);
-                
-                return (
-                  <button
-                    key={i}
-                    disabled={!isUnlocked}
-                    onClick={() => {
-                      onEquipRune?.(selectedRuneId, i);
-                      setSelectedRuneId(null);
-                      setIsEquippingRune(false);
-                    }}
-                    className={`relative w-16 h-16 md:w-20 md:h-20 rounded-2xl border-2 flex items-center justify-center transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#eab308]/50 ${
-                      isUnlocked
-                        ? 'bg-zinc-900 border-zinc-700 hover:border-[#eab308] hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]'
-                        : 'bg-zinc-950 border-zinc-900 opacity-50 cursor-not-allowed'
-                    }`}
-                  >
-                    {isUnlocked ? (
-                      currentRuneItem ? (
-                        <div className="flex flex-col items-center w-full h-full">
-                          <SkillRuneIcon runeId={currentRuneItem.runeId} rarity={currentRuneItem.rarity as any} size={70} />
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity z-20">
-                            <span className="text-[10px] font-black text-[#eab308] tracking-widest uppercase">Replace</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="text-[10px] font-black text-[#eab308] tracking-widest">EQUIP</span>
-                        </div>
-                      )
-                    ) : (
-                      <span className="text-2xl grayscale">🔒</span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            
-            <button
-              onClick={() => setIsEquippingRune(false)}
-              className="w-full py-4 bg-zinc-800 text-white rounded-xl font-bold tracking-widest hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50"
-            >
-              CANCEL
-            </button>
-          </div>
-        </div>
+        <RuneEquipOverlay
+          stats={stats}
+          selectedRuneId={selectedRuneId}
+          runeName={selectedRuneConfig.name}
+          onEquipRune={onEquipRune}
+          onClose={() => {
+            setSelectedRuneId(null);
+            setIsEquippingRune(false);
+          }}
+        />
       )}
     </div>
   );

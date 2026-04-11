@@ -188,7 +188,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
         );
     }
     
-    if (dropCount > 1) createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE - 10, `x${dropCount} Drops!`, '#a855f7');
+    // 삭제됨: if (dropCount > 1) createFloatingText(world, ... `x${dropCount} Drops!`)
     if (!player.stats.discoveredMinerals.includes(type)) player.stats.discoveredMinerals.push(type);
 
     // 숙련도 처리 (가공된 아이템 제외)

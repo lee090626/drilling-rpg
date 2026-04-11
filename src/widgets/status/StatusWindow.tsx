@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
@@ -18,6 +18,8 @@ import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 import { createPortal } from 'react-dom';
 import { AtlasIconName } from '@/shared/config/atlasMap';
 import { useStatusStats } from './useStatusStats';
+import TileMasteryCard from './TileMasteryCard';
+import StatTooltip from './StatTooltip';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -31,7 +33,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
     type: 'perk' | 'stat',
     id: string, 
     name: string, 
-    desc?: string,
+    desc: string,
     details?: { label: string, value: string | number, color?: string }[],
     x: number, 
     y: number 
@@ -64,12 +66,25 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         type: 'stat',
         id,
         name,
+        desc: '',
         details,
         x: rect.left + rect.width / 2,
         y: rect.top - 10
       });
     }
   };
+
+  const handleHoverPerk = useCallback((e: React.MouseEvent, perkId: string, name: string, desc: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setHoveredTooltip({
+      type: 'perk',
+      id: perkId,
+      name,
+      desc,
+      x: rect.left + rect.width / 2,
+      y: rect.top - 10
+    });
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
@@ -389,91 +404,17 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
 
           {stats.discoveredMinerals.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {stats.discoveredMinerals.map((tileKey, idx) => {
-                const mineral = MINERALS.find(m => m.key === tileKey);
-                const mastery = (stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey);
-                const nextExp = getNextLevelExp(mastery.level);
-                const expPercent = Math.min(100, (mastery.exp / nextExp) * 100);
-                const masteryMult = getMasteryMultiplier(mastery.level);
-
-                return (
-                  <div key={idx} className="bg-zinc-950/50 p-6 rounded-3xl border border-zinc-800 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all group">
-                    <div className="flex items-center gap-5 mb-5">
-                      <div className="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 shadow-inner group-hover:scale-110 transition-transform">
-                        {mineral?.image ? (
-                          <AtlasIcon name={mineral.image as AtlasIconName} size={48} />
-                        ) : (
-                          <span className="text-2xl">{mineral?.icon || '❓'}</span>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-end gap-2 mb-2">
-                          <span className="text-sm font-black text-zinc-300 italic truncate uppercase tracking-tighter">{mineral?.name || tileKey}</span>
-                          <span className="text-xs font-black text-emerald-500 shrink-0">LV.{mastery.level}</span>
-                        </div>
-                        <div className="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
-                          <div 
-                            className="h-full bg-linear-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000" 
-                            style={{ width: `${expPercent}%` }} 
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800/50">
-                      <div className="flex justify-between items-center text-[10px] font-black tracking-widest uppercase">
-                        <span className="text-zinc-500 italic">Damage Buff</span>
-                        <span className="text-emerald-400 text-xs">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
-                      </div>
-                      
-                      {/* BREAKTHROUGH BADGES */}
-                      <div className="flex justify-between items-center gap-1.5 mt-1">
-                        {[50, 100, 150, 200].map(level => {
-                          const isUnlocked = mastery.level >= level;
-                          const perkId = `perk_${tileKey}_${level}`;
-                          const perk = MASTERY_PERKS.find(p => p.id === perkId);
-                          const hasPerk = stats.unlockedMasteryPerks?.includes(perkId);
-                          
-                          return (
-                            <div 
-                              key={level}
-                              className={`
-                                flex-1 flex items-center justify-center h-8 rounded-lg border text-[10px] font-black transition-all cursor-help
-                                ${isUnlocked 
-                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]' 
-                                  : 'bg-zinc-900 border-zinc-800 text-zinc-600'
-                                }
-                                ${hoveredTooltip?.id === perkId ? 'scale-110 border-emerald-400! bg-emerald-500/20!' : ''}
-                              `}
-                              onMouseEnter={(e) => {
-                                if (perk) {
-                                  const rect = e.currentTarget.getBoundingClientRect();
-                                  setHoveredTooltip({
-                                    type: 'perk',
-                                    id: perkId,
-                                    name: perk.name,
-                                    desc: perk.description,
-                                    x: rect.left + rect.width / 2,
-                                    y: rect.top - 10
-                                  });
-                                }
-                              }}
-                              onMouseLeave={() => setHoveredTooltip(null)}
-                            >
-                              {level}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="flex justify-between items-center text-[8px] font-bold tabular-nums">
-                        <span className="text-zinc-600">EXPERIENCE</span>
-                        <span className="text-zinc-400">{mastery.exp} <span className="text-zinc-700">/</span> {nextExp}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {stats.discoveredMinerals.map((tileKey) => (
+                <TileMasteryCard 
+                   key={tileKey}
+                   tileKey={tileKey}
+                   mastery={(stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey)}
+                   unlockedPerks={stats.unlockedMasteryPerks}
+                   hoveredTooltipId={hoveredTooltip?.id}
+                   onHoverPerk={handleHoverPerk}
+                   onLeavePerk={() => setHoveredTooltip(null)}
+                />
+              ))}
             </div>
           ) : (
             <div className="py-20 flex flex-col items-center justify-center bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800 opacity-30">
@@ -484,44 +425,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         </div>
       </div>
 
-      {hoveredTooltip && typeof document !== 'undefined' && createPortal(
-        <div 
-          className="fixed z-1000000 pointer-events-none -translate-x-1/2 -translate-y-full transition-all duration-300 ease-out"
-          style={{ 
-            left: hoveredTooltip.x, 
-            top: hoveredTooltip.y,
-            opacity: 1
-          }}
-        >
-          <div className="bg-zinc-950/95 backdrop-blur-2xl border border-emerald-500/40 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(16,185,129,0.15)] min-w-[200px] max-w-[280px] ring-1 ring-white/10">
-            <div className="flex items-center gap-2 mb-2.5">
-              <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                <span className="text-[12px] text-emerald-400">
-                  {hoveredTooltip.type === 'stat' ? '📊' : '✨'}
-                </span>
-              </div>
-              <span className="text-xs font-black text-white tracking-widest uppercase">{hoveredTooltip.name}</span>
-            </div>
-
-            {hoveredTooltip.type === 'stat' && hoveredTooltip.details ? (
-              <div className="space-y-1.5 mt-2">
-                {hoveredTooltip.details.map((detail, idx) => (
-                  <div key={idx} className="flex justify-between items-center gap-4 text-[11px]">
-                    <span className="text-zinc-500 font-medium">{detail.label}</span>
-                    <span className={`font-bold tabular-nums ${detail.color || 'text-zinc-300'}`}>{detail.value}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-[13px] text-zinc-400 font-medium leading-relaxed mt-1">
-                {hoveredTooltip.desc}
-              </p>
-            )}
-          </div>
-          <div className="w-3 h-3 bg-zinc-950/95 border-r border-b border-emerald-500/30 absolute left-1/2 -translate-x-1/2 -bottom-1.5 rotate-45" />
-        </div>,
-        document.body
-      )}
+      <StatTooltip tooltip={hoveredTooltip} />
     </div>
   );
 }
