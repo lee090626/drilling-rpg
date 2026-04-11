@@ -26,7 +26,12 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   // 1. 공격 속도 계산 (연구 속도 보너스 + 룬 속도 보너스 + 마스터리 속도 보너스)
   const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
   const totalSpeedBonusMult = Math.min(0.95, researchBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult);
-  const attackInterval = currentDrill.cooldownMs * (1 - totalSpeedBonusMult);
+  let attackInterval = currentDrill.cooldownMs * (1 - totalSpeedBonusMult);
+
+  // FATIGUE (피로): 채굴 속도 50% 감소 (쿨타임 2배)
+  if (stats.activeEffects?.some(e => e.type === 'FATIGUE')) {
+    attackInterval *= 2;
+  }
 
   // 2. 숙련도 배율 계산 (기본 숙련도 레벨 보너스)
   const tileMastery = (stats.tileMastery && stats.tileMastery[targetTileType]) || createInitialMasteryState(targetTileType);

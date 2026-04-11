@@ -382,7 +382,7 @@ export interface ToastMessage {
 /**
  * 상태 이상의 종류를 정의합니다.
  */
-export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE';
+export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE' | 'FATIGUE' | 'BLEED' | 'CONFUSION' | 'CURSE' | 'ENRAGE';
 
 /**
  * 활성화된 캐릭터 상태 효과 정보입니다.
