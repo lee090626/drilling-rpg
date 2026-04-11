@@ -13,11 +13,9 @@ import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 
 /**
  * 플레이어의 영구 스탯(체력, 이속 등)을 마스터리 및 연구 보너스에 맞춰 동기화합니다.
+ * (O(1) 단순 사칙연산 형태이므로 매 프레임 호출하더라도 문제없음)
  */
-function syncPermanentStats(player: any) {
-  const masteryBonuses = getMasteryBonuses(player.stats);
-  const researchBonuses = getResearchBonuses(player.stats);
-
+function syncPermanentStats(player: any, researchBonuses: any, masteryBonuses: any) {
   // 1. 최대 체력 동기화: (기본 100 + 마스터리고정) * (1 + 마스터리배율)
   const baseHp = 100 + masteryBonuses.maxHp;
   const finalMaxHp = Math.floor(baseHp * (1 + masteryBonuses.maxHpMult));
@@ -27,10 +25,19 @@ function syncPermanentStats(player: any) {
   player.stats.maxHp = finalMaxHp;
   player.stats.hp = Math.floor(finalMaxHp * hpRatio);
 
-  // 2. 이동 속도 동기화: (기본 100 + 마스터리고정) * (1 + 연구배율 + 마스터리배율)
+  // 2. 이동 속도 동기화: 기본 이속 * (연구 배율 + 마스터리 배율) (연구의 기본값 1.0을 안전하게 상쇄 없이 그대로 합산)
   const baseMoveSpeed = 100 + masteryBonuses.moveSpeed;
-  const totalMoveSpeedMult = 1 + (researchBonuses.moveSpeed - 1) + masteryBonuses.moveSpeedMult;
+  const totalMoveSpeedMult = researchBonuses.moveSpeed + masteryBonuses.moveSpeedMult;
   player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
+}
+
+/**
+ * 프레임당 1회 계산될 공통 캐시 (GC 및 CPU 최적화)
+ */
+interface FrameCache {
+  luck: number;
+  masteryExpGain: number;
+  hasMonsterTarget: boolean;
 }
 
 /**
@@ -40,26 +47,35 @@ function syncPermanentStats(player: any) {
 export const miningSystem = (world: GameWorld, now: number) => {
   const { player, tileMap, intent } = world;
 
-  // 1. 초기 스탯 동기화 및 마스터리 보너스 적용
-  if (!player._statsSynced) {
-    syncPermanentStats(player);
-    player._statsSynced = true;
-  }
+  // --- 성능 최적화 (Memory & CPU) ---
+  // 한 프레임에 여러 개의 타일이 동시 파괴될 때마다 매번 O(N) 탐색을 하는 것을 방지
+  const researchBonuses = getResearchBonuses(player.stats);
+  const masteryBonuses = getMasteryBonuses(player.stats);
+  
+  // 1. 매 프레임 영구 스탯 즉시 동기화 (연구/마스터리 갱신 시 별도의 _statsSynced 플래그 없이 O(1)로 즉시 반영)
+  syncPermanentStats(player, researchBonuses, masteryBonuses);
+
+  const frameCache: FrameCache = {
+    // 행운 적용: (룬 확률값스케일100배 + 연구럭 + 마스터리럭) * (1 + 마스터리행운배율)
+    luck: Math.max(0, ((getTotalRuneStat(player.stats, 'luck') * 100) + researchBonuses.luck + masteryBonuses.luck) * (1 + masteryBonuses.luckMult)),
+    masteryExpGain: Math.floor(10 * researchBonuses.masteryExp * (1 + masteryBonuses.masteryExpMult)),
+    hasMonsterTarget: false
+  };
 
   // 2. 채굴 대상 타일 업데이트 (하이라이트용)
-  updateMiningTarget(world);
+  updateMiningTarget(world, frameCache);
 
-  // 2. 플레이어 채굴 수행
-  handlePlayerMining(world, now);
+  // 3. 플레이어 채굴 수행
+  handlePlayerMining(world, now, frameCache);
 
-  // 3. 드론 자동 채굴 수행 (독립 시스템으로 분리됨)
+  // 4. 드론 자동 채굴 수행 (독립 시스템으로 분리됨)
   droneSystem(world, now);
 };
 
 /**
  * 현재 조준 중인 타일을 계산하고 하이라이트 대상을 설정합니다.
  */
-function updateMiningTarget(world: GameWorld) {
+function updateMiningTarget(world: GameWorld, frameCache: FrameCache) {
   const { player, tileMap, intent } = world;
   const targetX = Math.floor(player.pos.x + (intent.moveX !== 0 ? intent.moveX * 1.0 : 0) + 0.5);
   const targetY = Math.floor(player.pos.y + (intent.moveY !== 0 ? intent.moveY * 1.0 : 0) + 0.5);
@@ -80,6 +96,7 @@ function updateMiningTarget(world: GameWorld) {
       const eh = world.entities.soa.height[idx] || TILE_SIZE;
       if (targetPxX >= ex && targetPxX < ex + ew && targetPxY >= ey && targetPxY < ey + eh) {
         hasMonster = true;
+        frameCache.hasMonsterTarget = true;
         break;
       }
     }
@@ -95,7 +112,7 @@ function updateMiningTarget(world: GameWorld) {
 /**
  * 플레이어의 드릴링 액션을 처리합니다.
  */
-function handlePlayerMining(world: GameWorld, now: number) {
+function handlePlayerMining(world: GameWorld, now: number, frameCache: FrameCache) {
   const { player, tileMap, intent, entities } = world;
 
   if (!player.isDrilling || !intent.miningTarget) {
@@ -105,27 +122,8 @@ function handlePlayerMining(world: GameWorld, now: number) {
 
   const { x, y } = intent.miningTarget;
 
-  // 몬스터를 조준 중이면 바닥(타일) 채굴은 건너뛰고 combatSystem에서만 처리되도록 함 (SoA & SpatialHash 사용)
-  let hasMonster = false;
-  const targetPxX = x * TILE_SIZE;
-  const targetPxY = y * TILE_SIZE;
-  const nearbyIdxs = world.spatialHash.query(targetPxX + TILE_SIZE / 2, targetPxY + TILE_SIZE / 2, TILE_SIZE);
-  for (let i = 0; i < nearbyIdxs.length; i++) {
-    const idx = nearbyIdxs[i];
-    const type = world.entities.soa.type[idx];
-    if ((type === 1 || type === 2) && world.entities.soa.hp[idx] > 0) { // 1: monster, 2: boss
-      const ex = world.entities.soa.x[idx];
-      const ey = world.entities.soa.y[idx];
-      const ew = world.entities.soa.width[idx] || TILE_SIZE;
-      const eh = world.entities.soa.height[idx] || TILE_SIZE;
-      if (targetPxX >= ex && targetPxX < ex + ew && targetPxY >= ey && targetPxY < ey + eh) {
-        hasMonster = true;
-        break;
-      }
-    }
-  }
-
-  if (hasMonster) {
+  // 몬스터를 조준 중이면 바닥(타일) 채굴은 건너뛰고 combatSystem에서만 처리되도록 함 (updateMiningTarget에서 이미 찾아둔 캐시 활용)
+  if (frameCache.hasMonsterTarget) {
     return;
   }
 
@@ -141,7 +139,7 @@ function handlePlayerMining(world: GameWorld, now: number) {
   // 타격 처리
   const destroyed = finalDamage > 0 ? tileMap.damageTile(x, y, finalDamage) : false;
   
-  if (finalDamage >= 0) {
+  if (finalDamage > 0) {
     player.lastHitTime = now;
     world.shake = Math.max(world.shake, destroyed ? 2.0 : 0.5);
     
@@ -153,28 +151,22 @@ function handlePlayerMining(world: GameWorld, now: number) {
   world.timestamp.lastMiningTime = now;
 
   if (destroyed) {
-    handleTileDestruction(world, x, y, targetTile.type, totalPower);
+    handleTileDestruction(world, x, y, targetTile.type, totalPower, frameCache);
   }
 }
 
 /**
  * 타일 파괴 시 발생하는 보상 및 효과를 처리합니다.
  */
-function handleTileDestruction(world: GameWorld, x: number, y: number, type: any, power: number) {
+function handleTileDestruction(world: GameWorld, x: number, y: number, type: any, power: number, frameCache: FrameCache) {
   const { player, tileMap } = world;
   
   createParticles(world, x * TILE_SIZE, y * TILE_SIZE, getTileColor(type), 8);
   
   // 아이템 드롭 및 숙련도
   if (player.stats.inventory[type as any] !== undefined) {
-    const researchBonuses = getResearchBonuses(player.stats);
-    const masteryBonuses = getMasteryBonuses(player.stats);
-    
-    // 행운 적용: 룬 확률값은 스케일 100배, 나머지는 이미 상수 형식으로 저장되어 있으므로 그대로 더함
-    const luck = Math.max(0, (getTotalRuneStat(player.stats, 'luck') * 100) + researchBonuses.luck + masteryBonuses.luck + masteryBonuses.luckMult);
-    
-    // 로그 Base 5로 확정 드랍 개수 계산
-    const dropCount = 1 + Math.floor(Math.log(Math.max(1, luck)) / Math.log(5));
+    // 로그 Base 5로 확정 드랍 개수 계산 (프레임당 1회 계산된 캐시된 luck 값 재사용)
+    const dropCount = 1 + Math.floor(Math.log(Math.max(1, frameCache.luck)) / Math.log(5));
 
     for (let i = 0; i < dropCount; i++) {
         const vx = (Math.random() - 0.5) * 8;
@@ -186,9 +178,7 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
           vx,
           vy
         );
-    }
-    
-    // 삭제됨: if (dropCount > 1) createFloatingText(world, ... `x${dropCount} Drops!`)
+    }    
     if (!player.stats.discoveredMinerals.includes(type)) player.stats.discoveredMinerals.push(type);
 
     // 숙련도 처리 (가공된 아이템 제외)
@@ -199,9 +189,8 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
       player.stats.tileMastery[type as string] = tileMastery;
     }
     
-    // 마스터리 경험치 획득량: 기본 10 * 연구 배율 * (1 + 마스터리 배율)
-    const expGain = Math.floor(10 * researchBonuses.masteryExp * (1 + masteryBonuses.masteryExpMult));
-    tileMastery.exp += expGain;
+    // 마스터리 경험치 획득량: 프레임 캐시 재사용하여 연산 최소화
+    tileMastery.exp += frameCache.masteryExpGain;
     
     const nextExp = getNextLevelExp(tileMastery.level);
     if (tileMastery.exp >= nextExp) {
@@ -222,9 +211,9 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
         }
       });
 
-      // 새로운 특성이 해금되었으면 플레이어의 영구 스탯 즉시 동기화
+      // 새로운 특성이 해금되었으면 화면에 알림 (영구 스탯은 다음 프레임 루프에서 자동으로 동기화됨)
       if (anyNewPerk) {
-        syncPermanentStats(player);
+        // 중복 호출 제거됨 (miningSystem 상단에서 매 프레임 처리)
       }
     }
   }
