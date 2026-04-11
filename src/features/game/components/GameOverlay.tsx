@@ -9,7 +9,7 @@ import StatusWindow from '@/widgets/status/StatusWindow';
 import Settings from '@/widgets/settings/Settings';
 import Elevator from '@/widgets/elevator/Elevator';
 import Encyclopedia from '@/widgets/encyclopedia/Encyclopedia';
-import RefineryWindow from '@/widgets/refinery/RefineryWindow';
+
 import Laboratory from '@/widgets/laboratory/Laboratory';
 import GuideWindow from '@/widgets/guide/GuideWindow';
 import ToastContainer from '@/shared/ui/ToastContainer';
@@ -84,7 +84,7 @@ export default function GameOverlay({
       {ui.isCraftingOpen && <Overlay key="crafting" onClose={() => handleClose('isCraftingOpen')}><Crafting stats={currentStats} onClose={() => handleClose('isCraftingOpen')} onCraft={handleCraft} /></Overlay>}
       {ui.isElevatorOpen && <Overlay key="elevator" onClose={() => handleClose('isElevatorOpen')}><Elevator stats={currentStats} onClose={() => handleClose('isElevatorOpen')} onSelectCheckpoint={handleSelectCheckpoint} /></Overlay>}
       {ui.isEncyclopediaOpen && <Overlay key="encyclopedia" onClose={() => handleClose('isEncyclopediaOpen')}><Encyclopedia stats={currentStats} onClose={() => handleClose('isEncyclopediaOpen')} /></Overlay>}
-      {ui.isRefineryOpen && <Overlay key="refinery" onClose={() => handleClose('isRefineryOpen')}><RefineryWindow stats={currentStats} onClose={() => handleClose('isRefineryOpen')} onStartSmelting={handleStartSmelting} onCollectSmelting={handleCollectSmelting} /></Overlay>}
+      {/* [삭제됨] RefineryWindow — 용광로 시스템 제거됨 */}
       {ui.isSettingsOpen && <Overlay key="settings" onClose={() => handleClose('isSettingsOpen')}><Settings onClose={() => handleClose('isSettingsOpen')} onReset={handleResetGame} onRegenerateWorld={handleRegenerateWorld} onExport={handleExportSave} onImport={() => {
         const code = prompt('Enter save code:');
         if (code) handleImportSave(code);

@@ -7,7 +7,7 @@ import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
-import { droneSystem } from './droneSystem';
+
 import { showToast } from './toastSystem';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 
@@ -68,8 +68,7 @@ export const miningSystem = (world: GameWorld, now: number) => {
   // 3. 플레이어 채굴 수행
   handlePlayerMining(world, now, frameCache);
 
-  // 4. 드론 자동 채굴 수행 (독립 시스템으로 분리됨)
-  droneSystem(world, now);
+  // [삭제됨] droneSystem — 드론 시스템 제거됨
 };
 
 /**

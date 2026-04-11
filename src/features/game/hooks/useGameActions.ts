@@ -4,10 +4,7 @@ import { saveManager, SaveData } from '@/shared/lib/saveManager';
 import { CraftRequirements, CraftResult, Rarity } from '@/shared/types/game';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { DRILLS } from '@/shared/config/drillData';
-import { REFINERY_RECIPES } from '@/shared/config/refineryData';
-import { RESEARCH_NODES } from '@/shared/config/researchData';
-import { getResearchBonuses } from '@/shared/lib/researchUtils';
-import { getDroneData } from '@/shared/config/droneData';
+
 import { createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { TILE_SIZE } from '@/shared/config/constants';
@@ -41,14 +38,6 @@ export const useGameActions = (
     updateUi();
   }, [sendToWorker, updateUi]);
 
-  /** 펫 드론 장착 변경 */
-  const handleEquipDrone = useCallback((id: string) => {
-    sendToWorker('ACTION', {
-      action: 'equip',
-      data: { type: 'drone', id }
-    });
-    updateUi();
-  }, [sendToWorker, updateUi]);
 
   /** 수집한 자원 판매 처리 */
   const handleSell = useCallback((resource: string, amount: number, price: number) => {
@@ -109,28 +98,7 @@ export const useGameActions = (
     updateUi();
   }, [sendToWorker, updateUi]);
 
-  /** 용광로에서 새로운 제련 작업 시작 */
-  const handleStartSmelting = useCallback((recipeId: string) => {
-    const stats = worldRef.current.player.stats;
-    const recipe = REFINERY_RECIPES.find(r => r.id === recipeId);
-    if (!recipe) return;
-    
-    // UI 스레드에서 간단한 유효성 검사 (피드백용)
-    if ((stats.inventory[recipe.inputId as any] || 0) < recipe.inputAmount) {
-      alert("Not enough raw materials!");
-      return;
-    }
-    
-    sendToWorker('ACTION', { action: 'startSmelting', data: { recipeId } });
-    updateUi();
-  }, [sendToWorker, updateUi]);
 
-  /** 완료된 제련 작업 수거 */
-  const handleCollectSmelting = useCallback((jobId: string) => {
-    sendToWorker('ACTION', { action: 'collectSmelting', data: { jobId } });
-    updateUi();
-  }, [sendToWorker, updateUi]);
-  
   /** 연구소에서 새로운 연구(스킬) 해금 */
   const handleUnlockResearch = useCallback((researchId: string) => {
     sendToWorker('ACTION', { action: 'unlockResearch', data: { researchId } });
@@ -179,7 +147,6 @@ export const useGameActions = (
     handleSummonRune,
     handleSynthesizeRunes,
     handleEquipDrill,
-    handleEquipDrone,
     handleEquipRune,
     handleUnequipRune,
     handleSelectCheckpoint,
@@ -187,8 +154,6 @@ export const useGameActions = (
     handleRegenerateWorld,
     handleExportSave,
     handleImportSave,
-    handleStartSmelting,
-    handleCollectSmelting,
     handleUnlockResearch,
     handleUseArtifact,
     handleEquipArtifact,

@@ -9,7 +9,7 @@ import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import DrillCard from './DrillCard';
-import DroneCard from './DroneCard';
+
 import RuneEquipOverlay from './RuneEquipOverlay';
 
 /**
@@ -246,15 +246,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 />
               ))}
 
-              {/* 드론 목록 */}
-              {stats.ownedDroneIds?.map((droneId) => (
-                <DroneCard
-                  key={droneId}
-                  droneId={droneId}
-                  isEquipped={stats.equippedDroneId === droneId}
-                  onEquip={onEquip}
-                />
-              ))}
+              {/* [삭제됨] DroneCard — 드론 시스템 제거됨 */}
             </div>
           </div>
         ) : (

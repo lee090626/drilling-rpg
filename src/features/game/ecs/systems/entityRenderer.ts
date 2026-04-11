@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { GameWorld } from '@/entities/world/model';
 import { Entity } from '@/shared/types/game';
 import { TILE_SIZE } from '@/shared/config/constants';
-import { DRONES } from '@/shared/config/droneData';
+
 import { MONSTERS } from '@/shared/config/monsterData';
 
 /**
@@ -10,7 +10,6 @@ import { MONSTERS } from '@/shared/config/monsterData';
  */
 const entityContainerMap = new Map<string, PIXI.Container>();
 const staticContainerMap = new Map<string, PIXI.Container>();
-const droneContainerMap = new Map<string, PIXI.Container>();
 const visualHpMap = new Map<string, number>(); // 이전 프레임의 HP 비율 캐시 (애니메이션용)
 
 /**
@@ -25,7 +24,7 @@ export const renderEntities = (
   now: number,
   textures: { [key: string]: PIXI.Texture }
 ) => {
-  const { entities, activeDrone, player } = world;
+  const { entities, player } = world;
   const { staticLayer, entityLayer } = layers;
   const { soa } = entities;
 
@@ -69,12 +68,7 @@ export const renderEntities = (
     updateEntitySpriteFromSoA(idx, soa, player, container, now, textures);
   }
 
-  // 3. 펫 드론 렌더링
-  if (activeDrone) {
-    updateDrone(world, entityLayer, now);
-  }
-
-  // 4. 정적 NPC 및 오브젝트 (상점, 제련소 등) 렌더링
+  // 3. 정적 NPC 및 오브젝트 렌더링
   if (world.staticEntities) {
     for (let i = 0; i < world.staticEntities.length; i++) {
       const staticEntity = world.staticEntities[i];
@@ -365,7 +359,7 @@ function updateAttackIndicatorFromSoA(idx: number, soa: any, container: PIXI.Con
   const indicator = container.getChildByLabel('attackIndicator') as PIXI.Text;
   if (!indicator) return;
 
-  const attackCooldown = 1000;
+  const attackCooldown = soa.attackCooldown[idx]; // SoA에서 개별 쿨타임 읽기
   const lastAttack = soa.lastAttackTime[idx];
   const timeSinceLastAttack = lastAttack ? now - lastAttack : attackCooldown;
   const isTelegraphing = timeSinceLastAttack > attackCooldown - 300;
@@ -423,21 +417,4 @@ function updateHPBarFromSoA(idx: number, soa: any, player: any, container: PIXI.
   }
 }
 
-function updateDrone(world: GameWorld, entityLayer: PIXI.Container, now: number) {
-  const { activeDrone } = world;
-  if (!activeDrone) return;
-
-  let container = droneContainerMap.get(activeDrone.id);
-  if (!container) {
-    container = new PIXI.Container();
-    const droneConfig = DRONES[activeDrone.id];
-    const icon = new PIXI.Text({ text: droneConfig ? droneConfig.icon : '🤖', style: { fontSize: 28 } });
-    icon.anchor.set(0.5, 0.5);
-    container.addChild(icon);
-    entityLayer.addChild(container);
-    droneContainerMap.set(activeDrone.id, container);
-  }
-
-  const hoverY = Math.sin(now / 200) * 4;
-  container.position.set(activeDrone.x, activeDrone.y + hoverY);
-}
+// [삭제됨] updateDrone — 드론 시스템 제거됨

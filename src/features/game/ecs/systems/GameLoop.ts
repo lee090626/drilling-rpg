@@ -3,7 +3,7 @@ import { inputSystem } from '@/features/input/inputSystem';
 import { physicsSystem } from '@/features/game/ecs/systems/physicsSystem';
 import { miningSystem } from '@/features/game/ecs/systems/miningSystem';
 import { interactionSystem } from '@/features/game/ecs/systems/interactionSystem';
-import { refinerySystem } from '@/features/refinery/refinerySystem';
+
 import { spawnSystem } from '@/features/game/ecs/systems/spawnSystem';
 import { monsterAiSystem } from '@/features/game/ecs/systems/monsterAiSystem';
 import { combatSystem } from '@/features/game/ecs/systems/combatSystem';
@@ -147,7 +147,7 @@ export class GameLoop {
       physicsSystem(this.world, now);
       miningSystem(this.world, now);
       interactionSystem(this.world);
-      refinerySystem(this.world, now);
+      // [삭제됨] refinerySystem - 용광로 시스템 제거됨
       spawnSystem(this.world);
       monsterAiSystem(this.world, now);
       orosAiSystem(this.world, now);
