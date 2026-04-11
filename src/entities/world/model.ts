@@ -190,7 +190,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         power: 10,
         moveSpeed: 100,
         inventory: {
-          veinstone: 0, galestone: 0, fervorstone: 0,
+          crimsonstone: 0, galestone: 0, fervorstone: 0,
           moldstone: 0, siltstone: 0, gorestone: 0,
           goldstone: 0, luststone: 0, midasite: 0,
           ragestone: 0, cinderstone: 0, furystone: 0,

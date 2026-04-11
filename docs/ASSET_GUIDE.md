@@ -11,7 +11,7 @@
 | 폴더 | 용도 | 파일 명명 규칙 | 권장 해상도 | 포맷 |
 | :--- | :--- | :--- | :--- | :--- |
 | `minerals/` | 광물 아이템 아이콘 | `PascalCaseIcon.png` (예: `SapphireIcon.png`) | **128*128** | PNG (투명) |
-| `tiles/` | 맵 타일 이미지 | `snake_case.png` (예: `sapphire.png`) | **128×128** | PNG |
+| `tiles/` | 맵 타일 이미지 | `PascalCaseTile.png` (예: `SapphireTile.png`) | **128×128** | PNG |
 | `drills/` | 드릴 장비 이미지 | `PascalCaseDrill.png` (예: `GoldDrill.png`) | 자유 (세로형 권장) | PNG (투명) |
 | `rune/` | 룬 스킬 아이콘 | `PascalCaseRune.png` (예: `AttackRune.png`) | **1024×1024** | PNG (투명) |
 | `entities/` | 몬스터/보스 | `PascalCase.png` (예: `PebbleGolem.png`) | 256×256 ~ 1024×1024 | PNG (투명) |

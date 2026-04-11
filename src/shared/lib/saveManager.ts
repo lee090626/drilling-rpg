@@ -131,6 +131,13 @@ export const saveManager = {
           
           let compensationGold = 0;
           for (const key of Object.keys(oldInv)) {
+            // 명시적 마이그레이션: veinstone -> crimsonstone
+            if (key === 'veinstone') {
+              (s.inventory as any).crimsonstone = ((s.inventory as any).crimsonstone || 0) + oldInv[key];
+              console.log(`[SaveManager] migrated 'veinstone' to 'crimsonstone'`);
+              continue;
+            }
+
             if (validMineralKeys.has(key)) {
               (s.inventory as any)[key] = oldInv[key];
             } else if (typeof oldInv[key] === 'number' && oldInv[key] > 0) {

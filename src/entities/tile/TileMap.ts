@@ -61,7 +61,7 @@ export class TileMap {
 
     if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0 };
 
-    let type: TileType = 'veinstone'; // 기본 배경 타일
+    let type: TileType = 'crimsonstone'; // 기본 배경 타일
     const bgRoll = this.hash(x, y);
     if (bgRoll < 0.40) type = 'galestone';
 

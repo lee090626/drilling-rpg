@@ -120,7 +120,7 @@ export function RecipeDetail({ selectedRecipe, stats, canCraft, onCraft }: Recip
                           )}
                         </div>
                         <span className="text-zinc-300 font-black text-sm tracking-tight capitalize group-hover/req:text-rose-400 transition-colors">
-                          {key === 'goldCoins' ? 'Gold' : key}
+                          {key === 'goldCoins' ? 'Gold' : ((mineral as any)?.nameKo || mineral?.name || key)}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">

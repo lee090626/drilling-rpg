@@ -173,7 +173,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                           x{count.toLocaleString()}
                         </div>
                         <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest">
-                          {m.name}
+                          {(m as any).nameKo || m.name}
                         </div>
                       </div>
                     </button>
@@ -204,10 +204,10 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                   </div>
 
                   <h3 className="text-3xl md:text-5xl font-black text-white text-center mb-4 md:mb-6 tracking-tighter">
-                    {selectedMineral.name}
+                    {(selectedMineral as any).nameKo || selectedMineral.name}
                   </h3>
                   <p className="text-sm md:text-base text-zinc-400 text-center leading-relaxed mb-6 md:mb-12 px-4 italic">
-                    {selectedMineral.description}
+                    {(selectedMineral as any).descriptionKo || selectedMineral.description}
                   </p>
 
                   <div className="mt-auto space-y-4">

@@ -138,7 +138,7 @@ function Shop({
                   if (count <= 0) return null;
                   
                   const mineral = MINERALS.find(m => m.key === res);
-                  const displayName = mineral?.name || res;
+                  const displayName = (mineral as any)?.nameKo || mineral?.name || res;
                   const currentAmount = sellAmounts[res] || 0;
                   const totalPrice = Math.floor(currentAmount * price);
 

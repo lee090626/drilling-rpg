@@ -48,7 +48,7 @@ export const CIRCLES: CircleConfig[] = [
     depthStart: 10,
     depthEnd: 310, // 30층 (층당 10 깊이)
     minerals: [
-      { type: 'veinstone', threshold: 0.20, minLayer: 1, peakLayer: 5, range: 4, scale: 8 },
+      { type: 'crimsonstone', threshold: 0.20, minLayer: 1, peakLayer: 5, range: 4, scale: 8 },
       { type: 'galestone', threshold: 0.15, minLayer: 11, peakLayer: 15, range: 4, scale: 7 },
       { type: 'fervorstone', threshold: 0.10, minLayer: 21, peakLayer: 25, range: 4, scale: 6 },
     ],

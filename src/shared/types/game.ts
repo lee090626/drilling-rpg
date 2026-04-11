@@ -8,7 +8,7 @@ export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Radiant' | 'Lege
  */
 export type TileType =
   // === Circle 2 — Lust ===
-  | 'veinstone'
+  | 'crimsonstone'
   | 'galestone'
   | 'fervorstone'
   // === Circle 3 — Gluttony ===
@@ -53,7 +53,7 @@ export type TileType =
 /** 타일 타입-ID 매핑 (저장 및 비트 패킹용) */
 export const TILE_TYPE_TO_ID: Record<string, number> = {
   empty: 0,
-  veinstone: 1,
+  crimsonstone: 1,
   galestone: 2,
   fervorstone: 3,
   moldstone: 4,
