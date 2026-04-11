@@ -1,10 +1,17 @@
 
+/**
+ * 게임 내 몬스터 및 보스 데이터 정의입니다.
+ * 이 파일은 scripts/genData.js에 의해 자동으로 생성됩니다.
+ */
 export interface MonsterDefinition {
   id: string;
   name: string;
+  nameKo: string;
   type: 'monster' | 'boss';
   imagePath: string; // atlas key
   description: string;
+  mechanic?: string;
+  rarity?: string;
   stats: {
     maxHp: number;
     power: number;
@@ -26,338 +33,365 @@ export interface MonsterDefinition {
     movementType: 'chase' | 'wander' | 'stationary' | 'flee';
     attackRange: number;
     aggroRange: number;
-    projectileId?: string; // TBD
+    projectileId?: string;
   };
-  mechanic?: any;
-  rarity?: string;
 }
-
-export const MONSTERS: Record<number, MonsterDefinition> = {};
-export const MONSTER_DEFINITIONS: MonsterDefinition[] = [];
-
-// Temporarily mapping old bosses and monsters to keep it compiling for now, or just leave it empty if we are refactoring.
-// Let's create dummy definitions for all 24 monsters and 8 bosses so the array can be used.
 
 export const MONSTER_LIST: MonsterDefinition[] = [
   {
-    id: 'c2_soul',
-    name: 'Lust Soul',
+    id: 'c2_whisperer',
+    name: 'Lustful Whisperer',
+    nameKo: '유혹하는 속삭임',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 500, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
+    imagePath: 'pebble_golem',
+    description: 'Lust 서클의 하급 영혼입니다.',
+    stats: { maxHp: 500, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: { exp: 50, gold: 10, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c2_shade',
-    name: 'Lust Shade',
+    id: 'c2_wind_soul',
+    name: 'Wind-torn Soul',
+    nameKo: '바람에 찢긴 영혼',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 500, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Lust 서클의 하급 영혼입니다.',
+    stats: { maxHp: 600, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 60, gold: 12, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c2_wraith',
-    name: 'Lust Wraith',
+    id: 'c2_gale_bat',
+    name: 'Gale Bat',
+    nameKo: '돌풍 박쥐',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 500, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Lust 서클의 하급 영혼입니다.',
+    stats: { maxHp: 450, power: 35, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 45, gold: 9, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c2_boss',
-    name: 'Boss of Lust',
+    id: 'c2_minos',
+    name: 'Minos (The Judge)',
+    nameKo: '심판자 미노스',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 5000, power: 60, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Lust 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 15000, power: 120, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 7500, gold: 1500, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c3_soul',
-    name: 'Gluttony Soul',
+    id: 'c3_devourer',
+    name: 'Bloated Devourer',
+    nameKo: '비대한 포식자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 1000, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Gluttony 서클의 하급 영혼입니다.',
+    stats: { maxHp: 1500, power: 60, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 150, gold: 30, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c3_shade',
-    name: 'Gluttony Shade',
+    id: 'c3_worm',
+    name: 'Carrion Worm',
+    nameKo: '부패 벌레',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 1000, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Gluttony 서클의 하급 영혼입니다.',
+    stats: { maxHp: 1200, power: 70, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 120, gold: 24, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c3_wraith',
-    name: 'Gluttony Wraith',
+    id: 'c3_mud_shade',
+    name: 'Mud-stained Shade',
+    nameKo: '진흙에 잠긴 그림자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 1000, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Gluttony 서클의 하급 영혼입니다.',
+    stats: { maxHp: 1800, power: 50, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 180, gold: 36, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c3_boss',
-    name: 'Boss of Gluttony',
+    id: 'c3_cerberus',
+    name: 'Cerberus',
+    nameKo: '케르베로스',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 10000, power: 90, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Gluttony 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 45000, power: 250, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 22500, gold: 4500, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c4_soul',
-    name: 'Greed Soul',
+    id: 'c4_hoarder',
+    name: 'Hoarding Specter',
+    nameKo: '수집가 망령',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 2000, power: 45, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Greed 서클의 하급 영혼입니다.',
+    stats: { maxHp: 4000, power: 120, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 400, gold: 80, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c4_shade',
-    name: 'Greed Shade',
+    id: 'c4_sinner',
+    name: 'Gilded Sinner',
+    nameKo: '황금 죄인',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 2000, power: 45, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Greed 서클의 하급 영혼입니다.',
+    stats: { maxHp: 5500, power: 150, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 550, gold: 110, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c4_wraith',
-    name: 'Greed Wraith',
+    id: 'c4_mimic',
+    name: 'Fortune Mimic',
+    nameKo: '운명의 미믹',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 2000, power: 45, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Greed 서클의 하급 영혼입니다.',
+    stats: { maxHp: 3500, power: 200, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 350, gold: 70, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c4_boss',
-    name: 'Boss of Greed',
+    id: 'c4_plutus',
+    name: 'Plutus',
+    nameKo: '플루토스',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 20000, power: 135, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Greed 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 120000, power: 500, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 60000, gold: 12000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c5_soul',
-    name: 'Wrath Soul',
+    id: 'c5_dweller',
+    name: 'Styx Dweller',
+    nameKo: '스틱스의 거주자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 4000, power: 67.5, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Wrath 서클의 하급 영혼입니다.',
+    stats: { maxHp: 12000, power: 300, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 1200, gold: 240, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c5_shade',
-    name: 'Wrath Shade',
+    id: 'c5_fury',
+    name: 'Raging Fury',
+    nameKo: '격노한 복수심',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 4000, power: 67.5, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Wrath 서클의 하급 영혼입니다.',
+    stats: { maxHp: 10000, power: 450, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 1000, gold: 200, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c5_wraith',
-    name: 'Wrath Wraith',
+    id: 'c5_golem',
+    name: 'Mud Golem',
+    nameKo: '진흙 골렘',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 4000, power: 67.5, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Wrath 서클의 하급 영혼입니다.',
+    stats: { maxHp: 25000, power: 250, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 2500, gold: 500, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c5_boss',
-    name: 'Boss of Wrath',
+    id: 'c5_phlegyas',
+    name: 'Phlegyas',
+    nameKo: '플레기아스',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 40000, power: 202.5, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Wrath 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 350000, power: 1200, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 175000, gold: 35000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c6_soul',
-    name: 'Heresy Soul',
+    id: 'c6_priest',
+    name: 'Heretic Priest',
+    nameKo: '이단 사제',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 8000, power: 101.25, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Heresy 서클의 하급 영혼입니다.',
+    stats: { maxHp: 35000, power: 800, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 3500, gold: 700, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c6_shade',
-    name: 'Heresy Shade',
+    id: 'c6_flame',
+    name: 'Eternal Flame Soul',
+    nameKo: '영겁의 불꽃 영혼',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 8000, power: 101.25, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Heresy 서클의 하급 영혼입니다.',
+    stats: { maxHp: 30000, power: 1200, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 3000, gold: 600, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c6_wraith',
-    name: 'Heresy Wraith',
+    id: 'c6_angel',
+    name: 'Fallen Angel',
+    nameKo: '타락한 천사',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 8000, power: 101.25, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
-    behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
-  },
-  {
-    id: 'c6_boss',
-    name: 'Boss of Heresy',
-    type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 80000, power: 303.75, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    imagePath: 'pebble_golem',
+    description: 'Heresy 서클의 하급 영혼입니다.',
+    stats: { maxHp: 50000, power: 900, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: { exp: 5000, gold: 1000, drops: [] },
+    behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
+  },
+  {
+    id: 'c6_farinata',
+    name: 'Farinata',
+    nameKo: '파리나타',
+    type: 'boss',
+    imagePath: 'oros_face',
+    description: 'Heresy 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 900000, power: 3500, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 450000, gold: 90000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c7_soul',
-    name: 'Violence Soul',
+    id: 'c7_centaur',
+    name: 'Centaur Archer',
+    nameKo: '켄타우로스 궁수',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 16000, power: 151.875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Violence 서클의 하급 영혼입니다.',
+    stats: { maxHp: 120000, power: 2500, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 12000, gold: 2400, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c7_shade',
-    name: 'Violence Shade',
+    id: 'c7_guard',
+    name: 'Blood-soaked Guard',
+    nameKo: '선혈의 경비병',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 16000, power: 151.875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Violence 서클의 하급 영혼입니다.',
+    stats: { maxHp: 180000, power: 3000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 18000, gold: 3600, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c7_wraith',
-    name: 'Violence Wraith',
+    id: 'c7_spawn',
+    name: 'Minotaur Spawn',
+    nameKo: '미노타우로스 하수인',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 16000, power: 151.875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Violence 서클의 하급 영혼입니다.',
+    stats: { maxHp: 250000, power: 4500, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 25000, gold: 5000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c7_boss',
-    name: 'Boss of Violence',
+    id: 'c7_minotaur',
+    name: 'Minotaur',
+    nameKo: '미노타우로스',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 160000, power: 455.625, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Violence 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 3000000, power: 15000, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 1500000, gold: 300000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c8_soul',
-    name: 'Fraud Soul',
+    id: 'c8_malebranche',
+    name: 'Malebranche',
+    nameKo: '말레브랑케',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 32000, power: 227.8125, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Fraud 서클의 하급 영혼입니다.',
+    stats: { maxHp: 600000, power: 10000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 60000, gold: 12000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c8_shade',
-    name: 'Fraud Shade',
+    id: 'c8_prophet',
+    name: 'False Prophet',
+    nameKo: '거짓 예언자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 32000, power: 227.8125, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Fraud 서클의 하급 영혼입니다.',
+    stats: { maxHp: 500000, power: 15000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 50000, gold: 10000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c8_wraith',
-    name: 'Fraud Wraith',
+    id: 'c8_illusionist',
+    name: 'Illusionist Shade',
+    nameKo: '환술사의 그림자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 32000, power: 227.8125, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Fraud 서클의 하급 영혼입니다.',
+    stats: { maxHp: 450000, power: 12000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 45000, gold: 9000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c8_boss',
-    name: 'Boss of Fraud',
+    id: 'c8_geryon',
+    name: 'Geryon',
+    nameKo: '게리온',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 320000, power: 683.4375, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Fraud 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 12000000, power: 45000, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 6000000, gold: 1200000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
-    id: 'c9_soul',
-    name: 'Treachery Soul',
+    id: 'c9_sinner',
+    name: 'Ice-bound Sinner',
+    nameKo: '빙결된 죄인',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 64000, power: 341.71875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Treachery 서클의 하급 영혼입니다.',
+    stats: { maxHp: 2500000, power: 40000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 250000, gold: 50000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c9_shade',
-    name: 'Treachery Shade',
+    id: 'c9_specter',
+    name: 'Cocytus Specter',
+    nameKo: '코키토스 망령',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 64000, power: 341.71875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Treachery 서클의 하급 영혼입니다.',
+    stats: { maxHp: 2000000, power: 55000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 200000, gold: 40000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c9_wraith',
-    name: 'Treachery Wraith',
+    id: 'c9_shadow',
+    name: 'Treacherous Shadow',
+    nameKo: '배신의 그림자',
     type: 'monster',
-    imagePath: 'pebble_golem', // Placeholder
-    description: '',
-    stats: { maxHp: 64000, power: 341.71875, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    imagePath: 'pebble_golem',
+    description: 'Treachery 서클의 하급 영혼입니다.',
+    stats: { maxHp: 3000000, power: 35000, defense: 5, speed: 2, attackCooldown: 1000 },
+    rewards: { exp: 300000, gold: 60000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c9_boss',
-    name: 'Boss of Treachery',
+    id: 'c9_lucifer',
+    name: 'Lucifer',
+    nameKo: '루시퍼',
     type: 'boss',
-    imagePath: 'oros_face', // Placeholder
-    description: '',
-    stats: { maxHp: 640000, power: 1025.15625, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    imagePath: 'oros_face',
+    description: 'Treachery 서클의 지배자, 어비셜 로드입니다.',
+    stats: { maxHp: 100000000, power: 250000, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    rewards: { exp: 50000000, gold: 10000000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   }
 ];
-MONSTER_LIST.forEach((m, i) => { MONSTERS[i] = m; MONSTER_DEFINITIONS.push(m); });
+
+export const MONSTERS: Record<string, MonsterDefinition> = {};
+export const MONSTER_DEFINITIONS: MonsterDefinition[] = [];
+MONSTER_LIST.forEach((m) => { MONSTERS[m.id] = m; MONSTER_DEFINITIONS.push(m); });
