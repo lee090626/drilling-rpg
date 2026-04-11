@@ -211,11 +211,9 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
         }
       });
 
-      // 새로운 특성이 해금되었으면 플레이어의 영구 스탯 즉시 동기화 (프레임 캐시 무시하고 1회 즉시 호출)
+      // 새로운 특성이 해금되었으면 화면에 알림 (영구 스탯은 다음 프레임 루프에서 자동으로 동기화됨)
       if (anyNewPerk) {
-        const _m = getMasteryBonuses(player.stats);
-        const _r = getResearchBonuses(player.stats);
-        syncPermanentStats(player, _r, _m);
+        // 중복 호출 제거됨 (miningSystem 상단에서 매 프레임 처리)
       }
     }
   }
