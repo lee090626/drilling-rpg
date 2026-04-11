@@ -30,8 +30,9 @@ export const getMasteryBonuses = (stats: PlayerStats) => {
     maxHpMult: 0,
     luck: 0,
     luckMult: 0,
-    goldBonusMult: 0,
     masteryExpMult: 0,
+    critRate: 0,
+    critDmg: 0,
   };
 
   if (!stats.unlockedMasteryPerks) return bonuses;
@@ -62,11 +63,14 @@ export const getMasteryBonuses = (stats: PlayerStats) => {
           if (effect.isMultiplier) bonuses.luckMult += effect.value;
           else bonuses.luck += effect.value;
           break;
-        case 'goldBonus':
-          bonuses.goldBonusMult += effect.value;
-          break;
         case 'masteryExp':
           bonuses.masteryExpMult += effect.value;
+          break;
+        case 'critRate':
+          bonuses.critRate += effect.value;
+          break;
+        case 'critDmg':
+          bonuses.critDmg += effect.value;
           break;
       }
     });

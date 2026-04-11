@@ -86,7 +86,7 @@ export interface Artifact {
  * 연구(스킬트리) 효과의 종류와 수치를 정의합니다.
  */
 export interface ResearchEffect {
-  type: 'power' | 'miningSpeed' | 'moveSpeed' | 'luck' | 'maxHp' | 'defense' | 'goldBonus' | 'masteryExp';
+  type: 'power' | 'miningSpeed' | 'moveSpeed' | 'luck' | 'maxHp' | 'maxHpMult' | 'defense' | 'masteryExp' | 'critRate' | 'critDmg';
   value: number;
 }
 

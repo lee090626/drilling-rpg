@@ -10,7 +10,8 @@ import {
   getMasteryMultiplier, 
   getUnlockedSlotCount,
   createInitialMasteryState,
-  createInitialEquipmentState 
+  createInitialEquipmentState,
+  getMasteryBonuses 
 } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
@@ -18,6 +19,7 @@ import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 import { createPortal } from 'react-dom';
+import { AtlasIconName } from '@/shared/config/atlasMap';
 
 interface StatusWindowProps {
   stats: PlayerStats;
@@ -27,19 +29,23 @@ interface StatusWindowProps {
 }
 
 function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: StatusWindowProps) {
-  const [hoveredPerk, setHoveredPerk] = React.useState<{ id: string, name: string, desc: string, x: number, y: number } | null>(null);
+  const [hoveredTooltip, setHoveredTooltip] = React.useState<{ 
+    type: 'perk' | 'stat',
+    id: string, 
+    name: string, 
+    desc?: string,
+    details?: { label: string, value: string | number, color?: string }[],
+    x: number, 
+    y: number 
+  } | null>(null);
+
   const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
-  
   const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialEquipmentState(stats.equippedDrillId);
   const masteryMult = getMasteryMultiplier(equipmentState.level);
-  const nextExp = getNextLevelExp(equipmentState.level);
-  const expPercent = Math.min(100, (equipmentState.exp / nextExp) * 100);
-  
-  const baseAttack = equippedDrill.basePower;
-  const masteryBonus = Math.round(baseAttack * (masteryMult - 1));
   
   // Unified Stat Calculations
   const researchBonuses = getResearchBonuses(stats);
+  const masteryBonuses = getMasteryBonuses(stats);
   const runePowerBonus = Math.floor(getTotalRuneStat(stats, 'power'));
   const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
   const runeCritRate = getTotalRuneStat(stats, 'critRate');
@@ -47,18 +53,90 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
   const runeLuck = getTotalRuneStat(stats, 'luck');
   const runeMoveSpeed = getTotalRuneStat(stats, 'moveSpeed');
 
-  const finalPower = stats.power + baseAttack + masteryBonus + runePowerBonus + researchBonuses.power;
-  const finalCritRate = runeCritRate;
+  const baseAttack = equippedDrill.basePower;
+  const levelMasteryBonus = Math.round(baseAttack * (masteryMult - 1));
+  
+  // POWER Calculation
+  const basePower = stats.power + baseAttack + levelMasteryBonus + masteryBonuses.miningPower + runePowerBonus;
+  const powerMult = 1 + researchBonuses.power + masteryBonuses.miningPowerMult;
+  const finalPower = Math.floor(basePower * powerMult);
+
+  // CRIT/SPEED
+  const finalCritRate = runeCritRate + (researchBonuses.critRate || 0);
   const finalCritDmg = 1.5 + runeCritDmg;
-  const finalMiningInterval = Math.round(equippedDrill.cooldownMs * (1 - Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus)));
+  const totalSpeedBonusMult = Math.min(0.9, researchBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult);
+  const finalMiningInterval = Math.round(equippedDrill.cooldownMs * (1 - totalSpeedBonusMult));
 
+  // MOVE SPEED
   const baseSpeedStat = stats.moveSpeed || 100;
-  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed;
+  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed * (1 + masteryBonuses.moveSpeedMult);
   const drillSpeedMult = equippedDrill.moveSpeedMult || 1;
-  const finalMoveSpeedMult = (baseSpeedMult * drillSpeedMult + (runeMoveSpeed * 0.01)) || 1;
+  const finalMoveSpeedMult = (baseSpeedMult * drillSpeedMult + ((runeMoveSpeed + masteryBonuses.moveSpeed) * 0.01)) || 1;
 
-  const finalLuck = runeLuck + (researchBonuses.luck - 1);
-  const finalGoldBonus = researchBonuses.goldBonus;
+  // LUCK
+  // runeLuck은 여전히 소수점이므로 *100을 통해 스케일을 맞춥니다.
+  const finalLuck = Math.floor((runeLuck * 100) + masteryBonuses.luck + researchBonuses.luck);
+
+  // Stat Breakdown Definitions
+  const statBreakdowns: Record<string, { label: string, value: string | number, color?: string }[]> = {
+    power: [
+      { label: 'Base Stats', value: stats.power },
+      { label: `Drill (${equippedDrill.name})`, value: baseAttack },
+      { label: 'Drill Mastery', value: `+${levelMasteryBonus}`, color: 'text-emerald-400' },
+      { label: 'Mastery Perks', value: `+${masteryBonuses.miningPower}`, color: 'text-emerald-500' },
+      { label: 'Skill Rune', value: `+${runePowerBonus}`, color: 'text-purple-400' },
+      { label: 'Power Multiplier', value: `x${powerMult.toFixed(2)}`, color: 'text-blue-400' },
+    ],
+    hp: [
+      { label: 'Base Health', value: 100 },
+      { label: 'Mastery Perks', value: `+${masteryBonuses.maxHp}`, color: 'text-emerald-500' },
+      { label: 'HP Multiplier', value: `x${(1 + researchBonuses.maxHpMult + masteryBonuses.maxHpMult).toFixed(2)}`, color: 'text-blue-400' },
+    ],
+    critRate: [
+      { label: 'Base Crit Rate', value: '0.0%' },
+      { label: 'Rune Bonus', value: `+${(runeCritRate * 100).toFixed(1)}%`, color: 'text-purple-400' },
+      { label: 'Research', value: `+${((researchBonuses.critRate || 0) * 100).toFixed(1)}%`, color: 'text-blue-400' },
+    ],
+    moveSpeed: [
+      { label: 'Base Speed', value: '100%' },
+      { label: 'Drill Multiplier', value: `x${(equippedDrill.moveSpeedMult || 1.0).toFixed(2)}`, color: 'text-zinc-400' },
+      { label: 'Research Bonus', value: `x${researchBonuses.moveSpeed.toFixed(2)}`, color: 'text-blue-400' },
+      { label: 'Mastery Perks', value: `+${masteryBonuses.moveSpeed}%`, color: 'text-emerald-500' },
+      { label: 'Rune Bonus', value: `+${runeMoveSpeed}%`, color: 'text-purple-400' },
+    ],
+    critDmg: [
+      { label: 'Base Damage', value: '150%' },
+      { label: 'Rune Bonus', value: `+${(runeCritDmg * 100).toFixed(0)}%`, color: 'text-purple-400' },
+      { label: 'Research', value: `+${((researchBonuses.critDmg || 0) * 100).toFixed(0)}%`, color: 'text-blue-400' },
+    ],
+    miningSpeed: [
+      { label: 'Drill Base', value: `${equippedDrill.cooldownMs}ms` },
+      { label: 'Mastery Perks', value: `-${(masteryBonuses.miningSpeedMult * 100).toFixed(0)}%`, color: 'text-emerald-500' },
+      { label: 'Rune Reduction', value: `-${(runeSpeedBonus * 100).toFixed(0)}%`, color: 'text-purple-400' },
+      { label: 'Research Speed', value: `-${(researchBonuses.miningSpeed * 100).toFixed(0)}%`, color: 'text-blue-400' },
+    ],
+    luck: [
+      { label: 'Base Luck', value: '+0' },
+      { label: 'Mastery Perks', value: `+${masteryBonuses.luck.toFixed(0)}`, color: 'text-emerald-500' },
+      { label: 'Rune Bonus', value: `+${(runeLuck * 100).toFixed(0)}`, color: 'text-purple-400' },
+      { label: 'Research', value: `+${(researchBonuses.luck).toFixed(0)}`, color: 'text-blue-400' },
+    ]
+  };
+
+  const handleStatHover = (e: React.MouseEvent, id: string, name: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const details = statBreakdowns[id];
+    if (details) {
+      setHoveredTooltip({
+        type: 'stat',
+        id,
+        name,
+        details,
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
@@ -104,14 +182,19 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
 
           <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
             {[
-              { label: 'Total Power', value: finalPower, bonus: runePowerBonus, color: 'text-emerald-400' },
-              { label: 'Max HP', value: stats.maxHp, color: 'text-rose-400' },
-              { label: 'Crit Rate', value: `${(finalCritRate * 100).toFixed(1)}%`, bonus: runeCritRate > 0 ? `(${(runeCritRate * 100).toFixed(1)}%)` : null, color: 'text-emerald-400' },
-              { label: 'Crit Damage', value: `${(finalCritDmg * 100).toFixed(0)}%`, bonus: runeCritDmg > 0 ? `(+${(runeCritDmg * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
-              { label: 'Mining Speed', value: `${finalMiningInterval}ms`, bonus: runeSpeedBonus > 0 ? `(-${(runeSpeedBonus * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
+              { id: 'power', label: 'Total Power', value: finalPower, bonus: runePowerBonus, color: 'text-emerald-400' },
+              { id: 'hp', label: 'Max HP', value: stats.maxHp, color: 'text-rose-400' },
+              { id: 'critRate', label: 'Crit Rate', value: `${(finalCritRate * 100).toFixed(1)}%`, bonus: runeCritRate > 0 ? `(${(runeCritRate * 100).toFixed(1)}%)` : null, color: 'text-emerald-400' },
+              { id: 'critDmg', label: 'Crit Damage', value: `${(finalCritDmg * 100).toFixed(0)}%`, bonus: runeCritDmg > 0 ? `(+${(runeCritDmg * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
+              { id: 'miningSpeed', label: 'Mining Speed', value: `${finalMiningInterval}ms`, bonus: runeSpeedBonus > 0 ? `(-${(runeSpeedBonus * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
             ].map((stat, i) => (
-              <div key={i} className="flex justify-between items-center group">
-                <div className="text-[11px] font-bold text-zinc-400 tracking-tight">
+              <div 
+                key={i} 
+                className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
+                onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
+                onMouseLeave={() => setHoveredTooltip(null)}
+              >
+                <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
                   {stat.label}
                 </div>
                 <div className={`text-sm font-black ${stat.color} tabular-nums flex items-center gap-1.5`}>
@@ -132,12 +215,16 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           
           <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
             {[
-              { label: 'Move Speed', value: `${(finalMoveSpeedMult * 100).toFixed(0)}%`, bonus: runeMoveSpeed > 0 ? `(+${runeMoveSpeed}%)` : null },
-              { label: 'Luck (Drop Bonus)', value: `+${(finalLuck * 100).toFixed(0)}%`, bonus: runeLuck > 0 ? `(+${(runeLuck * 100).toFixed(0)}%)` : null },
-              { label: 'Gold Bonus', value: `+${((finalGoldBonus - 1) * 100).toFixed(0)}%` },
+              { id: 'moveSpeed', label: 'Move Speed', value: `${(finalMoveSpeedMult * 100).toFixed(0)}%`, bonus: runeMoveSpeed > 0 ? `(+${runeMoveSpeed}%)` : null },
+              { id: 'luck', label: 'Luck (Drop Bonus)', value: `+${finalLuck}`, bonus: runeLuck > 0 ? `(+${(runeLuck * 100).toFixed(0)})` : null },
             ].map((stat, i) => (
-              <div key={i} className="flex justify-between items-center group">
-                <div className="text-[11px] font-bold text-zinc-400 tracking-tight">
+              <div 
+                key={i} 
+                className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
+                onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
+                onMouseLeave={() => setHoveredTooltip(null)}
+              >
+                <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
                   {stat.label}
                 </div>
                 <div className="text-sm font-black text-[#eab308] tabular-nums flex items-center gap-1.5">
@@ -259,7 +346,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           <div className="bg-[#252526] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl flex flex-col items-center text-center relative group overflow-hidden">
             <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
               {equippedDrill.image ? (
-                <AtlasIcon name={equippedDrill.image} size={96} />
+                <AtlasIcon name={equippedDrill.image as AtlasIconName} size={96} />
               ) : (
                 <span className="text-4xl md:text-6xl">{equippedDrill.icon}</span>
               )}
@@ -276,8 +363,8 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                 </div>
                 <div className="text-xl font-black text-white flex items-center gap-2 justify-center">
                   {equippedDrill.basePower}
-                  {masteryBonus > 0 && (
-                    <span className="text-[10px] text-emerald-500">+{masteryBonus}</span>
+                  {levelMasteryBonus > 0 && (
+                    <span className="text-[10px] text-emerald-500">+{levelMasteryBonus}</span>
                   )}
                   {runePowerBonus > 0 && (
                     <span className="text-[10px] text-blue-400">+{runePowerBonus}</span>
@@ -381,7 +468,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                     <div className="flex items-center gap-5 mb-5">
                       <div className="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center border border-zinc-800 shadow-inner group-hover:scale-110 transition-transform">
                         {mineral?.image ? (
-                          <AtlasIcon name={mineral.image} size={48} />
+                          <AtlasIcon name={mineral.image as AtlasIconName} size={48} />
                         ) : (
                           <span className="text-2xl">{mineral?.icon || '❓'}</span>
                         )}
@@ -423,12 +510,13 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]' 
                                   : 'bg-zinc-900 border-zinc-800 text-zinc-600'
                                 }
-                                ${hoveredPerk?.id === perkId ? 'scale-110 border-emerald-400! bg-emerald-500/20!' : ''}
+                                ${hoveredTooltip?.id === perkId ? 'scale-110 border-emerald-400! bg-emerald-500/20!' : ''}
                               `}
                               onMouseEnter={(e) => {
                                 if (perk) {
                                   const rect = e.currentTarget.getBoundingClientRect();
-                                  setHoveredPerk({
+                                  setHoveredTooltip({
+                                    type: 'perk',
                                     id: perkId,
                                     name: perk.name,
                                     desc: perk.description,
@@ -437,7 +525,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                                   });
                                 }
                               }}
-                              onMouseLeave={() => setHoveredPerk(null)}
+                              onMouseLeave={() => setHoveredTooltip(null)}
                             >
                               {level}
                             </div>
@@ -463,28 +551,40 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         </div>
       </div>
 
-      {/* PREMIUM FLOATING TOOLTIP OVERLAY */}
-      {hoveredPerk && typeof document !== 'undefined' && createPortal(
+      {hoveredTooltip && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed z-1000000 pointer-events-none -translate-x-1/2 -translate-y-full transition-all duration-300 ease-out"
           style={{ 
-            left: hoveredPerk.x, 
-            top: hoveredPerk.y,
+            left: hoveredTooltip.x, 
+            top: hoveredTooltip.y,
             opacity: 1
           }}
         >
-          <div className="bg-zinc-950/95 backdrop-blur-2xl border border-emerald-500/40 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(16,185,129,0.15)] min-w-[200px] max-w-[260px] ring-1 ring-white/10">
+          <div className="bg-zinc-950/95 backdrop-blur-2xl border border-emerald-500/40 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(16,185,129,0.15)] min-w-[200px] max-w-[280px] ring-1 ring-white/10">
             <div className="flex items-center gap-2 mb-2.5">
               <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                <span className="text-[14px] text-emerald-400">✨</span>
+                <span className="text-[12px] text-emerald-400">
+                  {hoveredTooltip.type === 'stat' ? '📊' : '✨'}
+                </span>
               </div>
-              <span className="text-xs font-black text-white tracking-widest">{hoveredPerk.name}</span>
+              <span className="text-xs font-black text-white tracking-widest uppercase">{hoveredTooltip.name}</span>
             </div>
-            <p className="text-[16px] text-zinc-400 font-medium leading-relaxed mb-3">
-              {hoveredPerk.desc}
-            </p>
+
+            {hoveredTooltip.type === 'stat' && hoveredTooltip.details ? (
+              <div className="space-y-1.5 mt-2">
+                {hoveredTooltip.details.map((detail, idx) => (
+                  <div key={idx} className="flex justify-between items-center gap-4 text-[11px]">
+                    <span className="text-zinc-500 font-medium">{detail.label}</span>
+                    <span className={`font-bold tabular-nums ${detail.color || 'text-zinc-300'}`}>{detail.value}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[13px] text-zinc-400 font-medium leading-relaxed mt-1">
+                {hoveredTooltip.desc}
+              </p>
+            )}
           </div>
-          {/* TOOLTIP ARROW */}
           <div className="w-3 h-3 bg-zinc-950/95 border-r border-b border-emerald-500/30 absolute left-1/2 -translate-x-1/2 -bottom-1.5 rotate-45" />
         </div>,
         document.body

@@ -1,17 +1,32 @@
 import { PlayerStats } from '../types/game';
 import { RESEARCH_NODES } from '../config/researchData';
 
+export interface ResearchBonuses {
+  power: number;
+  miningSpeed: number;
+  moveSpeed: number;
+  luck: number;
+  masteryExp: number;
+  critRate: number;
+  critDmg: number;
+  maxHp: number;
+  maxHpMult: number;
+}
+
 /**
  * 해금된 연구 항목들을 기반으로 플레이어의 총 보너스 수치를 계산합니다.
  */
-export const getResearchBonuses = (stats: PlayerStats) => {
-  const bonuses = {
+export const getResearchBonuses = (stats: PlayerStats): ResearchBonuses => {
+  const bonuses: ResearchBonuses = {
     power: 0,
     miningSpeed: 0, // 기본 0 (연사 속도 감소 비율)
     moveSpeed: 1,   // 기본 1 (배수)
-    luck: 1,        // 기본 1 (배수)
-    goldBonus: 1,   // 기본 1 (배수)
+    luck: 0,        // 기본 0 (상수 합산)
     masteryExp: 1,  // 기본 1 (배수)
+    critRate: 0,
+    critDmg: 0,
+    maxHp: 0,
+    maxHpMult: 0,
   };
 
   if (!stats.unlockedResearchIds) return bonuses;
@@ -33,11 +48,20 @@ export const getResearchBonuses = (stats: PlayerStats) => {
       case 'luck':
         bonuses.luck += node.effect.value;
         break;
-      case 'goldBonus':
-        bonuses.goldBonus += node.effect.value;
-        break;
       case 'masteryExp':
         bonuses.masteryExp += node.effect.value;
+        break;
+      case 'critRate':
+        bonuses.critRate += node.effect.value;
+        break;
+      case 'critDmg':
+        bonuses.critDmg += node.effect.value;
+        break;
+      case 'maxHp':
+        bonuses.maxHp += node.effect.value;
+        break;
+      case 'maxHpMult':
+        bonuses.maxHpMult += node.effect.value;
         break;
     }
   });

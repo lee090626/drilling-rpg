@@ -2,8 +2,8 @@
  * 마스터리 돌파 특성 보너스 효과의 세부 명세입니다.
  */
 export interface MasteryPerkEffect {
-  /** 효과 종류 (이동 속도, 채굴력, 채굴 속도, 체력, 행운, 골드 등) */
-  type: 'moveSpeed' | 'miningPower' | 'miningSpeed' | 'hpRegen' | 'maxHp' | 'luck' | 'goldBonus' | 'masteryExp';
+  /** 효과 종류 (이동 속도, 채굴력, 채굴 속도, 체력, 행운 등) */
+  type: 'moveSpeed' | 'miningPower' | 'miningSpeed' | 'hpRegen' | 'maxHp' | 'luck' | 'masteryExp' | 'critRate' | 'critDmg';
   /** 보너스 수치 */
   value: number;
   /** 배율(Multiplier) 적용 여부 (true면 기존 스탯에 곱해지고, false면 더해짐) */
@@ -170,7 +170,7 @@ export const MASTERY_PERKS: MasteryPerkDef[] = [
     effects: [{ type: 'miningPower', value: 0.2, isMultiplier: true }]
   },
 
-  // --- 금 (Gold) 특성 (테마: 재화와 이득) ---
+  // --- 금 (Gold) 특성 (테마: 재화와 행운) ---
   {
     id: 'perk_gold_50',
     tileType: 'gold',
@@ -184,8 +184,8 @@ export const MASTERY_PERKS: MasteryPerkDef[] = [
     tileType: 'gold',
     requiredLevel: 100,
     name: '상인의 안목',
-    description: '광물 판매 가격이 10% 증가합니다.',
-    effects: [{ type: 'goldBonus', value: 0.1, isMultiplier: true }]
+    description: '행운 수치가 20 증가합니다.',
+    effects: [{ type: 'luck', value: 20, isMultiplier: false }]
   },
   {
     id: 'perk_gold_150',
@@ -200,8 +200,8 @@ export const MASTERY_PERKS: MasteryPerkDef[] = [
     tileType: 'gold',
     requiredLevel: 200,
     name: '미다스의 손',
-    description: '광물 판매 가격이 20% 증가합니다.',
-    effects: [{ type: 'goldBonus', value: 0.2, isMultiplier: true }]
+    description: '행운 수치가 50 증가합니다.',
+    effects: [{ type: 'luck', value: 50, isMultiplier: false }]
   },
 
   // --- 다이아몬드 (Diamond) 특성 (테마: 극한의 행운 및 정밀도) ---
@@ -210,8 +210,8 @@ export const MASTERY_PERKS: MasteryPerkDef[] = [
     tileType: 'diamond',
     requiredLevel: 50,
     name: '눈부신 예리함',
-    description: '행운 수치가 20% 증가합니다.',
-    effects: [{ type: 'luck', value: 0.2, isMultiplier: true }]
+    description: '행운 수치가 20 증가합니다.',
+    effects: [{ type: 'luck', value: 20, isMultiplier: false }]
   },
   {
     id: 'perk_diamond_100',
@@ -226,16 +226,16 @@ export const MASTERY_PERKS: MasteryPerkDef[] = [
     tileType: 'diamond',
     requiredLevel: 150,
     name: '영롱한 광채',
-    description: '행운 수치가 40% 증가합니다.',
-    effects: [{ type: 'luck', value: 0.4, isMultiplier: true }]
+    description: '행운 수치가 40 증가합니다.',
+    effects: [{ type: 'luck', value: 40, isMultiplier: false }]
   },
   {
     id: 'perk_diamond_200',
     tileType: 'diamond',
     requiredLevel: 200,
     name: '보석의 왕',
-    description: '행운 수치가 50% 증가합니다.',
-    effects: [{ type: 'luck', value: 0.5, isMultiplier: true }]
+    description: '행운 수치가 50 증가합니다.',
+    effects: [{ type: 'luck', value: 50, isMultiplier: false }]
   },
 
   // --- 에메랄드 (Emerald) 특성 (테마: 지식 및 경험) ---

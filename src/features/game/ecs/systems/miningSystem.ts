@@ -170,13 +170,11 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     const researchBonuses = getResearchBonuses(player.stats);
     const masteryBonuses = getMasteryBonuses(player.stats);
     
-    // 행운 적용: 기본 행운 + 연구 + 마스터리(고정/배율)
-    const luck = getTotalRuneStat(player.stats, 'luck') + (researchBonuses.luck - 1) + masteryBonuses.luck + masteryBonuses.luckMult;
+    // 행운 적용: 룬 확률값은 스케일 100배, 나머지는 이미 상수 형식으로 저장되어 있으므로 그대로 더함
+    const luck = Math.max(0, (getTotalRuneStat(player.stats, 'luck') * 100) + researchBonuses.luck + masteryBonuses.luck + masteryBonuses.luckMult);
     
-    let dropCount = 1;
-    let remLuck = luck;
-    while (remLuck >= 1) { dropCount++; remLuck--; }
-    if (Math.random() < remLuck) dropCount++;
+    // 로그 Base 5로 확정 드랍 개수 계산
+    const dropCount = 1 + Math.floor(Math.log(Math.max(1, luck)) / Math.log(5));
 
     for (let i = 0; i < dropCount; i++) {
         world.droppedItems.push({

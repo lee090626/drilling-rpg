@@ -27,7 +27,7 @@ export class GameLoop {
   private lastSyncTime: number = 0;
   private lastUiSyncTime: number = 0;
   private lastSaveTime: number = 0;
-  private readonly uiSyncInterval: number = 200; // 5Hz
+  private readonly uiSyncInterval: number = 500; // 2Hz (Optimized to reduce cloning load)
   public readonly syncInterval: number = 16.66;  // 60Hz Target
 
   // 의존성 주입(DI) 데이터
