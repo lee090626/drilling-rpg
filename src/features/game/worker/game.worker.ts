@@ -221,9 +221,14 @@ class GameEngineInstance {
     const { action, data } = payload;
     
     if (action === 'travelDimension') {
-      const nextDim = this.world.player.stats.dimension + 1;
-      const newSeed = Math.floor(Math.random() * 1000000);
-      this.safeReset(newSeed, nextDim);
+      const targetDepth = payload.targetDepth || 0;
+      this.world.player.pos.x = 15;
+      this.world.player.pos.y = targetDepth;
+      this.world.player.visualPos.x = 15;
+      this.world.player.visualPos.y = targetDepth;
+      this.world.player.stats.depth = targetDepth;
+      
+      (self as any).postMessage({ type: 'DIMENSION_TRAVEL_COMPLETE' });
       return;
     }
     

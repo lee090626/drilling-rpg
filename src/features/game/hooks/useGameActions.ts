@@ -157,8 +157,8 @@ export const useGameActions = (
     handleUnlockResearch,
     handleUseArtifact,
     handleEquipArtifact,
-    handleTravelDimension: useCallback(() => {
-      sendToWorker('ACTION', { action: 'travelDimension' });
+    handleTravelDimension: useCallback((targetDepth: number) => {
+      sendToWorker('ACTION', { action: 'travelDimension', targetDepth });
       updateUi();
     }, [sendToWorker, updateUi]),
     handleRespawn: useCallback(() => {

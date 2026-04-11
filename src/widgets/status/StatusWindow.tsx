@@ -218,8 +218,8 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                  <span className="text-xs font-black text-blue-400">{stats.maxDepthReached || 0}m</span>
                </div>
                <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-zinc-400">Dimension</span>
-                 <span className="text-xs font-black text-purple-400">Dim {stats.dimension || 0}</span>
+                 <span className="text-[10px] font-bold text-zinc-400">Current Depth</span>
+                 <span className="text-xs font-black text-purple-400">{Math.floor(stats.depth)}m</span>
                </div>
                <div className="flex justify-between items-center">
                  <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>

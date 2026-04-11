@@ -268,7 +268,7 @@ function Shop({
                     </div>
                     
                     <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-2 group-hover:text-amber-400 transition-colors">Tier {tierIndex} Summoner</h3>
-                    <p className="text-zinc-500 text-xs md:text-sm mb-6 md:mb-8 font-bold tracking-tight max-w-[240px] opacity-80">Summoning of core energy modules from the {tierIndex === 0 ? 'Earth' : `Dimension ${tierIndex}`}.</p>
+                    <p className="text-zinc-500 text-xs md:text-sm mb-6 md:mb-8 font-bold tracking-tight max-w-[240px] opacity-80">Summoning of core energy modules from {tierIndex === 0 ? 'Limbo' : `Circle ${tierIndex}`}.</p>
                     
                     {/* 확률표 */}
                     <div className="grid grid-cols-2 gap-2 w-full mb-8 bg-black/40 p-5 rounded-3xl border border-white/5 shadow-inner">

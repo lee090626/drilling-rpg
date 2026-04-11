@@ -5,7 +5,7 @@ import { getCircleConfig, getLayerFromDepth } from '@/shared/config/circleData';
 import { MONSTER_LIST } from '@/shared/config/monsterData';
 
 /** Max map height (tiles) */
-export const MAP_HEIGHT = 1550;
+export const MAP_HEIGHT = 3000;
 /** Map width (centered at 0, spans 150 tiles left/right) */
 export const MAP_WIDTH = 301; // odd number including origin (-150 to +150)
 export const HALF_WIDTH = 150;

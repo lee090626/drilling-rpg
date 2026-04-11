@@ -1,5 +1,6 @@
-import { PlayerStats, Position } from '../types/game';
+import { PlayerStats, Position, Inventory } from '../types/game';
 import { DRILLING_SECRET_KEY } from '../config/constants';
+import { MINERALS } from '../config/mineralData';
 
 /**
  * 저장될 게임 데이터의 규격을 정의합니다.
@@ -122,12 +123,33 @@ export const saveManager = {
         if (!s.tileMastery) s.tileMastery = {};
         if (!s.unlockedMasteryPerks) s.unlockedMasteryPerks = [];
         
-        // 인벤토리 누락 아이템 보정
+        // 인벤토리 누락 아이템 보정 및 레거시 데이터 마이그레이션
         if (s.inventory) {
-          const inv = s.inventory;
-          if (inv.iron_ingot === undefined) inv.iron_ingot = 0;
-          if (inv.gold_ingot === undefined) inv.gold_ingot = 0;
-          if (inv.polished_diamond === undefined) inv.polished_diamond = 0;
+          const validMineralKeys = new Set(MINERALS.map(m => m.key));
+          const oldInv = s.inventory as any;
+          s.inventory = {} as Inventory;
+          
+          let compensationGold = 0;
+          for (const key of Object.keys(oldInv)) {
+            if (validMineralKeys.has(key)) {
+              (s.inventory as any)[key] = oldInv[key];
+            } else if (typeof oldInv[key] === 'number' && oldInv[key] > 0) {
+              // 사용되지 않는 구형 광물(dirt, stone 등)은 1개당 10G로 환산
+              compensationGold += oldInv[key] * 10;
+            }
+          }
+          
+          if (compensationGold > 0) {
+            s.goldCoins = (s.goldCoins || 0) + compensationGold;
+            console.log(`[SaveManager] Legacy items converted to ${compensationGold} Gold Coins.`);
+          }
+
+          // 신규 광물 초기화
+          MINERALS.forEach(m => {
+            if ((s.inventory as any)[m.key] === undefined) {
+              (s.inventory as any)[m.key] = 0;
+            }
+          });
         }
       }
       

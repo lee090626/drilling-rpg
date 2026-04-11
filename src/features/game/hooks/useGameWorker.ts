@@ -10,7 +10,7 @@ export function useGameWorker(
   setIsEngineReady: (ready: boolean) => void,
   isReadyRef: React.MutableRefObject<boolean>,
   loadAssetsAndTransfer: (sendToWorker: (type: string, payload?: any, transfer?: Transferable[]) => void) => void,
-  handleTravelDimension: () => void,
+  handleTravelDimension: (targetDepth: number) => void
   handleOpenModal: (target: any) => void
 ) {
   const workerRef = useRef<Worker | null>(null);
@@ -65,11 +65,11 @@ export function useGameWorker(
           alert('Save code copied to clipboard!');
         }
       } else if (type === 'PORTAL_TRIGGERED') {
-        if (confirm(`Dimension ${payload.nextDim}으로 이동하시겠습니까?\n새로운 세계에서 모험이 시작됩니다!`)) {
-          handleTravelDimension();
+        if (confirm(`Circle ${payload.nextCircleId}로 하강하시겠습니까?\n새로운 심연 탐험이 시작됩니다!`)) {
+          handleTravelDimension(payload.nextDepth);
         }
       } else if (type === 'DIMENSION_TRAVEL_COMPLETE') {
-        alert(`Dimension ${payload.dimension}에 도착했습니다!`);
+        alert(`원하는 Circle에 도착했습니다!`);
       } else if (type === 'TUTORIAL_TRIGGER') {
         // 워커로부터 튜토리얼 발생 신호를 받으면 가이드 창을 엶
         handleOpenModal('isGuideOpen');
