@@ -3,6 +3,7 @@ import { MINERALS } from '@/shared/config/mineralData';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { createParticles } from '@/shared/lib/effectUtils';
 import { showToast } from './toastSystem';
+import { ID_TO_TILE_TYPE } from '@/shared/types/game';
 
 // Buffer for item pickup aggregation
 const pickupBuffer: Record<string, number> = {};
@@ -96,42 +97,47 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     }
   }
 
-  // 3. Dropped item update
-  for (let i = world.droppedItems.length - 1; i >= 0; i--) {
-    const item = world.droppedItems[i];
-    const dtSeconds = deltaTime / 1000;
-    
-    item.life += dtSeconds;
+  // 3. Dropped item update (TypedArray Optimization)
+  const dp = world.droppedItemPool;
+  for (let i = 0; i < dp.capacity; i++) {
+    if (!dp.active[i]) continue;
 
-    if (item.life < 0.5) {
-      item.vy += 0.4;
-      const nextX = item.x + item.vx;
-      const nextY = item.y + item.vy;
+    const dtSeconds = deltaTime / 1000;
+    dp.life[i] += dtSeconds;
+
+    const type = ID_TO_TILE_TYPE[dp.typeId[i]];
+
+    if (dp.life[i] < 0.5) {
+      // Physics phase
+      dp.vy[i] += 0.4;
+      const nextX = dp.x[i] + dp.vx[i];
+      const nextY = dp.y[i] + dp.vy[i];
 
       const tileX = Math.floor(nextX / TILE_SIZE);
       const tileY = Math.floor(nextY / TILE_SIZE);
       const tile = world.tileMap.getTile(tileX, tileY);
 
       if (tile && tile.type !== 'empty' && tile.type !== 'portal' && tile.type !== 'wall') {
-        item.vy = -item.vy * 0.4;
-        item.vx *= 0.8;
-        if (Math.abs(item.vy) > 0.5) {
-          item.y = tileY * TILE_SIZE - 1;
+        dp.vy[i] = -dp.vy[i] * 0.4;
+        dp.vx[i] *= 0.8;
+        if (Math.abs(dp.vy[i]) > 0.5) {
+          dp.y[i] = tileY * TILE_SIZE - 1;
         } else {
-          item.vy = 0;
-          item.y += item.vy; 
+          dp.vy[i] = 0;
+          dp.y[i] += dp.vy[i]; 
         }
-        item.x += item.vx;
+        dp.x[i] += dp.vx[i];
       } else {
-        item.x = nextX;
-        item.y = nextY;
+        dp.x[i] = nextX;
+        dp.y[i] = nextY;
       }
     } else {
+      // Pickup phase
       const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
       const py = world.player.visualPos.y * TILE_SIZE + TILE_SIZE / 2;
       
-      const dx = px - item.x;
-      const dy = py - item.y;
+      const dx = px - dp.x[i];
+      const dy = py - dp.y[i];
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       const hasMagnet = world.player.stats.equippedDroneId === 'magnet_drone';
@@ -139,36 +145,36 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
 
       if (dist < pickupRadius) {
         // Collect
-        if (world.player.stats.inventory[item.type] !== undefined) {
-          world.player.stats.inventory[item.type]++;
+        if (world.player.stats.inventory[type] !== undefined) {
+          world.player.stats.inventory[type]++;
         }
         
-        // Record for aggregation
-        pickupBuffer[item.type] = (pickupBuffer[item.type] || 0) + 1;
+        // Record for aggregation (UI Snapshot happens implicitly by name)
+        pickupBuffer[type] = (pickupBuffer[type] || 0) + 1;
         lastPickupEventTime = now;
         
         // Visual feedback
         createParticles(world, px - TILE_SIZE / 2, py - TILE_SIZE / 2, '#ffffff', 4);
         
         // Remove from world
-        world.droppedItems.splice(i, 1);
-        continue;
+        dp.kill(i);
       } else {
+        // Magnet/Follow logic
         const accel = hasMagnet ? 4.0 : 1.5;
-        item.vx += (dx / dist) * accel;
-        item.vy += (dy / dist) * accel;
-        item.vx *= 0.85;
-        item.vy *= 0.85;
+        dp.vx[i] += (dx / dist) * accel;
+        dp.vy[i] += (dy / dist) * accel;
+        dp.vx[i] *= 0.85;
+        dp.vy[i] *= 0.85;
 
         const maxSpeed = hasMagnet ? 25 : 15;
-        const speed = Math.sqrt(item.vx * item.vx + item.vy * item.vy);
+        const speed = Math.sqrt(dp.vx[i] * dp.vx[i] + dp.vy[i] * dp.vy[i]);
         if (speed > maxSpeed) {
-          item.vx = (item.vx / speed) * maxSpeed;
-          item.vy = (item.vy / speed) * maxSpeed;
+          dp.vx[i] = (dp.vx[i] / speed) * maxSpeed;
+          dp.vy[i] = (dp.vy[i] / speed) * maxSpeed;
         }
 
-        item.x += item.vx;
-        item.y += item.vy;
+        dp.x[i] += dp.vx[i];
+        dp.y[i] += dp.vy[i];
       }
     }
   }

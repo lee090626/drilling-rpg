@@ -1,9 +1,81 @@
 import { TileMap } from '../tile/TileMap';
 import { Player } from '../player/model';
-import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType } from '@/shared/types/game';
+import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType, TILE_TYPE_TO_ID, ID_TO_TILE_TYPE, TileType } from '@/shared/types/game';
 import { ObjectPool } from '@/shared/lib/effectPool';
 import { EntityManager } from '@/features/game/lib/EntityManager';
 import { SpatialHash } from '@/features/game/lib/SpatialHash';
+import { TILE_SIZE } from '@/shared/config/constants';
+
+/**
+ * [초고속] 드랍 아이템 관리 클래스 (SoA + Pooling)
+ */
+export class DroppedItemManager {
+  public capacity: number;
+  public active: Uint8Array;
+  public generation: Uint16Array;
+  public typeId: Uint8Array;
+  public x: Float32Array;
+  public y: Float32Array;
+  public vx: Float32Array;
+  public vy: Float32Array;
+  public life: Float32Array;
+  
+  public blockedDropCount: number = 0;
+  private nextIdx: number = 0;
+
+  constructor(capacity: number = 500) {
+    this.capacity = capacity;
+    this.active = new Uint8Array(capacity);
+    this.generation = new Uint16Array(capacity);
+    this.typeId = new Uint8Array(capacity);
+    this.x = new Float32Array(capacity);
+    this.y = new Float32Array(capacity);
+    this.vx = new Float32Array(capacity);
+    this.vy = new Float32Array(capacity);
+    this.life = new Float32Array(capacity);
+  }
+
+  /** 새로운 아이템을 풀에서 활성화 (generation-based ID 반환) */
+  public spawn(type: TileType, x: number, y: number, vx: number, vy: number): number {
+    const start = this.nextIdx;
+    do {
+      const idx = this.nextIdx;
+      this.nextIdx = (this.nextIdx + 1) % this.capacity;
+
+      if (!this.active[idx]) {
+        this.active[idx] = 1;
+        this.typeId[idx] = TILE_TYPE_TO_ID[type] || 0;
+        this.x[idx] = x;
+        this.y[idx] = y;
+        this.vx[idx] = vx;
+        this.vy[idx] = vy;
+        this.life[idx] = 0;
+        
+        // 0xFFFF 오버플로우는 & 연산으로 안전하게 처리
+        this.generation[idx] = (this.generation[idx] + 1) & 0xFFFF;
+        
+        return (this.generation[idx] << 16) | idx;
+      }
+    } while (this.nextIdx !== start);
+
+    this.blockedDropCount++;
+    return -1; // 풀 가득 참
+  }
+
+  /** 아이템 비활성화 */
+  public kill(index: number) {
+    if (index >= 0 && index < this.capacity) {
+      this.active[index] = 0;
+    }
+  }
+
+  /** 모든 아이템 초기화 (차원 이동 시) */
+  public clear() {
+    this.active.fill(0);
+    this.blockedDropCount = 0;
+    this.nextIdx = 0;
+  }
+}
 
 /**
  * 게임의 모든 상태를 포함하는 최상위 월드 객체 인터페이스입니다.
@@ -25,8 +97,8 @@ export interface GameWorld {
   floatingTextPool: ObjectPool<FloatingText>;
   /** 텍스트 접근용 래퍼 (하위 호환성) */
   floatingTexts: FloatingText[];
-  /** 드랍된 아이템 리스트 */
-  droppedItems: DroppedItem[];
+  /** 드랍된 아이템 관리 객체 (TypedArray 풀링) */
+  droppedItemPool: DroppedItemManager;
   /** 활성화되어 플레이어를 따라다니는 펫 드론의 물리 및 애니메이션 상태 */
   activeDrone: {
     id: string;
@@ -155,7 +227,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
       x: 0, y: 0, text: '', color: '#fff', life: 0, active: false
     }), 100),
     floatingTexts: [],
-    droppedItems: [],
+    droppedItemPool: new DroppedItemManager(500),
     activeDrone: null,
     keys: {},
     baseLayout: null,

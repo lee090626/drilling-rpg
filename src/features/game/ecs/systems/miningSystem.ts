@@ -177,15 +177,15 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     const dropCount = 1 + Math.floor(Math.log(Math.max(1, luck)) / Math.log(5));
 
     for (let i = 0; i < dropCount; i++) {
-        world.droppedItems.push({
-          id: `item_${Date.now()}_${Math.random()}`,
-          type,
-          x: x * TILE_SIZE + TILE_SIZE / 2,
-          y: y * TILE_SIZE - 5,
-          vx: (Math.random() - 0.5) * 8,
-          vy: -6 - Math.random() * 4,
-          life: 0
-        });
+        const vx = (Math.random() - 0.5) * 8;
+        const vy = -Math.random() * 6 - 2;
+        world.droppedItemPool.spawn(
+          type as any,
+          x * TILE_SIZE + TILE_SIZE / 2,
+          y * TILE_SIZE - 5,
+          vx,
+          vy
+        );
     }
     
     if (dropCount > 1) createFloatingText(world, x * TILE_SIZE, y * TILE_SIZE - 10, `x${dropCount} Drops!`, '#a855f7');

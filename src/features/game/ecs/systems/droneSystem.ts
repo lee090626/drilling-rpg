@@ -1,6 +1,7 @@
 import { GameWorld } from '@/entities/world/model';
 import { DRONES } from '@/shared/config/droneData';
 import { TILE_SIZE } from '@/shared/config/constants';
+import { TileType } from '@/shared/types/game';
 import { getTileColor } from '@/shared/lib/tileUtils';
 import { MINERALS } from '@/shared/config/mineralData';
 import { createParticles } from '@/shared/lib/effectUtils';
@@ -34,7 +35,7 @@ export const droneSystem = (world: GameWorld, now: number) => {
   
   // 반경 내 파괴 가능한 대상 탐색
   let targetFound = false;
-  let tX = 0, tY = 0, tType: any = '';
+  let tX = 0, tY = 0, tType: TileType | 'empty' = 'empty';
   
   const radius = droneConfig.miningRadius || 2;
   searchLoop:
@@ -72,16 +73,14 @@ export const droneSystem = (world: GameWorld, now: number) => {
       if (dDestroyed) {
         createParticles(world, tX * TILE_SIZE, tY * TILE_SIZE, color, 8);
         const inv = player.stats.inventory;
-        if (inv[tType] !== undefined) {
-          world.droppedItems.push({
-            id: `drone_drop_${Math.random()}`,
-            type: tType,
-            x: tX * TILE_SIZE + TILE_SIZE / 2,
-            y: tY * TILE_SIZE + TILE_SIZE / 2,
-            vx: (Math.random() - 0.5) * 6,
-            vy: -4 - Math.random() * 3,
-            life: 0
-          });
+        if (inv[tType as TileType] !== undefined) {
+          world.droppedItemPool.spawn(
+            tType as TileType,
+            tX * TILE_SIZE + TILE_SIZE / 2,
+            tY * TILE_SIZE + TILE_SIZE / 2,
+            (Math.random() - 0.5) * 6,
+            -4 - Math.random() * 3
+          );
         }
         
         if (tType === 'boss_core') {
