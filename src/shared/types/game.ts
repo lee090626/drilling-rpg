@@ -407,6 +407,8 @@ export interface Entity {
     attack: number;
     speed: number;
     defense: number;
+    /** 공격 쿨타임 (ms). monsterData 정의에서 복사됨. */
+    attackCooldown?: number;
   };
   /** 마지막 공격 시간 */
   lastAttackTime?: number;

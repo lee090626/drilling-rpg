@@ -29,6 +29,7 @@ export const spawnSystem = (world: GameWorld) => {
             entities.soa.hp[idx] = bossDef.stats.hp;
             entities.soa.maxHp[idx] = bossDef.stats.hp;
             entities.soa.attack[idx] = bossDef.stats.attack;
+            entities.soa.attackCooldown[idx] = bossDef.stats.attackCooldown ?? 2500;
             entities.soa.width[idx] = TILE_SIZE * 5; // 보스는 크게
             entities.soa.height[idx] = TILE_SIZE * 5;
             
@@ -83,8 +84,9 @@ export const spawnSystem = (world: GameWorld) => {
             entities.soa.hp[idx] = initialMonster.stats?.hp || 100;
             entities.soa.maxHp[idx] = initialMonster.stats?.maxHp || 100;
             entities.soa.attack[idx] = initialMonster.stats?.attack || 5;
+            entities.soa.attackCooldown[idx] = initialMonster.stats?.attackCooldown ?? 1000;
             entities.soa.speed[idx] = initialMonster.stats?.speed || 50;
-            entities.soa.width[idx] = initialMonster.width || TILE_SIZE; // 60에서 TILE_SIZE(32px)로 축소
+            entities.soa.width[idx] = initialMonster.width || TILE_SIZE;
             entities.soa.height[idx] = initialMonster.height || TILE_SIZE;
           }
         }

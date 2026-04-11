@@ -13,6 +13,8 @@ export interface MonsterDefinition {
     attack: number;
     speed: number;
     defense: number;
+    /** 공격 쿨타임 (ms). 낮을수록 빠름. 기본 1000ms */
+    attackCooldown: number;
   };
   spawnWeight: number;
 }
@@ -30,6 +32,7 @@ export const MONSTERS: MonsterDefinition[] = [
       attack: 10,
       speed: 0,
       defense: 20,
+      attackCooldown: 1500, // 느린 골렘
     },
     spawnWeight: 0.1,
   },
@@ -45,6 +48,7 @@ export const MONSTERS: MonsterDefinition[] = [
       attack: 5,
       speed: 0,
       defense: 5,
+      attackCooldown: 600, // 빠른 두더지
     },
     spawnWeight: 0.05,
   },
@@ -61,6 +65,7 @@ export const MONSTERS: MonsterDefinition[] = [
       attack: 15,
       speed: 0,
       defense: 100,
+      attackCooldown: 2000, // 방어적인 거북 (느리지만 강함)
     },
     spawnWeight: 0.03,
   },
@@ -76,6 +81,7 @@ export const MONSTERS: MonsterDefinition[] = [
       attack: 25,
       speed: 0,
       defense: 50,
+      attackCooldown: 2500, // 보스 - 느리지만 강력한 일격
     },
     spawnWeight: 0, // 수동 스폰되므로 0 설정
   },

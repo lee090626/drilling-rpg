@@ -38,7 +38,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
       py < ey + eh + TILE_SIZE * 0.5;
 
     if (isInRange) {
-      const cooldown = 1000;
+      const cooldown = entities.soa.attackCooldown[idx]; // 몬스터 별 개별 공격 쿨타임
       if (now - entities.soa.lastAttackTime[idx] > cooldown) {
         const damage = entities.soa.attack[idx];
         player.stats.hp -= damage;

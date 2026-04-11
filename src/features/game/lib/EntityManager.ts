@@ -25,6 +25,8 @@ export interface EntitySoA {
   attack: Float32Array;
   speed: Float32Array;
   lastAttackTime: Float32Array;
+  /** 개별 공격 쿨타임 (ms). 모스터 정의에서 초기화. */
+  attackCooldown: Float32Array;
   
   // 시각 데이터 및 히트박스
   monsterDefIndex: Uint16Array;
@@ -63,6 +65,7 @@ export class EntityManager {
       attack: new Float32Array(capacity),
       speed: new Float32Array(capacity),
       lastAttackTime: new Float32Array(capacity),
+      attackCooldown: new Float32Array(capacity).fill(1000), // 기본값 1000ms
       monsterDefIndex: new Uint16Array(capacity),
       spriteIndex: new Uint16Array(capacity),
       width: new Float32Array(capacity),
@@ -128,6 +131,7 @@ export class EntityManager {
       this.soa.attack[index] = this.soa.attack[lastIndex];
       this.soa.speed[index] = this.soa.speed[lastIndex];
       this.soa.lastAttackTime[index] = this.soa.lastAttackTime[lastIndex];
+      this.soa.attackCooldown[index] = this.soa.attackCooldown[lastIndex];
       this.soa.monsterDefIndex[index] = this.soa.monsterDefIndex[lastIndex];
       this.soa.spriteIndex[index] = this.soa.spriteIndex[lastIndex];
       this.soa.width[index] = this.soa.width[lastIndex];
@@ -186,6 +190,7 @@ export class EntityManager {
     this.soa.attack.fill(0);
     this.soa.speed.fill(0);
     this.soa.lastAttackTime.fill(0);
+    this.soa.attackCooldown.fill(1000); // 기본값 1000ms 로 리셋
     this.soa.monsterDefIndex.fill(0);
     this.soa.spriteIndex.fill(0);
     this.soa.width.fill(0);
