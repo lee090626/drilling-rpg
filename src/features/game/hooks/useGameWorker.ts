@@ -10,7 +10,7 @@ export function useGameWorker(
   setIsEngineReady: (ready: boolean) => void,
   isReadyRef: React.MutableRefObject<boolean>,
   loadAssetsAndTransfer: (sendToWorker: (type: string, payload?: any, transfer?: Transferable[]) => void) => void,
-  handleTravelDimension: (targetDepth: number) => void
+  handleTravelDimension: (targetDepth: number) => void,
   handleOpenModal: (target: any) => void
 ) {
   const workerRef = useRef<Worker | null>(null);

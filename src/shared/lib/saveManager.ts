@@ -125,7 +125,7 @@ export const saveManager = {
         
         // 인벤토리 누락 아이템 보정 및 레거시 데이터 마이그레이션
         if (s.inventory) {
-          const validMineralKeys = new Set(MINERALS.map(m => m.key));
+          const validMineralKeys: Set<string> = new Set(MINERALS.map(m => m.key as string));
           const oldInv = s.inventory as any;
           s.inventory = {} as Inventory;
           
