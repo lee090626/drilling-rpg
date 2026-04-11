@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
-import { getDimensionConfig } from '@/shared/config/dimensionData';
+import { getCircleConfig } from '@/shared/config/circleData';
 import { getDrillData } from '@/shared/config/drillData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 
@@ -44,7 +44,7 @@ const Hud: React.FC<HudProps> = React.memo(({
   onOpenGuide
 }) => {
   const hpPercent = Math.max(0, (stats.hp / stats.maxHp) * 100);
-  const config = getDimensionConfig(stats.dimension);
+  const config = getCircleConfig(stats.depth);
 
   /** 하단 네비게이션 메뉴 항목 */
   const navItems: NavItem[] = useMemo(() => [

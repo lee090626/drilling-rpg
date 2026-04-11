@@ -1,23 +1,15 @@
 import { TileType } from '../types/game';
 
+import { MINERALS } from '../config/mineralData';
+
 /**
  * 특정 타일 타입에 해당하는 렌더링 색상을 반환합니다.
  * @param type 타일의 종류
  * @returns 헥사코드 색상 문자열
  */
 export function getTileColor(type: TileType): string {
+  // 1. 특수 타일 등 하드코딩
   switch (type) {
-    case 'dirt': return '#4e342e';
-    case 'stone': return '#455a64';
-    case 'coal': return '#212121';
-    case 'iron': return '#78909c';
-    case 'gold': return '#fbc02d';
-    case 'diamond': return '#00bcd4';
-    case 'emerald': return '#10b981';
-    case 'ruby': return '#ef4444';
-    case 'sapphire': return '#3b82f6';
-    case 'uranium': return '#84cc16';
-    case 'obsidian': return '#581c87';
     case 'lava': return '#f97316';
     case 'dungeon_bricks': return '#374151';
     case 'monster_nest': return '#b91c1c';
@@ -25,8 +17,14 @@ export function getTileColor(type: TileType): string {
     case 'boss_core': return '#064e3b';
     case 'portal': return '#a855f7';
     case 'wall': return '#1a1a1b';
-    default: return '#000000';
+    case 'empty': return '#000000';
   }
+  
+  // 2. 광물 데이터 테이블에서 조회
+  const mineral = MINERALS.find(m => m.key === type);
+  if (mineral && mineral.color) return mineral.color;
+  
+  return '#455a64'; // fallback string
 }
 
 /**
@@ -37,29 +35,16 @@ export function getTileColor(type: TileType): string {
 export function getTileIndex(type: string): number {
   switch (type) {
     case 'empty': return -1;
-    case 'dirt': return 0; // 1행 1열
-    case 'stone': return 3; // 1행 4열 (벽돌)
-    case 'coal': return 5; // 2행 1열
-    case 'iron': return 6; // 2행 2열
-    case 'gold': return 7; // 2행 3열
-    case 'diamond': return 8; // 2행 4열
-    case 'emerald': return 20; // 5행 1열
-    case 'ruby': return 21; // 5행 2열
-    case 'sapphire': return 22; // 5행 3열
-    case 'uranium': return 23; // 5행 4열
-    case 'obsidian': return 24; // 5행 5열
     case 'lava': return 25;
-    case 'dungeon_bricks': return 9; // 2행 5열 (그물망 형태)
+    case 'dungeon_bricks': return 9; 
     case 'boss_core': return 32;
     case 'monster_nest': return 31;
-    case 'wall': return 4; // 1행 5열 (돌벽)
+    case 'wall': return 4; 
     case 'portal': return 10;
     case 'boss_skin': return 33;
-    default: return 0;
+    default: return 0; // 광물은 개별 아이콘이나 stone으로 렌더링됨
   }
 }
-
-import { MINERALS } from '../config/mineralData';
 
 /**
  * 타일 타입에 따른 기본 스탯(내구도 등)을 조회합니다.

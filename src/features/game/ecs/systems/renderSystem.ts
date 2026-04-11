@@ -314,7 +314,7 @@ function updateLighting(world: GameWorld, layers: any, app: PIXI.Application, no
   for (let i = 0; i < dp.capacity; i++) {
     if (dp.active[i] && lights.length < 64) {
       const type = ID_TO_TILE_TYPE[dp.typeId[i]];
-      if (type === 'iron' || type === 'gold') {
+      if (type === 'goldstone' || type === 'luststone') {
         lights.push(dp.x[i], dp.y[i], TILE_SIZE * 2, 0.5);
       }
     }

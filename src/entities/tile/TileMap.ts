@@ -1,9 +1,8 @@
 import { Tile, TileType, Entity, TILE_TYPE_TO_ID, ID_TO_TILE_TYPE } from '@/shared/types/game';
 import { getMineralStats } from '@/shared/lib/tileUtils';
 import { BASE_DEPTH } from '@/shared/config/constants';
-import { getDimensionConfig } from '@/shared/config/dimensionData';
-import { MONSTERS } from '@/shared/config/monsterData';
-import { BOSSES } from '@/shared/config/bossData';
+import { getCircleConfig, getLayerFromDepth } from '@/shared/config/circleData';
+import { MONSTER_LIST } from '@/shared/config/monsterData';
 
 /** Max map height (tiles) */
 export const MAP_HEIGHT = 1550;
@@ -57,12 +56,14 @@ export class TileMap {
     if (Math.abs(x) > HALF_WIDTH) return { type: 'wall', health: 1000000, maxHealth: 1000000 };
     if (y < BASE_DEPTH) return { type: 'empty', health: 0, maxHealth: 0 };
 
-    const config = getDimensionConfig(this.dimension);
+    const config = getCircleConfig(y);
+    const layer = getLayerFromDepth(y, config);
+
     if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0 };
 
-    let type: TileType = 'dirt';
+    let type: TileType = 'veinstone'; // 기본 배경 타일
     const bgRoll = this.hash(x, y);
-    if (bgRoll < 0.40) type = 'stone';
+    if (bgRoll < 0.40) type = 'galestone';
 
     // 지터드 그리드 로직은 간소화하거나 필요시 복원 (현재는 직접 구현부만 대체)
     // 여기서는 기존 generateTile의 코어를 활용하여 데이터만 추출합니다.
@@ -83,12 +84,12 @@ export class TileMap {
       if (spotX === x && spotY === y) {
         const roll = this.hash(x + 500, y + 600);
         let cumulative = 0;
-        const valuableMinerals = config.minerals.filter(m => m.type !== 'stone');
+        const valuableMinerals = config.minerals;
         for (const rule of valuableMinerals) {
-          if (!rule.minDepth || y >= rule.minDepth) {
+          if (!rule.minLayer || layer >= rule.minLayer) {
             let chance = rule.threshold;
-            if (rule.peakDepth && rule.range) {
-              const dist = Math.abs(y - rule.peakDepth);
+            if (rule.peakLayer && rule.range) {
+              const dist = Math.abs(layer - rule.peakLayer);
               const depthFactor = Math.max(0, 1 - dist / rule.range);
               chance *= depthFactor;
             }
@@ -102,12 +103,12 @@ export class TileMap {
       }
     }
 
-    const bossHeight = config.bossHeight;
+    const bossHeight = config.boss ? config.depthStart + (config.boss.spawnLayer * 10) : MAP_HEIGHT;
     const bossCenterY = bossHeight - 1;
     const bossCenterX = 15;
     if (Math.abs(x - bossCenterX) <= 2 && Math.abs(y - bossCenterY) <= 2) {
       type = 'empty';
-    } else if (config.hasMonsterNest && y === bossCenterY && (x === bossCenterX - 3 || x === bossCenterX + 3)) {
+    } else if (config.boss && y === bossCenterY && (x === bossCenterX - 3 || x === bossCenterX + 3)) {
       type = 'monster_nest';
     }
 
@@ -175,22 +176,23 @@ export class TileMap {
   /** 초기 몬스터 배치는 최적화를 위해 따로 캐싱하거나 필요시 워커에서 처리 */
   getInitialMonster(x: number, y: number): Entity | null {
     if (y < BASE_DEPTH + 10) return null;
-    const config = getDimensionConfig(this.dimension);
+    const config = getCircleConfig(y);
+    const layer = getLayerFromDepth(y, config);
 
-    const available = config.monsters.filter(m => y >= m.minDepth && (!m.maxDepth || y <= m.maxDepth));
+    const available = config.monsters.filter(m => layer >= m.minLayer && (!m.maxLayer || layer <= m.maxLayer));
     if (available.length === 0) return null;
 
     const mobHash = this.hash(x + 100, y + 100);
     for (const rule of available) {
       if (mobHash < rule.chance) {
-        const mob = MONSTERS.find(m => m.id === rule.monsterId);
+        const mob = MONSTER_LIST.find(m => m.id === rule.monsterId);
         if (!mob) continue;
         return {
           id: `mob_${x}_${y}_${mob.id}`,
           type: 'monster', name: mob.name, x, y,
           interactionType: 'none',
           imagePath: mob.imagePath,
-          stats: { hp: mob.stats.hp, maxHp: mob.stats.hp, attack: mob.stats.attack, speed: mob.stats.speed, defense: mob.stats.defense },
+          stats: { hp: mob.stats.maxHp, maxHp: mob.stats.maxHp, attack: mob.stats.power, speed: mob.stats.speed, defense: mob.stats.defense },
           state: 'idle',
         };
       }
