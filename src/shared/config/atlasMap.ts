@@ -16,149 +16,59 @@ import { ATLAS_FILE_MAPPING, AtlasIconName } from './atlasFiles';
 export type { AtlasIconName };
 
 export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
-  "rusty_drill": {
+  "RustyDrill": {
     "atlasIndex": 0,
     "x": 3,
     "y": 3,
     "width": 1078,
     "height": 976,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
+    "atlasWidth": 1966,
+    "atlasHeight": 2012
   },
-  "gold": {
+  "CritDmgRune": {
+    "atlasIndex": 0,
+    "x": 3,
+    "y": 985,
+    "width": 1024,
+    "height": 1024,
+    "atlasWidth": 1966,
+    "atlasHeight": 2012
+  },
+  "Player": {
     "atlasIndex": 0,
     "x": 1087,
     "y": 3,
-    "width": 935,
-    "height": 927,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
+    "width": 876,
+    "height": 992,
+    "atlasWidth": 1966,
+    "atlasHeight": 2012
   },
-  "crit_dmg_rune": {
-    "atlasIndex": 0,
-    "x": 3,
-    "y": 985,
-    "width": 1024,
-    "height": 1024,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "attack_rune": {
+  "DiamondDrill": {
     "atlasIndex": 0,
     "x": 1033,
-    "y": 985,
-    "width": 1011,
-    "height": 926,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
+    "y": 1001,
+    "width": 470,
+    "height": 971,
+    "atlasWidth": 1966,
+    "atlasHeight": 2012
   },
-  "boss_core": {
+  "GoldDrill": {
     "atlasIndex": 0,
-    "x": 1033,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
+    "x": 1509,
+    "y": 1001,
+    "width": 449,
+    "height": 928,
+    "atlasWidth": 1966,
+    "atlasHeight": 2012
   },
-  "coal_tile": {
-    "atlasIndex": 0,
-    "x": 1167,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "diamond_tile": {
-    "atlasIndex": 0,
-    "x": 1301,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "dirt_tile": {
-    "atlasIndex": 0,
-    "x": 1435,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "dungeon_bricks_tile": {
-    "atlasIndex": 0,
-    "x": 1569,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "emerald_tile": {
-    "atlasIndex": 0,
-    "x": 1703,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "gold_tile": {
-    "atlasIndex": 0,
-    "x": 1837,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "sapphire_icon": {
-    "atlasIndex": 0,
-    "x": 1971,
-    "y": 1917,
-    "width": 46,
-    "height": 64,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "boss_skin": {
-    "atlasIndex": 0,
-    "x": 1033,
-    "y": 1917,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2048
-  },
-  "crit_rate_rune": {
+  "CritRateRune": {
     "atlasIndex": 1,
     "x": 3,
     "y": 3,
     "width": 1024,
     "height": 1024,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
-  },
-  "luck_rune": {
-    "atlasIndex": 1,
-    "x": 1033,
-    "y": 3,
-    "width": 1008,
-    "height": 924,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
-  },
-  "speed_rune": {
-    "atlasIndex": 1,
-    "x": 1033,
-    "y": 933,
-    "width": 1008,
-    "height": 924,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
   "move_rune": {
     "atlasIndex": 1,
@@ -166,304 +76,232 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "y": 1033,
     "width": 1024,
     "height": 938,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "steel_scale_turtle": {
+  "AttackRune": {
     "atlasIndex": 1,
     "x": 1033,
-    "y": 1863,
-    "width": 308,
-    "height": 176,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "y": 3,
+    "width": 1011,
+    "height": 926,
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "obsidian_tile": {
+  "luck_rune": {
     "atlasIndex": 1,
-    "x": 1347,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "x": 1033,
+    "y": 935,
+    "width": 1008,
+    "height": 924,
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "ruby_tile": {
+  "GaleStoneIcon": {
     "atlasIndex": 1,
-    "x": 1481,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "x": 1033,
+    "y": 1865,
+    "width": 88,
+    "height": 92,
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "sapphire_tile": {
+  "CrimsonStoneIcon": {
     "atlasIndex": 1,
-    "x": 1615,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "x": 1127,
+    "y": 1865,
+    "width": 84,
+    "height": 88,
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "stone_tile": {
+  "FervorStoneIcon": {
     "atlasIndex": 1,
-    "x": 1749,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
+    "x": 1217,
+    "y": 1865,
+    "width": 80,
+    "height": 86,
+    "atlasWidth": 2047,
+    "atlasHeight": 1974
   },
-  "uranium_tile": {
-    "atlasIndex": 1,
-    "x": 1883,
-    "y": 1863,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2044,
-    "atlasHeight": 2042
-  },
-  "oros_face": {
+  "Refinery": {
     "atlasIndex": 2,
     "x": 3,
     "y": 3,
     "width": 1024,
     "height": 1024,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
+    "atlasWidth": 2044,
+    "atlasHeight": 1963
   },
-  "player": {
+  "speed_rune": {
+    "atlasIndex": 2,
+    "x": 1033,
+    "y": 3,
+    "width": 1008,
+    "height": 924,
+    "atlasWidth": 2044,
+    "atlasHeight": 1963
+  },
+  "gold": {
     "atlasIndex": 2,
     "x": 3,
     "y": 1033,
-    "width": 876,
-    "height": 992,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "diamond_drill": {
-    "atlasIndex": 2,
-    "x": 885,
-    "y": 1033,
-    "width": 470,
-    "height": 971,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "coal_icon": {
-    "atlasIndex": 2,
-    "x": 1361,
-    "y": 1033,
-    "width": 683,
-    "height": 853,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "wall_tile": {
-    "atlasIndex": 2,
-    "x": 1361,
-    "y": 1892,
-    "width": 128,
-    "height": 128,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "iron_tile": {
-    "atlasIndex": 2,
-    "x": 1495,
-    "y": 1892,
-    "width": 128,
-    "height": 127,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
+    "width": 935,
+    "height": 927,
+    "atlasWidth": 2044,
+    "atlasHeight": 1963
   },
   "emerald_drill": {
     "atlasIndex": 2,
     "x": 1033,
-    "y": 3,
+    "y": 933,
     "width": 472,
     "height": 930,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
+    "atlasWidth": 2044,
+    "atlasHeight": 1963
   },
-  "gold_icon": {
+  "StoneDrill": {
     "atlasIndex": 2,
     "x": 1511,
-    "y": 3,
-    "width": 529,
-    "height": 529,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "mechanic": {
-    "atlasIndex": 2,
-    "x": 1511,
-    "y": 538,
-    "width": 512,
-    "height": 418,
-    "atlasWidth": 2047,
-    "atlasHeight": 2028
-  },
-  "refinery": {
-    "atlasIndex": 3,
-    "x": 3,
-    "y": 3,
-    "width": 1024,
-    "height": 1024,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "gold_drill": {
-    "atlasIndex": 3,
-    "x": 3,
-    "y": 1033,
-    "width": 449,
-    "height": 928,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "stone_drill": {
-    "atlasIndex": 3,
-    "x": 458,
-    "y": 1033,
+    "y": 933,
     "width": 413,
     "height": 926,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
+    "atlasWidth": 2044,
+    "atlasHeight": 1963
   },
   "settings": {
     "atlasIndex": 3,
-    "x": 877,
-    "y": 1033,
+    "x": 3,
+    "y": 3,
     "width": 906,
     "height": 913,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   },
-  "pebble_golem": {
+  "IronDrill": {
     "atlasIndex": 3,
-    "x": 1789,
-    "y": 1033,
-    "width": 256,
-    "height": 250,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "thief_mole": {
-    "atlasIndex": 3,
-    "x": 1789,
-    "y": 1289,
-    "width": 256,
-    "height": 204,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "iron_drill": {
-    "atlasIndex": 3,
-    "x": 1033,
+    "x": 915,
     "y": 3,
     "width": 410,
     "height": 912,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "diamond_icon": {
-    "atlasIndex": 3,
-    "x": 1449,
-    "y": 3,
-    "width": 584,
-    "height": 742,
-    "atlasWidth": 2048,
-    "atlasHeight": 1964
-  },
-  "stone_icon": {
-    "atlasIndex": 4,
-    "x": 3,
-    "y": 3,
-    "width": 899,
-    "height": 677,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
-  },
-  "dirt_icon": {
-    "atlasIndex": 4,
-    "x": 908,
-    "y": 3,
-    "width": 889,
-    "height": 665,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   },
   "status": {
-    "atlasIndex": 4,
-    "x": 908,
-    "y": 674,
+    "atlasIndex": 3,
+    "x": 3,
+    "y": 922,
     "width": 840,
     "height": 295,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   },
   "book": {
-    "atlasIndex": 4,
+    "atlasIndex": 3,
     "x": 3,
-    "y": 686,
+    "y": 1223,
     "width": 835,
     "height": 562,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   },
-  "emerald_icon": {
-    "atlasIndex": 4,
-    "x": 3,
-    "y": 1254,
-    "width": 583,
-    "height": 679,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
-  },
-  "ruby_icon": {
-    "atlasIndex": 4,
-    "x": 592,
-    "y": 1254,
-    "width": 612,
-    "height": 662,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
-  },
-  "base_tileset": {
-    "atlasIndex": 4,
-    "x": 1210,
-    "y": 975,
+  "BaseTileset": {
+    "atlasIndex": 3,
+    "x": 1331,
+    "y": 3,
     "width": 640,
     "height": 640,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   },
-  "inventory": {
-    "atlasIndex": 4,
-    "x": 1210,
-    "y": 1621,
-    "width": 481,
-    "height": 399,
-    "atlasWidth": 1853,
-    "atlasHeight": 2023
-  },
-  "iron_icon": {
-    "atlasIndex": 5,
-    "x": 3,
-    "y": 3,
-    "width": 638,
-    "height": 640,
-    "atlasWidth": 644,
-    "atlasHeight": 1164
-  },
-  "merchant": {
-    "atlasIndex": 5,
-    "x": 3,
+  "Mechanic": {
+    "atlasIndex": 3,
+    "x": 1331,
     "y": 649,
+    "width": 512,
+    "height": 418,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "Merchant": {
+    "atlasIndex": 3,
+    "x": 844,
+    "y": 1223,
     "width": 354,
     "height": 512,
-    "atlasWidth": 644,
-    "atlasHeight": 1164
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "inventory": {
+    "atlasIndex": 3,
+    "x": 1204,
+    "y": 1073,
+    "width": 481,
+    "height": 399,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "CrimsonStoneTile": {
+    "atlasIndex": 3,
+    "x": 849,
+    "y": 922,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "DirtTile": {
+    "atlasIndex": 3,
+    "x": 983,
+    "y": 921,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "FervorStoneTile": {
+    "atlasIndex": 3,
+    "x": 1117,
+    "y": 921,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "GaleStoneTile": {
+    "atlasIndex": 3,
+    "x": 849,
+    "y": 1056,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "StoneTile": {
+    "atlasIndex": 3,
+    "x": 983,
+    "y": 1055,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "boss_core": {
+    "atlasIndex": 3,
+    "x": 1691,
+    "y": 1073,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "boss_skin": {
+    "atlasIndex": 3,
+    "x": 1691,
+    "y": 1073,
+    "width": 128,
+    "height": 128,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
   }
 };
