@@ -34,7 +34,17 @@ async function generateAtlas() {
   console.log('\n🏗️ 에셋 패킹 중...');
 
   try {
-    // 2. 패킹할 파일들의 목록을 수집합니다.
+    // 2. 기존 아틀라스 파일 삭제 (Cleanup)
+    // 에셋 개수가 줄어들었을 때 이전 실행에서 생성된 파일이 남는 현상을 방지합니다.
+    const oldFiles = await glob(`${OUTPUT_DIR}/${ATLAS_NAME}-*.{json,webp}`);
+    const oldManifest = path.join(OUTPUT_DIR, 'manifest.json');
+    
+    for (const file of oldFiles) {
+      await fs.unlink(file).catch(() => {});
+    }
+    await fs.unlink(oldManifest).catch(() => {});
+
+    // 3. 패킹할 파일들의 목록을 수집합니다.
     let filesToPack = [];
     for (const pattern of ASSET_SOURCES) {
       const paths = await glob(pattern);

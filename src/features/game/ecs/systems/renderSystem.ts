@@ -4,6 +4,8 @@ import { TILE_SIZE, BASE_DEPTH, CAMERA_SCALE } from '@/shared/config/constants';
 import { renderEntities } from './entityRenderer';
 import { createHitFlashFilter, createRadialLightMask } from '../../lib/pixiEffects';
 import { ID_TO_TILE_TYPE } from '@/shared/types/game';
+import { MINERALS } from '@/shared/config/mineralData';
+import { getSafeTexture } from '@/shared/lib/assetUtils';
 
 // Tile sprite cache (coordinate key -> Sprite)
 const tileSpriteCache = new Map<string, PIXI.Sprite>();
@@ -71,14 +73,18 @@ export const renderSystem = (
       const tile = !isBaseTile ? tileMap.getTile(x, y) : null;
       if (!isBaseTile && (!tile || tile.type === 'empty')) continue;
       
-      const renderTextureKey = isBaseTile ? textureKey : `tile_${tile!.type}`;
+      // Resolve texture key: mineralData의 tileImage를 우선 사용, 없으면 StoneTile 폴백
+      const renderTextureKey = isBaseTile
+        ? textureKey
+        : (MINERALS.find(m => m.key === tile!.type)?.tileImage || 'StoneTile');
+      
       const key = `${x},${y}_${renderTextureKey}`;
       visibleTileKeys.add(key);
 
       if (!tileSpriteCache.has(key)) {
         let sprite = tilePool.pop() || new PIXI.Sprite();
-        // Fallback texture lookup
-        sprite.texture = textures[renderTextureKey] || textures[renderTextureKey.replace('tile_', '')] || PIXI.Texture.WHITE;
+        // Use safe texture lookup with defined tileImage or default fallback
+        sprite.texture = getSafeTexture(textures, renderTextureKey as string, 'StoneTile');
         sprite.width = TILE_SIZE;
         sprite.height = TILE_SIZE;
         sprite.position.set(x * TILE_SIZE, y * TILE_SIZE);
@@ -271,7 +277,10 @@ function updateDroppedItems(world: GameWorld, layers: any, textures: any) {
       let sprite = itemSpriteMap.get(id);
       if (!sprite) {
         const type = ID_TO_TILE_TYPE[dp.typeId[i]];
-        const texture = textures[`${type}_icon`] || textures[`item_${type}`] || textures[type] || PIXI.Texture.WHITE;
+        const mineral = MINERALS.find(m => m.key === type);
+        const iconKey = mineral?.image || `${type}_icon`;
+        
+        const texture = getSafeTexture(textures, iconKey as string, 'StoneTile');
         sprite = new PIXI.Sprite(texture);
         sprite.anchor.set(0.5, 0.5);
         const itemSize = TILE_SIZE * 0.5;
@@ -314,7 +323,7 @@ function updateLighting(world: GameWorld, layers: any, app: PIXI.Application, no
   for (let i = 0; i < dp.capacity; i++) {
     if (dp.active[i] && lights.length < 64) {
       const type = ID_TO_TILE_TYPE[dp.typeId[i]];
-      if (type === 'iron' || type === 'gold') {
+      if (type === 'goldstone' || type === 'luststone') {
         lights.push(dp.x[i], dp.y[i], TILE_SIZE * 2, 0.5);
       }
     }

@@ -154,19 +154,12 @@ class GameEngineInstance {
       await spritesheet.parse();
 
       for (const [name, texture] of Object.entries(spritesheet.textures)) {
+        // 원본 파일명 그대로 등록 (PascalCase 유지)
         this.textures[name] = texture;
         
-        // Normalized keys (lowercase, no extension)
-        const cleanName = name.replace(/\.(png|webp)$/i, '').toLowerCase();
+        // 확장자만 제거한 키로도 등록 (예: "CrimsonStoneTile.png" → "CrimsonStoneTile")
+        const cleanName = name.replace(/\.(png|webp)$/i, '');
         this.textures[cleanName] = texture;
-        
-        // Prefix/Suffix support (tile_, item_, _icon)
-        this.textures[`tile_${cleanName}`] = texture;
-        if (cleanName.includes('icon')) {
-          const itemName = cleanName.replace('icon', '').replace(/[_]/g, '');
-          this.textures[`item_${itemName}`] = texture;
-          this.textures[itemName] = texture;
-        }
 
         if (name === 'Player.png') this.textures['player'] = texture;
         if (name === 'BaseTileset.png') {
@@ -221,17 +214,17 @@ class GameEngineInstance {
     const { action, data } = payload;
     
     if (action === 'travelDimension') {
-      const nextDim = this.world.player.stats.dimension + 1;
-      const newSeed = Math.floor(Math.random() * 1000000);
-      this.safeReset(newSeed, nextDim);
+      const targetDepth = payload.targetDepth || 0;
+      this.world.player.pos.x = 15;
+      this.world.player.pos.y = targetDepth;
+      this.world.player.visualPos.x = 15;
+      this.world.player.visualPos.y = targetDepth;
+      this.world.player.stats.depth = targetDepth;
+      
+      (self as any).postMessage({ type: 'DIMENSION_TRAVEL_COMPLETE' });
       return;
     }
     
-    if (action === 'regenerateWorld') {
-      const newSeed = Math.floor(Math.random() * 1000000);
-      this.safeReset(newSeed, this.world.player.stats.dimension);
-      return;
-    }
 
     handlePlayerAction(this.world, payload);
   }

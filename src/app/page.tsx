@@ -1,11 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import CoalIcon from '@/shared/assets/minerals/CoalIcon.png';
-import IronIcon from '@/shared/assets/minerals/IronIcon.png';
-import GoldIcon from '@/shared/assets/minerals/GoldIcon.png';
-import DiamondIcon from '@/shared/assets/minerals/DiamondIcon.png';
-import RubyIcon from '@/shared/assets/minerals/RubyIcon.png';
-import EmeraldIcon from '@/shared/assets/minerals/EmeraldIcon.png';
 
 export const dynamic = 'force-static';
 
@@ -23,7 +16,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-indigo-600">
               Drilling RPG
             </span>
           </h1>
@@ -90,7 +83,7 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-cyan-500/30 transition-colors group">
+            <div className="bg-linear-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-cyan-500/30 transition-colors group">
               <div className="w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/40 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">⛏️</span>
               </div>
@@ -102,7 +95,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-indigo-500/30 transition-colors group">
+            <div className="bg-linear-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-indigo-500/30 transition-colors group">
               <div className="w-14 h-14 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-6 border border-indigo-500/40 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🤖</span>
               </div>
@@ -114,7 +107,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-blue-500/30 transition-colors group">
+            <div className="bg-linear-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-blue-500/30 transition-colors group">
               <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/40 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🔮</span>
               </div>
@@ -127,7 +120,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-purple-500/30 transition-colors group">
+            <div className="bg-linear-to-br from-zinc-900 to-black border border-white/5 p-8 rounded-3xl hover:border-purple-500/30 transition-colors group">
               <div className="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 border border-purple-500/40 group-hover:scale-110 transition-transform">
                 <span className="text-2xl">🐉</span>
               </div>
@@ -150,16 +143,16 @@ export default function LandingPage() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { name: 'Coal', img: CoalIcon, desc: 'A common fuel found near the surface. Used as basic fuel for the refinery.', depth: '0m ~ 100m' },
-              { name: 'Iron Ore', img: IronIcon, desc: 'An essential metal for early equipment upgrades. Hidden inside heavy rock crevices.', depth: '150m ~ 400m' },
-              { name: 'Gold', img: GoldIcon, desc: 'A highly valuable material needed for strong drills and base research. Easily recognizable by its shining glow.', depth: '400m ~ 800m' },
-              { name: 'Diamond', img: DiamondIcon, desc: 'The hardest mineral in the world. Found in unbreakable bedrock layers.', depth: '800m ~ 1200m' },
-              { name: 'Ruby', img: RubyIcon, desc: 'A red gem containing the heat of magma. Increases the thermal efficiency of high-level weapons.', depth: '1000m+' },
-              { name: 'Emerald', img: EmeraldIcon, desc: 'A transparent green gem used in precision optical equipment.', depth: '650m+' }
+              { name: 'Coal', icon: '🌑', desc: 'A common fuel found near the surface. Used as basic fuel for the refinery.', depth: '0m ~ 100m' },
+              { name: 'Iron Ore', icon: '⛓️', desc: 'An essential metal for early equipment upgrades. Hidden inside heavy rock crevices.', depth: '150m ~ 400m' },
+              { name: 'Gold', icon: '💰', desc: 'A highly valuable material needed for strong drills and base research. Easily recognizable by its shining glow.', depth: '400m ~ 800m' },
+              { name: 'Diamond', icon: '💎', desc: 'The hardest mineral in the world. Found in unbreakable bedrock layers.', depth: '800m ~ 1200m' },
+              { name: 'Ruby', icon: '🏮', desc: 'A red gem containing the heat of magma. Increases the thermal efficiency of high-level weapons.', depth: '1000m+' },
+              { name: 'Emerald', icon: '🌲', desc: 'A transparent green gem used in precision optical equipment.', depth: '650m+' }
             ].map((min, idx) => (
               <div key={idx} className="bg-black/50 border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center group hover:bg-zinc-900 transition-colors">
-                <div className="w-16 h-16 mb-4 relative drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:scale-110 transition-transform group-hover:drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
-                  <Image src={min.img} alt={min.name} fill className="object-contain rendering-pixelated" />
+                <div className="w-16 h-16 mb-4 flex items-center justify-center text-4xl drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] group-hover:scale-110 transition-transform">
+                  {min.icon}
                 </div>
                 <h4 className="text-xl font-bold text-white mb-2">{min.name}</h4>
                 <div className="text-xs font-mono text-cyan-400 mb-3 bg-cyan-950/50 px-2 py-1 rounded">Depth: {min.depth}</div>

@@ -1,6 +1,6 @@
 {
   "frames": {
-    "OrosFace.png": {
+    "Refinery.png": {
       "frame": {
         "x": 3,
         "y": 3,
@@ -24,120 +24,48 @@
         "y": 0.5
       }
     },
-    "Player.png": {
+    "MiningSpeedRune.png": {
+      "frame": {
+        "x": 1033,
+        "y": 3,
+        "w": 1008,
+        "h": 924
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 50,
+        "w": 1008,
+        "h": 924
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "MoneyIcon.webp": {
       "frame": {
         "x": 3,
         "y": 1033,
-        "w": 876,
-        "h": 992
+        "w": 935,
+        "h": 927
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 148,
-        "y": 32,
-        "w": 876,
-        "h": 992
+        "x": 56,
+        "y": 60,
+        "w": 935,
+        "h": 927
       },
       "sourceSize": {
         "w": 1024,
         "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "DiamondDrill.png": {
-      "frame": {
-        "x": 885,
-        "y": 1033,
-        "w": 470,
-        "h": 971
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 368,
-        "y": 5,
-        "w": 470,
-        "h": 971
-      },
-      "sourceSize": {
-        "w": 1078,
-        "h": 976
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "CoalIcon.png": {
-      "frame": {
-        "x": 1361,
-        "y": 1033,
-        "w": 683,
-        "h": 853
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 168,
-        "y": 84,
-        "w": 683,
-        "h": 853
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "wall.png": {
-      "frame": {
-        "x": 1361,
-        "y": 1892,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "iron.png": {
-      "frame": {
-        "x": 1495,
-        "y": 1892,
-        "w": 128,
-        "h": 127
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 127
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
       },
       "pivot": {
         "x": 0.5,
@@ -147,7 +75,7 @@
     "EmeralDrill.png": {
       "frame": {
         "x": 1033,
-        "y": 3,
+        "y": 933,
         "w": 472,
         "h": 930
       },
@@ -168,48 +96,24 @@
         "y": 0.5
       }
     },
-    "GoldIcon.png": {
+    "StoneDrill.png": {
       "frame": {
         "x": 1511,
-        "y": 3,
-        "w": 529,
-        "h": 529
+        "y": 933,
+        "w": 413,
+        "h": 926
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 256,
-        "y": 247,
-        "w": 529,
-        "h": 529
+        "x": 369,
+        "y": 25,
+        "w": 413,
+        "h": 926
       },
       "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "Mechanic.png": {
-      "frame": {
-        "x": 1511,
-        "y": 538,
-        "w": 512,
-        "h": 418
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 256,
-        "y": 303,
-        "w": 512,
-        "h": 418
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
+        "w": 1078,
+        "h": 976
       },
       "pivot": {
         "x": 0.5,
@@ -223,8 +127,8 @@
     "image": "game-atlas-2.png",
     "format": "RGBA8888",
     "size": {
-      "w": 2047,
-      "h": 2028
+      "w": 2044,
+      "h": 1963
     },
     "scale": 1
   }

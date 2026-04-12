@@ -87,7 +87,7 @@ export default function Laboratory({ stats, onUnlockResearch, onClose }: Laborat
           <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
             <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
               <div className="flex items-center justify-center">
-                 <AtlasIcon name="gold" size={32} />
+                 <AtlasIcon name="GoldIcon" size={32} />
               </div>
               <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
                 {stats.goldCoins.toLocaleString()}
@@ -197,7 +197,7 @@ export default function Laboratory({ stats, onUnlockResearch, onClose }: Laborat
                            <span className={`font-black tabular-nums text-xs md:text-base ${met ? 'text-zinc-300' : 'text-rose-500'}`}>
                              {owned.toLocaleString()} / {amount.toLocaleString()}
                            </span>
-                           {res === 'goldCoins' && <AtlasIcon name="gold" size={16} />}
+                           {res === 'goldCoins' && <AtlasIcon name="GoldIcon" size={16} />}
                         </div>
                      </div>
                    );

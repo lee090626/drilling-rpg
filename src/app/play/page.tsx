@@ -31,7 +31,7 @@ export default function Play() {
           </div>
           <div className="space-y-2">
             <h3 className="font-black text-zinc-500">Combat Systems</h3>
-            <p className="leading-relaxed">Dimensional Boss Encounters</p>
+            <p className="leading-relaxed">Abyssal Lord Encounters</p>
           </div>
           <div className="space-y-2">
             <h3 className="font-black text-zinc-500">Tech Upgrades</h3>

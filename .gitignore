@@ -48,3 +48,6 @@ yarn-error.log*
 generate_save.js
 # AI Agent Session Log
 Agents.md
+
+# Data Generator
+scripts/genData.js

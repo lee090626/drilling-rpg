@@ -112,7 +112,7 @@ export function RecipeDetail({ selectedRecipe, stats, canCraft, onCraft }: Recip
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center p-1.5 shadow-inner">
                           {key === 'goldCoins' ? (
-                            <AtlasIcon name="gold" size={24} />
+                            <AtlasIcon name="GoldIcon" size={24} />
                           ) : mineral?.image ? (
                             <AtlasIcon name={mineral.image} size={24} />
                           ) : (
@@ -120,7 +120,7 @@ export function RecipeDetail({ selectedRecipe, stats, canCraft, onCraft }: Recip
                           )}
                         </div>
                         <span className="text-zinc-300 font-black text-sm tracking-tight capitalize group-hover/req:text-rose-400 transition-colors">
-                          {key === 'goldCoins' ? 'Gold' : key}
+                          {key === 'goldCoins' ? 'Gold' : ((mineral as any)?.nameKo || mineral?.name || key)}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">

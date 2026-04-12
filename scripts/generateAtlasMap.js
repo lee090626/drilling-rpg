@@ -4,14 +4,11 @@ const path = require('path');
 // 매핑 정보를 직접 가져옵니다 (TS 파일을 읽기 위해 간단한 파싱이나 직접 정의 사용)
 // 여기서는 실수를 줄이기 위해 아까 만든 src/shared/config/atlasFiles.ts의 내용을 기반으로 정의합니다.
 /**
- * 파일명(예: PascalCase.png)을 snake_case ID로 변환합니다.
+ * 파일명(예: PascalCase.png)에서 확장자를 제외한 이름을 반환합니다.
+ * 더 이상 강제로 snake_case로 변환하지 않고 원본 케이스를 유지합니다.
  */
-function toSnakeCase(str) {
-  const fileName = path.parse(str).name;
-  return fileName
-    .replace(/([A-Z])/g, "_$1")
-    .toLowerCase()
-    .replace(/^_/, "");
+function getAssetId(fileName) {
+  return path.parse(fileName).name;
 }
 
 /**
@@ -19,34 +16,29 @@ function toSnakeCase(str) {
  */
 const SPECIAL_OVERRIDES = {
   // --- UI Icons ---
-  'MoneyIcon.webp': 'gold',
-  'StatusIcon.webp': 'status',
-  'InventoryIcon.webp': 'inventory',
-  'BookIcon.webp': 'book',
-  'SettingsIcon.webp': 'settings',
+  'MoneyIcon.webp': 'GoldIcon',
+  'StatusIcon.webp': 'StatusIcon',
+  'InventoryIcon.webp': 'InventoryIcon',
+  'BookIcon.webp': 'BookIcon',
+  'SettingsIcon.webp': 'SettingsIcon',
 
-  // --- Runes ---
-  'MiningSpeedRune.png': 'speed_rune',
-  'MoveSpeedRune.png': 'move_rune',
-  'LuckRune.png': 'luck_rune',
+  // --- Minerals/Tiles (하위 호환 및 명확성을 위한 명명) ---
+  'dirt.png': 'DirtTile',
+  'stone.png': 'StoneTile',
+  'coal.png': 'CoalTile',
+  'iron.png': 'IronTile',
+  'gold.png': 'GoldTile',
+  'diamond.png': 'DiamondTile',
+  'emerald.png': 'EmeraldTile',
+  'ruby.png': 'RubyTile',
+  'sapphire.png': 'SapphireTile',
+  'uranium.png': 'UraniumTile',
+  'obsidian.png': 'ObsidianTile',
+  'wall.png': 'WallTile',
+  'dungeon_bricks.png': 'DungeonBricksTile',
 
-  // --- Minerals/Tiles ---
-  'dirt.png': 'dirt_tile',
-  'stone.png': 'stone_tile',
-  'coal.png': 'coal_tile',
-  'iron.png': 'iron_tile',
-  'gold.png': 'gold_tile',
-  'diamond.png': 'diamond_tile',
-  'emerald.png': 'emerald_tile',
-  'ruby.png': 'ruby_tile',
-  'sapphire.png': 'sapphire_tile',
-  'uranium.png': 'uranium_tile',
-  'obsidian.png': 'obsidian_tile',
-  'wall.png': 'wall_tile',
-  'dungeon_bricks.png': 'dungeon_bricks_tile',
-
-  // --- Typo Correction (하위 호환성) ---
-  'EmeralDrill.png': 'emerald_drill',
+  // --- Typo Correction ---
+  'EmeralDrill.png': 'EmeraldDrill',
 };
 
 const ASSETS_DIR = path.join(__dirname, '../public/assets');
@@ -67,8 +59,8 @@ function generate() {
     const metaSize = content.meta.size;
 
     for (const fileName of Object.keys(content.frames)) {
-      // ID 결정 (예외 매핑 우선, 없으면 자동 스네이크 케이스 변환)
-      const id = SPECIAL_OVERRIDES[fileName] || toSnakeCase(fileName);
+      // ID 결정 (예외 매핑 우선, 없으면 오리지널 파일명 유지)
+      const id = SPECIAL_OVERRIDES[fileName] || getAssetId(fileName);
       const frame = content.frames[fileName].frame;
 
       fileMapping[id] = fileName;

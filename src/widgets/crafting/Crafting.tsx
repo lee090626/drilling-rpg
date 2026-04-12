@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
-import { DRONES } from '@/shared/config/droneData';
+
 import { MINERALS } from '@/shared/config/mineralData';
 import { formatNumber } from '@/shared/lib/numberUtils';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
@@ -26,8 +26,6 @@ interface CraftingProps {
  */
 function Crafting({ stats, onCraft, onClose }: CraftingProps) {
   const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'drill' | 'drone'>('drill');
-  const [droneFilter, setDroneFilter] = useState<'all' | 'mining' | 'support'>('all');
 
   const drillRecipes = Object.values(DRILLS)
     .filter((drill) => drill.price) // 가격 정보가 있는(제작 가능한) 아이템만 필터링
@@ -48,35 +46,11 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
       type: 'drill'
     }));
 
-  const droneRecipes = Object.values(DRONES)
-    .filter((drone) => drone.price && (droneFilter === 'all' || drone.category === droneFilter))
-    .map((drone) => ({
-      name: drone.name,
-      icon: drone.icon,
-      category: drone.category,
-      requirements: drone.price || {},
-      result: {
-        droneId: drone.id,
-      },
-      description: drone.description,
-      id: drone.id,
-      power: drone.basePower,
-      cooldownMs: drone.cooldownMs,
-      specialEffect: drone.specialEffect,
-      smeltSpeedMult: drone.smeltSpeedMult,
-      smeltSlotBonus: drone.smeltSlotBonus,
-      maxSkillSlots: 0,
-      image: null,
-      type: 'drone'
-    }));
-
-  const recipes = [...drillRecipes, ...droneRecipes];
+  const recipes = [...drillRecipes];
 
   /** 해당 레시피를 제작할 수 있는지 확인하는 함수 */
   const canCraft = (rcp: any) => {
-    // 이미 보유한 장비는 다시 제작할 수 없음
     if (rcp.type === 'drill' && stats.ownedDrillIds?.includes(rcp.id)) return false;
-    if (rcp.type === 'drone' && stats.ownedDroneIds?.includes(rcp.id)) return false;
     // 모든 재료 조건을 충족하는지 확인
     return Object.entries(rcp.requirements).every(([key, val]) => {
       const currentVal =
@@ -115,7 +89,7 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="gold" size={32} />
+               <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
@@ -143,56 +117,14 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                   Blueprints
                 </h2>
               </div>
-              <div className="flex bg-black/40 p-1 rounded-xl md:rounded-2xl border border-white/5 shadow-inner w-full sm:w-auto">
-                <button
-                  onClick={() => setActiveTab('drill')}
-                  className={`flex-1 sm:flex-none px-6 md:px-8 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-rose-400/50 ${
-                    activeTab === 'drill'
-                      ? 'bg-rose-500 text-white shadow-[0_4px_12px_rgba(244,63,94,0.3)]'
-                      : 'text-zinc-500 hover:text-zinc-300'
-                  }`}
-                >
-                  Drills
-                </button>
-                <button
-                  onClick={() => setActiveTab('drone')}
-                  className={`flex-1 sm:flex-none px-6 md:px-8 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-rose-400/50 ${
-                    activeTab === 'drone'
-                      ? 'bg-rose-500 text-white shadow-[0_4px_12px_rgba(244,63,94,0.3)]'
-                      : 'text-zinc-500 hover:text-zinc-300'
-                  }`}
-                >
-                  Drones
-                </button>
-              </div>
             </div>
-
-            {/* 드론 세부 필터 */}
-            {activeTab === 'drone' && (
-              <div className="flex gap-2 bg-black/40 p-1.5 rounded-xl self-end scale-90 origin-right px-4 md:px-6 mb-4 mr-4 md:mr-8 border border-white/5 shadow-inner">
-                {(['all', 'mining', 'support'] as const).map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setDroneFilter(f)}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase transition-all focus:outline-none focus:ring-2 focus:ring-amber-400/50 ${
-                      droneFilter === f
-                        ? 'bg-zinc-800 text-amber-400 border border-white/10 shadow-lg'
-                        : 'text-zinc-600 hover:text-zinc-400'
-                    }`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
-            )}
 
             <div className="overflow-y-auto px-4 md:px-8 custom-scrollbar flex-1 pb-12 min-h-0 pt-2">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
-                {(activeTab === 'drill' ? drillRecipes : droneRecipes).map((rcp) => {
+                {drillRecipes.map((rcp) => {
                   const active = selectedRecipe?.name === rcp.name;
                   const craftable = canCraft(rcp);
-                  const owned = (rcp.type === 'drill' && stats.ownedDrillIds?.includes(rcp.id)) ||
-                                (rcp.type === 'drone' && stats.ownedDroneIds?.includes(rcp.id));
+                  const owned = rcp.type === 'drill' && stats.ownedDrillIds?.includes(rcp.id);
 
                   return (
                     <button

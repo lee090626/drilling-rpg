@@ -7,52 +7,86 @@ export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Radiant' | 'Lege
  * 게임 내 타일의 종류를 정의합니다.
  */
 export type TileType =
-  | 'dirt'            // 흙
-  | 'stone'           // 돌
-  | 'coal'            // 석탄
-  | 'iron'            // 철
-  | 'gold'            // 금
-  | 'diamond'         // 다이아몬드
-  | 'emerald'         // 에메랄드
-  | 'ruby'            // 루비
-  | 'sapphire'        // 사파이어
-  | 'uranium'         // 우라늄
-  | 'obsidian'        // 옵시디언
-  | 'lava'            // 용암
-  | 'dungeon_bricks'  // 던전 벽돌
-  | 'boss_core'       // 보스 코어
-  | 'boss_skin'       // 보스 외피
-  | 'monster_nest'    // 몬스터 둥지
-  | 'monster'         // 몬스터 (표기용)
-  | 'empty'           // 빈 공간
-  | 'wall'            // 파괴 불가능한 벽
-  | 'portal'          // 차원 관문
-  | 'iron_ingot'      // 가공된 철 주괴
-  | 'gold_ingot'      // 가공된 금 주괴
-  | 'polished_diamond'; // 가공된 다이아몬드
+  // === Circle 2 — Lust ===
+  | 'crimsonstone'
+  | 'galestone'
+  | 'fervorstone'
+  // === Circle 3 — Gluttony ===
+  | 'moldstone'
+  | 'siltstone'
+  | 'gorestone'
+  // === Circle 4 — Greed ===
+  | 'goldstone'
+  | 'luststone'
+  | 'midasite'
+  // === Circle 5 — Wrath ===
+  | 'ragestone'
+  | 'cinderstone'
+  | 'furystone'
+  // === Circle 6 — Heresy ===
+  | 'ashstone'
+  | 'blightstone'
+  | 'vexite'
+  // === Circle 7 — Violence ===
+  | 'thornstone'
+  | 'bloodstone'
+  | 'cruelite'
+  // === Circle 8 — Fraud ===
+  | 'mimicite'
+  | 'lurerstone'
+  | 'phantomite'
+  // === Circle 9 — Treachery ===
+  | 'froststone'
+  | 'glacialite'
+  | 'abyssstone'
+  // === 시스템 타일 ===
+  | 'stone'
+  | 'lava'
+  | 'dungeon_bricks'
+  | 'boss_core'
+  | 'boss_skin'
+  | 'monster_nest'
+  | 'monster'
+  | 'empty'
+  | 'wall'
+  | 'portal';
 
 /** 타일 타입-ID 매핑 (저장 및 비트 패킹용) */
 export const TILE_TYPE_TO_ID: Record<string, number> = {
   empty: 0,
-  dirt: 1,
-  stone: 2,
-  coal: 3,
-  iron: 4,
-  gold: 5,
-  diamond: 6,
-  emerald: 7,
-  ruby: 8,
-  sapphire: 9,
-  uranium: 10,
-  obsidian: 11,
-  lava: 12,
-  dungeon_bricks: 13,
-  boss_core: 14,
-  monster_nest: 15,
-  monster: 16,
-  wall: 17,
-  portal: 18,
-  boss_skin: 19,
+  crimsonstone: 1,
+  galestone: 2,
+  fervorstone: 3,
+  moldstone: 4,
+  siltstone: 5,
+  gorestone: 6,
+  goldstone: 7,
+  luststone: 8,
+  midasite: 9,
+  ragestone: 10,
+  cinderstone: 11,
+  furystone: 12,
+  ashstone: 13,
+  blightstone: 14,
+  vexite: 15,
+  thornstone: 16,
+  bloodstone: 17,
+  cruelite: 18,
+  mimicite: 19,
+  lurerstone: 20,
+  phantomite: 21,
+  froststone: 22,
+  glacialite: 23,
+  abyssstone: 24,
+  lava: 25,
+  dungeon_bricks: 26,
+  boss_core: 27,
+  monster_nest: 28,
+  monster: 29,
+  wall: 30,
+  portal: 31,
+  boss_skin: 32,
+  stone: 33,
 };
 
 /** ID-타일 타입 역매핑 */
@@ -71,6 +105,8 @@ export interface Tile {
   health: number;
   /** 최대 내구도 */
   maxHealth: number;
+  /** 광물 스팟(true)인지 배경 채우기 타일(false)인지 구분 */
+  isSpot?: boolean;
 }
 
 /**
@@ -350,7 +386,7 @@ export interface ToastMessage {
 /**
  * 상태 이상의 종류를 정의합니다.
  */
-export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE';
+export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE' | 'FATIGUE' | 'BLEED' | 'CONFUSION' | 'CURSE' | 'ENRAGE';
 
 /**
  * 활성화된 캐릭터 상태 효과 정보입니다.

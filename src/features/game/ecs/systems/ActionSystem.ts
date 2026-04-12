@@ -1,8 +1,6 @@
 import { GameWorld } from '@/entities/world/model';
 import { createInitialEquipmentState } from '@/shared/lib/masteryUtils';
-import { REFINERY_RECIPES } from '@/shared/config/refineryData';
 import { RESEARCH_NODES } from '@/shared/config/researchData';
-import { getDroneData } from '@/shared/config/droneData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { TileMap } from '@/entities/tile/TileMap';
 import { Rarity } from '@/shared/types/game';
@@ -42,7 +40,6 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
 
     case 'equip':
       if (data.type === 'drill') stats.equippedDrillId = data.id;
-      else if (data.type === 'drone') stats.equippedDroneId = data.id;
       else if (data.type === 'artifact') stats.equippedArtifactId = data.id;
       break;
 
@@ -58,9 +55,6 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
         if (!stats.equipmentStates[data.res.drillId]) {
            stats.equipmentStates[data.res.drillId] = createInitialEquipmentState(data.res.drillId);
         }
-      }
-      if (data.res.droneId && !stats.ownedDroneIds.includes(data.res.droneId)) {
-        stats.ownedDroneIds.push(data.res.droneId);
       }
       break;
 
@@ -132,34 +126,7 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
       break;
     }
 
-    case 'startSmelting': {
-      const recipeId = data.recipeId;
-      const recipe = REFINERY_RECIPES.find(r => r.id === recipeId);
-      if (recipe) {
-        (stats.inventory[recipe.inputId as any] as number) -= recipe.inputAmount;
-        const speedMult = getDroneData(stats.equippedDroneId)?.smeltSpeedMult || 1;
-        stats.activeSmeltingJobs.push({
-          id: `smelt_${Date.now()}_${Math.random()}`,
-          inputMineral: recipe.inputId,
-          outputItem: recipe.outputId,
-          amount: recipe.outputAmount,
-          startTime: Date.now(),
-          durationMs: recipe.durationMs * speedMult
-        });
-      }
-      break;
-    }
-
-    case 'collectSmelting': {
-      const idx = stats.activeSmeltingJobs.findIndex(j => j.id === data.jobId);
-      if (idx !== -1) {
-        const job = stats.activeSmeltingJobs[idx];
-        stats.inventory[job.outputItem] += job.amount;
-        stats.activeSmeltingJobs.splice(idx, 1);
-      }
-      break;
-    }
-
+    // [삭제됨] startSmelting / collectSmelting — 용광로 시스템 제거됨
     case 'unlockResearch': {
       const node = RESEARCH_NODES.find(n => n.id === data.researchId);
       if (node) {

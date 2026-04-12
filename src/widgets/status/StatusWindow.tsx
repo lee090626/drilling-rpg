@@ -104,7 +104,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="gold" size={32} />
+               <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -218,8 +218,8 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                  <span className="text-xs font-black text-blue-400">{stats.maxDepthReached || 0}m</span>
                </div>
                <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-zinc-400">Dimension</span>
-                 <span className="text-xs font-black text-purple-400">Dim {stats.dimension || 0}</span>
+                 <span className="text-[10px] font-bold text-zinc-400">Current Depth</span>
+                 <span className="text-xs font-black text-purple-400">{Math.floor(stats.depth)}m</span>
                </div>
                <div className="flex justify-between items-center">
                  <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>

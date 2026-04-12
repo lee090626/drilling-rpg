@@ -1,5 +1,6 @@
 import { GameWorld } from '@/entities/world/model';
 import { Entity } from '@/shared/types/game';
+import { getCircleConfig, CIRCLES } from '@/shared/config/circleData';
 
 /**
  * 플레이어와 NPC(엔티티) 또는 포탈 간의 상호작용을 관리하는 시스템입니다.
@@ -93,13 +94,16 @@ const handlePortalInteraction = (world: GameWorld) => {
   const { player } = world;
   
   if (world.intent.action === 'interact') {
-    const nextDim = player.stats.dimension + 1;
+    const currentCircle = getCircleConfig(player.stats.depth);
+    const nextCircle = CIRCLES.find(c => c.id === currentCircle.id + 1);
     
-    // 워커에서는 confirm/alert을 사용할 수 없으므로 메인 스레드에 이벤트를 보냅니다.
-    self.postMessage({
-      type: 'PORTAL_TRIGGERED',
-      payload: { nextDim }
-    });
+    if (nextCircle) {
+      // 워커에서는 confirm/alert을 사용할 수 없으므로 메인 스레드에 이벤트를 보냅니다.
+      self.postMessage({
+        type: 'PORTAL_TRIGGERED',
+        payload: { nextDepth: nextCircle.depthStart, nextCircleId: nextCircle.id }
+      });
+    }
 
     // 즉시 재발생 방지를 위해 의도 초기화
     world.intent.action = 'none';

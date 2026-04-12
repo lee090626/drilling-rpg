@@ -7,6 +7,7 @@ import {
 import { DRILLS } from '@/shared/config/drillData';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { getResearchBonuses } from '@/shared/lib/researchUtils';
+import { createFloatingText } from '@/shared/lib/effectUtils';
 
 /**
  * 플레이어의 이동, 충돌 체크, 그리드 기반 위치 보간을 담당하는 시스템입니다.
@@ -43,6 +44,10 @@ export const physicsSystem = (world: GameWorld, now: number) => {
     // BUFF_SPEED 효과 확인
     const hasSpeedBuff = player.stats.activeEffects.some(e => e.type === 'BUFF_SPEED');
     if (hasSpeedBuff) statusSpeedMult *= 1.5;
+
+    // FREEZE (빙결): 순수하게 속도 대폭 감소 (statusSystem에서 행동불능 해제 필요)
+    const hasFreeze = player.stats.activeEffects.some(e => e.type === 'FREEZE');
+    if (hasFreeze) statusSpeedMult *= 0.2;
   }
   
   // 마스터리 돌파: 일시적 속도 버프 처리
@@ -78,6 +83,12 @@ export const physicsSystem = (world: GameWorld, now: number) => {
         dx = intent.moveX > 0 ? 1 : -1;
       } else if (intent.moveY !== 0) {
         dy = intent.moveY > 0 ? 1 : -1;
+      }
+
+      // CONFUSION (혼란): 조작 반전
+      if (player.stats.activeEffects?.some(e => e.type === 'CONFUSION')) {
+        dx *= -1;
+        dy *= -1;
       }
 
       if (dx !== 0 || dy !== 0) {
@@ -121,6 +132,13 @@ export const physicsSystem = (world: GameWorld, now: number) => {
           player.pos.x = targetX;
           player.pos.y = targetY;
           moved = true;
+
+          // BLEED (선혈): 이동 시 고정 피해
+          if (player.stats.activeEffects?.some(e => e.type === 'BLEED')) {
+            const bleedDmg = Math.max(1, Math.floor(player.stats.maxHp * 0.03));
+            player.stats.hp -= bleedDmg;
+            createFloatingText(world, player.visualPos.x * 128, player.visualPos.y * 128, "-" + bleedDmg, '#ef4444');
+          }
         } 
         else if (tile && tile.type !== 'wall') {
           drilling = true;
@@ -141,7 +159,7 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   }
 
   // 2. 플레이어 통계 업데이트 및 시각적 위치 보간
-  player.stats.depth = Math.max(0, Math.floor(player.pos.y) - BASE_DEPTH);
+  player.stats.depth = Math.floor(player.pos.y) - BASE_DEPTH;
   if (player.stats.depth > player.stats.maxDepthReached) {
     player.stats.maxDepthReached = player.stats.depth;
   }

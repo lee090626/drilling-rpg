@@ -1,5 +1,6 @@
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE } from '@/shared/config/constants';
+import { getCircleConfig } from '@/shared/config/circleData';
 
 /**
  * 플레이어의 위치를 기반으로 주변 맵에서 몬스터를 탐색하고 엔티티로 소환하는 시스템입니다.
@@ -7,37 +8,59 @@ import { TILE_SIZE } from '@/shared/config/constants';
 export const spawnSystem = (world: GameWorld) => {
   const { player, tileMap, spawnedCoords, entities } = world;
   
-  // 보스 소환 체크 (차원 1: 500m 상단)
-  if (player.stats.depth > 480 && player.stats.depth < 550) {
-    const bossId = 'oros_face';
+  // 현재 서클 설정 가져오기
+  const config = getCircleConfig(player.stats.depth);
+  
+  // 보스 소환 체크 (해당 서클 내 랜덤 위치 결정론적 생성)
+  if (config.boss) {
+    const bossId = config.boss.id;
     const isKilled = player.stats.killedMonsterIds?.includes(bossId);
+    
     if (!isKilled && !entities.hasId(bossId)) {
-        const MONSTERS = require('@/shared/config/monsterData').MONSTERS;
-        const defIdx = MONSTERS.findIndex((m: any) => m.id === bossId);
+      // 보스 위치 결정론적 계산 (시드 + 보스ID 해시)
+      const seed = world.player.stats.mapSeed || 12345;
+      const hash = (str: string) => {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+        return Math.abs(h);
+      };
+      
+      const bossHash = hash(bossId + seed);
+      const circleHeight = config.depthEnd - config.depthStart;
+      
+      // 서클의 10% ~ 90% 깊이 사이에서 랜덤 스폰
+      const spawnY = config.depthStart + Math.floor((bossHash % 100) / 100 * (circleHeight * 0.8) + (circleHeight * 0.1));
+      const spawnX = Math.floor((bossHash / 100 % 100) / 100 * 20) + 5; // 5~25 사이 랜덤 X
+      
+      // 보스 근처 접근 시 소환
+      const distY = Math.abs(player.stats.depth - spawnY);
+      if (distY < 15) {
+        const MONSTER_LIST = require('@/shared/config/monsterData').MONSTER_LIST;
+        const defIdx = MONSTER_LIST.findIndex((m: any) => m.id === bossId);
         
         if (defIdx !== -1) {
-            const bossDef = MONSTERS[defIdx];
+            const bossDef = MONSTER_LIST[defIdx];
             entities.create(
                 2, // type: boss
-                15 * TILE_SIZE - (2 * TILE_SIZE), // 중앙 정렬 (폭 고려)
-                500 * TILE_SIZE, 
+                spawnX * TILE_SIZE - (2 * TILE_SIZE), 
+                spawnY * TILE_SIZE, 
                 bossId,
                 defIdx
             );
             
             const idx = entities.soa.count - 1;
-            entities.soa.hp[idx] = bossDef.stats.hp;
-            entities.soa.maxHp[idx] = bossDef.stats.hp;
-            entities.soa.attack[idx] = bossDef.stats.attack;
+            entities.soa.hp[idx] = bossDef.stats.maxHp;
+            entities.soa.maxHp[idx] = bossDef.stats.maxHp;
+            entities.soa.attack[idx] = bossDef.stats.power;
             entities.soa.attackCooldown[idx] = bossDef.stats.attackCooldown ?? 2500;
-            entities.soa.width[idx] = TILE_SIZE * 5; // 보스는 크게
+            entities.soa.width[idx] = TILE_SIZE * 5;
             entities.soa.height[idx] = TILE_SIZE * 5;
             
-            // 조우 기록
             if (!player.stats.encounteredBossIds.includes(bossId)) {
                 player.stats.encounteredBossIds.push(bossId);
             }
         }
+      }
     }
   }
 
@@ -68,8 +91,8 @@ export const spawnSystem = (world: GameWorld) => {
           // 이미 해당 ID의 엔티티가 존재하지 않는지 최종 확인 (중복 방지 - $O(1)$ Hash Lookup)
           if (!entities.hasId(initialMonster.id)) {
             // MonsterDefinition 인덱스 찾기 (최적화: 미리 맵핑 테이블을 만드는 게 좋지만 일단 findIndex 사용)
-            const MONSTERS = require('@/shared/config/monsterData').MONSTERS;
-            const defIdx = MONSTERS.findIndex((m: any) => m.id === initialMonster.id);
+            const MONSTER_LIST = require('@/shared/config/monsterData').MONSTER_LIST;
+            const defIdx = MONSTER_LIST.findIndex((m: any) => m.id === initialMonster.id);
 
             entities.create(
                 1, // type: monster
@@ -81,7 +104,7 @@ export const spawnSystem = (world: GameWorld) => {
             
             // 추가 스탯 설정 (SoA 직접 접근)
             const idx = entities.soa.count - 1;
-            entities.soa.hp[idx] = initialMonster.stats?.hp || 100;
+            entities.soa.hp[idx] = initialMonster.stats?.maxHp || 100;
             entities.soa.maxHp[idx] = initialMonster.stats?.maxHp || 100;
             entities.soa.attack[idx] = initialMonster.stats?.attack || 5;
             entities.soa.attackCooldown[idx] = initialMonster.stats?.attackCooldown ?? 1000;

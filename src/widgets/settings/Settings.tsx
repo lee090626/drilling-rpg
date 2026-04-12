@@ -15,8 +15,6 @@ interface SettingsProps {
   onExport: () => void;
   /** 세이브 데이터 가져오기 함수 */
   onImport: () => void;
-  /** 맵 재생성 함수 */
-  onRegenerateWorld: () => void;
 }
 
 /**
@@ -37,7 +35,6 @@ export default function Settings({
   onClose,
   onExport,
   onImport,
-  onRegenerateWorld,
 }: SettingsProps) {
   const { screenShake, highPerformance } = useGameStore((state) => state.settings);
   const updateSettings = useGameStore((state) => state.updateSettings);
@@ -198,26 +195,6 @@ export default function Settings({
                 </div>
               </div>
 
-              {/* 맵 재생성 그룹 */}
-              <div className="bg-emerald-950/10 border border-emerald-900/30 p-6 rounded-2xl group/regen relative overflow-hidden">
-                <div className="flex flex-col relative z-10">
-                  <h4 className="text-sm font-bold text-emerald-500">
-                    World Regeneration
-                  </h4>
-                  <p className="text-[9px] text-zinc-600 font-bold tracking-widest mt-1 mb-4 leading-relaxed">
-                    Regenerates the underground map with a new seed. Your inventory and stats will be preserved.
-                  </p>
-                  <button
-                    onClick={() => {
-                      if (confirm('Regenerate world? You will be moved to the surface. Progress will be saved.'))
-                        onRegenerateWorld();
-                    }}
-                    className="w-full h-12 rounded-xl bg-emerald-600/20 border border-emerald-600/40 text-emerald-500 text-[10px] font-bold tracking-[0.2em] hover:bg-emerald-600 hover:text-white transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
-                  >
-                    Regenerate Map
-                  </button>
-                </div>
-              </div>
 
               {/* 초기화 그룹 */}
               <div className="bg-rose-950/10 border border-rose-900/30 p-6 rounded-2xl group/reset relative overflow-hidden">

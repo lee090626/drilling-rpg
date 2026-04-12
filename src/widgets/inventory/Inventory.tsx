@@ -9,7 +9,7 @@ import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import SkillRuneIcon from '@/shared/ui/SkillRuneIcon';
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import DrillCard from './DrillCard';
-import DroneCard from './DroneCard';
+
 import RuneEquipOverlay from './RuneEquipOverlay';
 
 /**
@@ -118,7 +118,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="gold" size={32} />
+               <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -173,7 +173,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                           x{count.toLocaleString()}
                         </div>
                         <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest">
-                          {m.name}
+                          {(m as any).nameKo || m.name}
                         </div>
                       </div>
                     </button>
@@ -204,10 +204,10 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                   </div>
 
                   <h3 className="text-3xl md:text-5xl font-black text-white text-center mb-4 md:mb-6 tracking-tighter">
-                    {selectedMineral.name}
+                    {(selectedMineral as any).nameKo || selectedMineral.name}
                   </h3>
                   <p className="text-sm md:text-base text-zinc-400 text-center leading-relaxed mb-6 md:mb-12 px-4 italic">
-                    {selectedMineral.description}
+                    {(selectedMineral as any).descriptionKo || selectedMineral.description}
                   </p>
 
                   <div className="mt-auto space-y-4">
@@ -246,15 +246,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 />
               ))}
 
-              {/* 드론 목록 */}
-              {stats.ownedDroneIds?.map((droneId) => (
-                <DroneCard
-                  key={droneId}
-                  droneId={droneId}
-                  isEquipped={stats.equippedDroneId === droneId}
-                  onEquip={onEquip}
-                />
-              ))}
+              {/* [삭제됨] DroneCard — 드론 시스템 제거됨 */}
             </div>
           </div>
         ) : (
@@ -326,7 +318,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 </div>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
-                  <AtlasIcon name="attack_rune" size={96} />
+                  <AtlasIcon name="AttackRune" size={96} />
                   <p className="text-xs font-bold text-zinc-500 tracking-widest mt-6">
                     Select a Rune
                   </p>
