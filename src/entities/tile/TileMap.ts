@@ -16,6 +16,7 @@ const HP_BITS = 8;
 const HP_MASK = 0xFFFF; // Next 16 bits: Health
 const GEN_FLAG = 1 << 24; // Bit 24: Generated flag
 const MOD_FLAG = 1 << 25; // Bit 25: Modified flag
+const SPOT_FLAG = 1 << 26; // Bit 26: 광물 스팟(true) vs 배경 타일(false) 구분
 
 /**
  * [초고최적화 버전] TileMap 클래스
@@ -52,18 +53,18 @@ export class TileMap {
   }
 
   /** 타일 초기 생성 (원본 로직 유지하며 결과 패턴 리턴) */
-  private calculateOriginalTile(x: number, y: number): Tile {
-    if (Math.abs(x) > HALF_WIDTH) return { type: 'wall', health: 1000000, maxHealth: 1000000 };
-    if (y < BASE_DEPTH) return { type: 'empty', health: 0, maxHealth: 0 };
+  private calculateOriginalTile(x: number, y: number): Tile & { isSpot: boolean } {
+    if (Math.abs(x) > HALF_WIDTH) return { type: 'wall', health: 1000000, maxHealth: 1000000, isSpot: false };
+    if (y < BASE_DEPTH) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
 
     const config = getCircleConfig(y);
     const layer = getLayerFromDepth(y, config);
 
-    if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0 };
+    if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
 
-    let type: TileType = 'crimsonstone'; // 기본 배경 타일
-    const bgRoll = this.hash(x, y);
-    if (bgRoll < 0.40) type = 'galestone';
+    /** 배경 타일: circleData의 bgType 사용 (기본값 'stone') */
+    let type: TileType = (config.bgType ?? 'stone') as TileType;
+    let isSpot = false;
 
     // 지터드 그리드 로직은 간소화하거나 필요시 복원 (현재는 직접 구현부만 대체)
     // 여기서는 기존 generateTile의 코어를 활용하여 데이터만 추출합니다.
@@ -96,6 +97,7 @@ export class TileMap {
             cumulative += chance;
             if (roll < cumulative) {
               type = rule.type;
+              isSpot = true; // 이 타일은 광물 스팟
               break;
             }
           }
@@ -114,7 +116,7 @@ export class TileMap {
 
     const stats = getMineralStats(type);
     const health = type === 'boss_core' ? 20000 : stats.health;
-    return { type, health, maxHealth: health };
+    return { type, health, maxHealth: health, isSpot };
   }
 
   getTile(x: number, y: number): Tile | null {
@@ -127,20 +129,22 @@ export class TileMap {
     if (!(packed & GEN_FLAG)) {
       const original = this.calculateOriginalTile(x, y);
       const typeId = TILE_TYPE_TO_ID[original.type] ?? 0;
-      // [Type ID] | [Health << 8] | [GEN_FLAG]
-      packed = (typeId & TYPE_MASK) | ((original.health & HP_MASK) << HP_BITS) | GEN_FLAG;
+      // [Type ID] | [Health << 8] | [GEN_FLAG] | [SPOT_FLAG?]
+      packed = (typeId & TYPE_MASK) | ((original.health & HP_MASK) << HP_BITS) | GEN_FLAG | (original.isSpot ? SPOT_FLAG : 0);
       this.data[idx] = packed;
     }
 
     const typeId = packed & TYPE_MASK;
     const health = (packed >> HP_BITS) & HP_MASK;
-    const type = ID_TO_TILE_TYPE[typeId] || 'dirt';
+    const type = ID_TO_TILE_TYPE[typeId] || 'crimsonstone';
     const stats = getMineralStats(type);
+    const isSpot = !!(packed & SPOT_FLAG);
 
     return {
       type,
       health,
-      maxHealth: stats.health
+      maxHealth: stats.health,
+      isSpot,
     };
   }
 
