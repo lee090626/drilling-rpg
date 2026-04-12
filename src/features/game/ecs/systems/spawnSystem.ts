@@ -28,9 +28,9 @@ export const spawnSystem = (world: GameWorld) => {
       const bossHash = hash(bossId + seed);
       const circleHeight = config.depthEnd - config.depthStart;
       
-      // 서클의 10% ~ 90% 깊이 사이에서 랜덤 스폰
-      const spawnY = config.depthStart + Math.floor((bossHash % 100) / 100 * (circleHeight * 0.8) + (circleHeight * 0.1));
-      const spawnX = Math.floor((bossHash / 100 % 100) / 100 * 20) + 5; // 5~25 사이 랜덤 X
+      // 보스 존(Layer 4, 최하단 15m) 내부에 고정 스폰 (약 292.5m 지점)
+      const spawnY = config.depthEnd - 8; 
+      const spawnX = 15; // 중앙 고정
       
       // 보스 근처 접근 시 소환
       const distY = Math.abs(player.stats.depth - spawnY);

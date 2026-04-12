@@ -3,6 +3,7 @@ import { TILE_SIZE } from '@/shared/config/constants';
 import { MONSTERS } from '@/shared/config/monsterData';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { createFloatingText } from '@/shared/lib/effectUtils';
+import { handleBossDefeat } from './bossSystem';
 
 /**
  * 플레이어와 몬스터 간의 전투(대미지 처리, 사망 등)를 담당하는 시스템입니다.
@@ -136,6 +137,11 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
             player.stats.goldCoins += totalGold;
             createFloatingText(world, entities.soa.x[i], entities.soa.y[i] - 60, `+${totalGold} G`, '#fde047', 1.5);
             
+            // 보스 처치 시 진행 처리
+            if (entities.soa.type[i] === 2) {
+                handleBossDefeat(world, entities.soa.x[i], entities.soa.y[i]);
+            }
+
             // 처치 기록 (ID가 있을 경우 활성화)
             // (참고: SoA에는 ID를 저장하지 않으므로, 필요 시 별도 매핑 테이블 사용)
         }

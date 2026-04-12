@@ -75,6 +75,9 @@ export class TileMap {
     const config = getCircleConfig(y - BASE_DEPTH);
     const layer = getLayerFromDepth(y - BASE_DEPTH, config);
 
+    // Layer 4 (Boss Zone)는 기본적으로 빈 공간으로 반환 (심리스 전투 구역)
+    if (layer === 4) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
+
     if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
 
     /** 배경 타일: circleData의 bgType 사용 (기본값 'stone') */
@@ -118,18 +121,8 @@ export class TileMap {
       }
     }
 
-    // 보스 구역은 중앙 근처(x=15)에만 생성되도록 고정
-    const absoluteBossY = config.boss ? (config.depthStart + BASE_DEPTH) + (config.boss.spawnLayer * 10) : MAP_HEIGHT;
-    const bossCenterY = absoluteBossY - 1;
-    const bossCenterX = 15;
-    if (Math.abs(x - bossCenterX) <= 2 && Math.abs(y - bossCenterY) <= 2) {
-      type = 'empty';
-    } else if (config.boss && y === bossCenterY && (x === bossCenterX - 3 || x === bossCenterX + 3)) {
-      type = 'monster_nest';
-    }
-
     const stats = getMineralStats(type);
-    const health = type === 'boss_core' ? 20000 : stats.health;
+    const health = stats.health;
     return { type, health, maxHealth: health, isSpot };
   }
 

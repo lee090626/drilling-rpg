@@ -34,14 +34,6 @@ export const handleBossDefeat = (world: GameWorld, x: number, y: number) => {
   });
   createFloatingText(world, x, y - 60, 'Unique Skill Rune Acquired!', '#22d3ee');
 
-  // 다음 차원으로 이동 가능한 포탈 생성 (보스 처치 위치)
-  const tileX = Math.floor(x / TILE_SIZE);
-  const tileY = Math.floor(y / TILE_SIZE);
-  const centerTile = tileMap.getTile(tileX, tileY);
-  if (centerTile && centerTile.type !== 'wall') {
-    centerTile.type = 'portal';
-    centerTile.health = Infinity;
-    centerTile.maxHealth = Infinity;
-    createFloatingText(world, x, y - 20, 'Descend Portal Opened!', '#a855f7');
-  }
+  // [심리스 개편] 포탈 생성을 생략하고 보상 지급 및 연출에 집중합니다.
+  createFloatingText(world, x, y - 20, `Circle ${circleId} Boss Defeated!`, '#a855f7');
 };
