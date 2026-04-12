@@ -68,7 +68,7 @@ function Shop({
         <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full md:w-auto relative z-10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-inner">
-                <AtlasIcon name="gold" size={40} />
+                <AtlasIcon name="GoldIcon" size={40} />
             </div>
             <div className="flex flex-col">
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-amber-400 leading-none">
@@ -105,7 +105,7 @@ function Shop({
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner group">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="gold" size={32} />
+               <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
@@ -216,7 +216,7 @@ function Shop({
                                 {totalPrice.toLocaleString()}
                               </span>
                               <div className="flex items-center justify-center">
-                                <AtlasIcon name="gold" size={20} />
+                                <AtlasIcon name="GoldIcon" size={20} />
                               </div>
                             </div>
                         </div>
@@ -264,7 +264,7 @@ function Shop({
                     
                     <div className="w-24 h-24 md:w-32 md:h-32 bg-black/40 rounded-3xl md:rounded-[2.5rem] flex items-center justify-center mb-6 shadow-inner border border-white/5 mt-10 md:mt-8 overflow-hidden relative group-hover:border-amber-500/30 transition-colors">
                        <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />
-                       <AtlasIcon name="attack_rune" size={128} className="transition-transform duration-700 group-hover:rotate-12" />
+                       <AtlasIcon name="AttackRune" size={128} className="transition-transform duration-700 group-hover:rotate-12" />
                     </div>
                     
                     <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter mb-2 group-hover:text-amber-400 transition-colors">Tier {tierIndex} Summoner</h3>
@@ -288,7 +288,7 @@ function Shop({
                       <div className="flex items-center gap-2">
                         <span className="text-2xl md:text-3xl font-black text-amber-500 tabular-nums tracking-tighter">{cost.toLocaleString()}</span>
                         <div className="flex items-center justify-center">
-                          <AtlasIcon name="gold" size={24} />
+                          <AtlasIcon name="GoldIcon" size={24} />
                         </div>
                       </div>
                     </div>

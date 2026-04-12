@@ -70,7 +70,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2047,
     "atlasHeight": 1974
   },
-  "move_rune": {
+  "MoveSpeedRune": {
     "atlasIndex": 1,
     "x": 3,
     "y": 1033,
@@ -88,7 +88,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2047,
     "atlasHeight": 1974
   },
-  "luck_rune": {
+  "LuckRune": {
     "atlasIndex": 1,
     "x": 1033,
     "y": 935,
@@ -133,7 +133,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2044,
     "atlasHeight": 1963
   },
-  "speed_rune": {
+  "MiningSpeedRune": {
     "atlasIndex": 2,
     "x": 1033,
     "y": 3,
@@ -142,7 +142,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2044,
     "atlasHeight": 1963
   },
-  "gold": {
+  "GoldIcon": {
     "atlasIndex": 2,
     "x": 3,
     "y": 1033,
@@ -151,7 +151,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2044,
     "atlasHeight": 1963
   },
-  "emerald_drill": {
+  "EmeraldDrill": {
     "atlasIndex": 2,
     "x": 1033,
     "y": 933,
@@ -169,7 +169,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 2044,
     "atlasHeight": 1963
   },
-  "settings": {
+  "SettingsIcon": {
     "atlasIndex": 3,
     "x": 3,
     "y": 3,
@@ -187,7 +187,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
-  "status": {
+  "StatusIcon": {
     "atlasIndex": 3,
     "x": 3,
     "y": 922,
@@ -196,7 +196,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
-  "book": {
+  "BookIcon": {
     "atlasIndex": 3,
     "x": 3,
     "y": 1223,
@@ -232,7 +232,7 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
-  "inventory": {
+  "InventoryIcon": {
     "atlasIndex": 3,
     "x": 1204,
     "y": 1073,

@@ -16,7 +16,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 200,
     moveSpeedMult: 1.0,
     price: { goldCoins: 0 },
-    image: 'rusty_drill',
+    image: 'RustyDrill',
     maxSkillSlots: 3,
   },
   rusty_pickaxe: {
@@ -41,7 +41,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 180,
     moveSpeedMult: 1.0,
     price: { crimsonstone: 25 },
-    image: 'stone_drill',
+    image: 'StoneDrill',
     maxSkillSlots: 3,
   },
   stone_pickaxe: {
@@ -66,7 +66,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 170,
     moveSpeedMult: 1.0,
     price: { galestone: 50, crimsonstone: 30 },
-    image: 'iron_drill',
+    image: 'IronDrill',
     maxSkillSlots: 3,
   },
   iron_pickaxe: {
@@ -91,7 +91,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 160,
     moveSpeedMult: 1.0,
     price: { fervorstone: 60, galestone: 40 },
-    image: 'gold_drill',
+    image: 'GoldDrill',
     maxSkillSlots: 3,
   },
   gold_pickaxe: {
@@ -116,7 +116,7 @@ export const DRILLS: { [id: string]: Drill } = {
     cooldownMs: 140,
     moveSpeedMult: 1.0,
     price: { moldstone: 100, fervorstone: 50 },
-    image: 'diamond_drill',
+    image: 'DiamondDrill',
     maxSkillSlots: 3,
   },
   diamond_pickaxe: {
@@ -142,7 +142,7 @@ export const DRILLS: { [id: string]: Drill } = {
     moveSpeedMult: 1.1,
     specialEffect: 'efficient',
     price: { gorestone: 120, siltstone: 80 },
-    image: 'emerald_drill',
+    image: 'EmeraldDrill',
     maxSkillSlots: 3,
   },
   emerald_pickaxe: {

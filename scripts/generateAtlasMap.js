@@ -16,34 +16,29 @@ function getAssetId(fileName) {
  */
 const SPECIAL_OVERRIDES = {
   // --- UI Icons ---
-  'MoneyIcon.webp': 'gold',
-  'StatusIcon.webp': 'status',
-  'InventoryIcon.webp': 'inventory',
-  'BookIcon.webp': 'book',
-  'SettingsIcon.webp': 'settings',
+  'MoneyIcon.webp': 'GoldIcon',
+  'StatusIcon.webp': 'StatusIcon',
+  'InventoryIcon.webp': 'InventoryIcon',
+  'BookIcon.webp': 'BookIcon',
+  'SettingsIcon.webp': 'SettingsIcon',
 
-  // --- Runes ---
-  'MiningSpeedRune.png': 'speed_rune',
-  'MoveSpeedRune.png': 'move_rune',
-  'LuckRune.png': 'luck_rune',
+  // --- Minerals/Tiles (하위 호환 및 명확성을 위한 명명) ---
+  'dirt.png': 'DirtTile',
+  'stone.png': 'StoneTile',
+  'coal.png': 'CoalTile',
+  'iron.png': 'IronTile',
+  'gold.png': 'GoldTile',
+  'diamond.png': 'DiamondTile',
+  'emerald.png': 'EmeraldTile',
+  'ruby.png': 'RubyTile',
+  'sapphire.png': 'SapphireTile',
+  'uranium.png': 'UraniumTile',
+  'obsidian.png': 'ObsidianTile',
+  'wall.png': 'WallTile',
+  'dungeon_bricks.png': 'DungeonBricksTile',
 
-  // --- Minerals/Tiles ---
-  'dirt.png': 'dirt_tile',
-  'stone.png': 'stone_tile',
-  'coal.png': 'coal_tile',
-  'iron.png': 'iron_tile',
-  'gold.png': 'gold_tile',
-  'diamond.png': 'diamond_tile',
-  'emerald.png': 'emerald_tile',
-  'ruby.png': 'ruby_tile',
-  'sapphire.png': 'sapphire_tile',
-  'uranium.png': 'uranium_tile',
-  'obsidian.png': 'obsidian_tile',
-  'wall.png': 'wall_tile',
-  'dungeon_bricks.png': 'dungeon_bricks_tile',
-
-  // --- Typo Correction (하위 호환성) ---
-  'EmeralDrill.png': 'emerald_drill',
+  // --- Typo Correction ---
+  'EmeralDrill.png': 'EmeraldDrill',
 };
 
 const ASSETS_DIR = path.join(__dirname, '../public/assets');

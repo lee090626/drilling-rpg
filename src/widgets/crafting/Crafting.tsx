@@ -89,7 +89,7 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="gold" size={32} />
+               <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}

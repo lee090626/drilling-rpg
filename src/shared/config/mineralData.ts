@@ -94,7 +94,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 10,
     baseHealth: 250,
     defense: 30,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -109,7 +109,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 20,
     baseHealth: 500,
     defense: 35,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -124,7 +124,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 30,
     baseHealth: 750,
     defense: 40,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -139,7 +139,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 20,
     baseHealth: 625,
     defense: 40,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -154,7 +154,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 40,
     baseHealth: 1250,
     defense: 45,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -169,7 +169,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 60,
     baseHealth: 1875,
     defense: 50,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -184,7 +184,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 40,
     baseHealth: 1562,
     defense: 50,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -199,7 +199,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 80,
     baseHealth: 3125,
     defense: 55,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -214,7 +214,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 120,
     baseHealth: 4687,
     defense: 60,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -229,7 +229,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 80,
     baseHealth: 3906,
     defense: 60,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -244,7 +244,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 160,
     baseHealth: 7812,
     defense: 65,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -259,7 +259,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 240,
     baseHealth: 11718,
     defense: 70,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -274,7 +274,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 160,
     baseHealth: 9765,
     defense: 70,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -289,7 +289,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 320,
     baseHealth: 19531,
     defense: 75,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -304,7 +304,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 480,
     baseHealth: 29296,
     defense: 80,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -319,7 +319,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 320,
     baseHealth: 24414,
     defense: 80,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -334,7 +334,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 640,
     baseHealth: 48828,
     defense: 85,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -349,7 +349,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 960,
     baseHealth: 73242,
     defense: 90,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -364,7 +364,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 640,
     baseHealth: 61035,
     defense: 90,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -379,7 +379,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 1280,
     baseHealth: 122070,
     defense: 95,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
   {
@@ -394,7 +394,7 @@ export const MINERALS: MineralDefinition[] = [
     basePrice: 1920,
     baseHealth: 183105,
     defense: 100,
-    image: 'stone_icon',
+    image: 'GoldIcon',
     tileImage: 'StoneTile',
   },
 ];

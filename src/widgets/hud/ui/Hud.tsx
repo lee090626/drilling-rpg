@@ -48,10 +48,10 @@ const Hud: React.FC<HudProps> = React.memo(({
 
   /** 하단 네비게이션 메뉴 항목 */
   const navItems: NavItem[] = useMemo(() => [
-    { label: 'Status', key: 'C', iconKey: 'status', onClick: onOpenStatus, color: '#eab308' },
-    { label: 'Inventory', key: 'I', iconKey: 'inventory', onClick: onOpenInventory, color: '#f59e0b' },
-    { label: 'Book', key: 'B', iconKey: 'book', onClick: onOpenEncyclopedia, color: '#a855f7' },
-    { label: 'Setting', key: 'S', iconKey: 'settings', onClick: onOpenSettings, color: '#94a3b8' },
+    { label: 'Status', key: 'C', iconKey: 'StatusIcon', onClick: onOpenStatus, color: '#eab308' },
+    { label: 'Inventory', key: 'I', iconKey: 'InventoryIcon', onClick: onOpenInventory, color: '#f59e0b' },
+    { label: 'Book', key: 'B', iconKey: 'BookIcon', onClick: onOpenEncyclopedia, color: '#a855f7' },
+    { label: 'Setting', key: 'S', iconKey: 'SettingsIcon', onClick: onOpenSettings, color: '#94a3b8' },
     { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
   ], [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide]);
 
@@ -87,7 +87,7 @@ const Hud: React.FC<HudProps> = React.memo(({
         <div className="flex flex-col items-end gap-2 md:gap-3">
             <div className="flex items-center gap-1.5 md:gap-3 bg-zinc-900/80 backdrop-blur-md border border-yellow-500/20 px-2 py-1 md:px-4 md:py-2 rounded-lg md:rounded-xl shadow-lg">
                 <div className="flex items-center justify-center rounded-full bg-transparent w-4 h-4 md:w-6 md:h-7 relative">
-                    <AtlasIcon name="gold" alt="Gold" size={24} />
+                    <AtlasIcon name="GoldIcon" alt="Gold" size={24} />
                 </div>
                 <span className="text-yellow-400 font-mono text-sm md:text-xl lg:text-2xl font-black tracking-tight">
                     {stats.goldCoins.toLocaleString()}
