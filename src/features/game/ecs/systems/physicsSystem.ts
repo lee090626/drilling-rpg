@@ -159,7 +159,7 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   }
 
   // 2. 플레이어 통계 업데이트 및 시각적 위치 보간
-  player.stats.depth = Math.max(0, Math.floor(player.pos.y) - BASE_DEPTH);
+  player.stats.depth = Math.floor(player.pos.y) - BASE_DEPTH;
   if (player.stats.depth > player.stats.maxDepthReached) {
     player.stats.maxDepthReached = player.stats.depth;
   }
