@@ -4,14 +4,11 @@ const path = require('path');
 // 매핑 정보를 직접 가져옵니다 (TS 파일을 읽기 위해 간단한 파싱이나 직접 정의 사용)
 // 여기서는 실수를 줄이기 위해 아까 만든 src/shared/config/atlasFiles.ts의 내용을 기반으로 정의합니다.
 /**
- * 파일명(예: PascalCase.png)을 snake_case ID로 변환합니다.
+ * 파일명(예: PascalCase.png)에서 확장자를 제외한 이름을 반환합니다.
+ * 더 이상 강제로 snake_case로 변환하지 않고 원본 케이스를 유지합니다.
  */
-function toSnakeCase(str) {
-  const fileName = path.parse(str).name;
-  return fileName
-    .replace(/([A-Z])/g, "_$1")
-    .toLowerCase()
-    .replace(/^_/, "");
+function getAssetId(fileName) {
+  return path.parse(fileName).name;
 }
 
 /**
@@ -67,8 +64,8 @@ function generate() {
     const metaSize = content.meta.size;
 
     for (const fileName of Object.keys(content.frames)) {
-      // ID 결정 (예외 매핑 우선, 없으면 자동 스네이크 케이스 변환)
-      const id = SPECIAL_OVERRIDES[fileName] || toSnakeCase(fileName);
+      // ID 결정 (예외 매핑 우선, 없으면 오리지널 파일명 유지)
+      const id = SPECIAL_OVERRIDES[fileName] || getAssetId(fileName);
       const frame = content.frames[fileName].frame;
 
       fileMapping[id] = fileName;

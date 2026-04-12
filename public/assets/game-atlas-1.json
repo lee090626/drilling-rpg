@@ -24,54 +24,6 @@
         "y": 0.5
       }
     },
-    "LuckRune.png": {
-      "frame": {
-        "x": 1033,
-        "y": 3,
-        "w": 1008,
-        "h": 924
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 8,
-        "y": 50,
-        "w": 1008,
-        "h": 924
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "MiningSpeedRune.png": {
-      "frame": {
-        "x": 1033,
-        "y": 933,
-        "w": 1008,
-        "h": 924
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 8,
-        "y": 50,
-        "w": 1008,
-        "h": 924
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "MoveSpeedRune.png": {
       "frame": {
         "x": 3,
@@ -96,92 +48,68 @@
         "y": 0.5
       }
     },
-    "SteelScaleTurtle.png": {
+    "AttackRune.png": {
       "frame": {
         "x": 1033,
-        "y": 1863,
-        "w": 308,
-        "h": 176
+        "y": 3,
+        "w": 1011,
+        "h": 926
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 102,
-        "y": 168,
-        "w": 308,
-        "h": 176
+        "x": 7,
+        "y": 47,
+        "w": 1011,
+        "h": 926
       },
       "sourceSize": {
-        "w": 512,
-        "h": 512
+        "w": 1024,
+        "h": 1024
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "obsidian.png": {
+    "LuckRune.png": {
       "frame": {
-        "x": 1347,
-        "y": 1863,
-        "w": 128,
-        "h": 128
+        "x": 1033,
+        "y": 935,
+        "w": 1008,
+        "h": 924
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
+        "x": 8,
+        "y": 50,
+        "w": 1008,
+        "h": 924
       },
       "sourceSize": {
-        "w": 128,
-        "h": 128
+        "w": 1024,
+        "h": 1024
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "ruby.png": {
+    "GaleStoneIcon.png": {
       "frame": {
-        "x": 1481,
-        "y": 1863,
-        "w": 128,
-        "h": 128
+        "x": 1033,
+        "y": 1865,
+        "w": 88,
+        "h": 92
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "sapphire.png": {
-      "frame": {
-        "x": 1615,
-        "y": 1863,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
+        "x": 20,
+        "y": 18,
+        "w": 88,
+        "h": 92
       },
       "sourceSize": {
         "w": 128,
@@ -192,20 +120,20 @@
         "y": 0.5
       }
     },
-    "stone.png": {
+    "CrimsonStoneIcon.png": {
       "frame": {
-        "x": 1749,
-        "y": 1863,
-        "w": 128,
-        "h": 128
+        "x": 1127,
+        "y": 1865,
+        "w": 84,
+        "h": 88
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
+        "x": 22,
+        "y": 20,
+        "w": 84,
+        "h": 88
       },
       "sourceSize": {
         "w": 128,
@@ -216,20 +144,20 @@
         "y": 0.5
       }
     },
-    "uranium.png": {
+    "FervorStoneIcon.png": {
       "frame": {
-        "x": 1883,
-        "y": 1863,
-        "w": 128,
-        "h": 128
+        "x": 1217,
+        "y": 1865,
+        "w": 80,
+        "h": 86
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
+        "x": 24,
+        "y": 21,
+        "w": 80,
+        "h": 86
       },
       "sourceSize": {
         "w": 128,
@@ -247,8 +175,8 @@
     "image": "game-atlas-1.png",
     "format": "RGBA8888",
     "size": {
-      "w": 2044,
-      "h": 2042
+      "w": 2047,
+      "h": 1974
     },
     "scale": 1
   }

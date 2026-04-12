@@ -24,30 +24,6 @@
         "y": 0.5
       }
     },
-    "MoneyIcon.webp": {
-      "frame": {
-        "x": 1087,
-        "y": 3,
-        "w": 935,
-        "h": 927
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 56,
-        "y": 60,
-        "w": 935,
-        "h": 927
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "CritDmgRune.png": {
       "frame": {
         "x": 3,
@@ -72,20 +48,20 @@
         "y": 0.5
       }
     },
-    "AttackRune.png": {
+    "Player.png": {
       "frame": {
-        "x": 1033,
-        "y": 985,
-        "w": 1011,
-        "h": 926
+        "x": 1087,
+        "y": 3,
+        "w": 876,
+        "h": 992
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 7,
-        "y": 47,
-        "w": 1011,
-        "h": 926
+        "x": 148,
+        "y": 32,
+        "w": 876,
+        "h": 992
       },
       "sourceSize": {
         "w": 1024,
@@ -96,216 +72,48 @@
         "y": 0.5
       }
     },
-    "boss_core.png": {
+    "DiamondDrill.png": {
       "frame": {
         "x": 1033,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "coal.png": {
-      "frame": {
-        "x": 1167,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "diamond.png": {
-      "frame": {
-        "x": 1301,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "dirt.png": {
-      "frame": {
-        "x": 1435,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "dungeon_bricks.png": {
-      "frame": {
-        "x": 1569,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "emerald.png": {
-      "frame": {
-        "x": 1703,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "gold.png": {
-      "frame": {
-        "x": 1837,
-        "y": 1917,
-        "w": 128,
-        "h": 128
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
-      },
-      "sourceSize": {
-        "w": 128,
-        "h": 128
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "SapphireIcon.png": {
-      "frame": {
-        "x": 1971,
-        "y": 1917,
-        "w": 46,
-        "h": 64
+        "y": 1001,
+        "w": 470,
+        "h": 971
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 41,
-        "y": 32,
-        "w": 46,
-        "h": 64
+        "x": 368,
+        "y": 5,
+        "w": 470,
+        "h": 971
       },
       "sourceSize": {
-        "w": 128,
-        "h": 128
+        "w": 1078,
+        "h": 976
       },
       "pivot": {
         "x": 0.5,
         "y": 0.5
       }
     },
-    "boss_skin.png": {
+    "GoldDrill.png": {
       "frame": {
-        "x": 1033,
-        "y": 1917,
-        "w": 128,
-        "h": 128
+        "x": 1509,
+        "y": 1001,
+        "w": 449,
+        "h": 928
       },
       "rotated": false,
-      "trimmed": false,
+      "trimmed": true,
       "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 128,
-        "h": 128
+        "x": 368,
+        "y": 48,
+        "w": 449,
+        "h": 928
       },
       "sourceSize": {
-        "w": 128,
-        "h": 128
+        "w": 1078,
+        "h": 976
       },
       "pivot": {
         "x": 0.5,
@@ -319,8 +127,8 @@
     "image": "game-atlas-0.png",
     "format": "RGBA8888",
     "size": {
-      "w": 2047,
-      "h": 2048
+      "w": 1966,
+      "h": 2012
     },
     "scale": 1
   }

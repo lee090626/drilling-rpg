@@ -1,81 +1,9 @@
 {
   "frames": {
-    "Refinery.png": {
+    "SettingsIcon.webp": {
       "frame": {
         "x": 3,
         "y": 3,
-        "w": 1024,
-        "h": 1024
-      },
-      "rotated": false,
-      "trimmed": false,
-      "spriteSourceSize": {
-        "x": 0,
-        "y": 0,
-        "w": 1024,
-        "h": 1024
-      },
-      "sourceSize": {
-        "w": 1024,
-        "h": 1024
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "GoldDrill.png": {
-      "frame": {
-        "x": 3,
-        "y": 1033,
-        "w": 449,
-        "h": 928
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 368,
-        "y": 48,
-        "w": 449,
-        "h": 928
-      },
-      "sourceSize": {
-        "w": 1078,
-        "h": 976
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "StoneDrill.png": {
-      "frame": {
-        "x": 458,
-        "y": 1033,
-        "w": 413,
-        "h": 926
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 369,
-        "y": 25,
-        "w": 413,
-        "h": 926
-      },
-      "sourceSize": {
-        "w": 1078,
-        "h": 976
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "SettingsIcon.webp": {
-      "frame": {
-        "x": 877,
-        "y": 1033,
         "w": 906,
         "h": 913
       },
@@ -96,57 +24,9 @@
         "y": 0.5
       }
     },
-    "PebbleGolem.png": {
-      "frame": {
-        "x": 1789,
-        "y": 1033,
-        "w": 256,
-        "h": 250
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 128,
-        "y": 131,
-        "w": 256,
-        "h": 250
-      },
-      "sourceSize": {
-        "w": 512,
-        "h": 512
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "ThiefMole.png": {
-      "frame": {
-        "x": 1789,
-        "y": 1289,
-        "w": 256,
-        "h": 204
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 128,
-        "y": 154,
-        "w": 256,
-        "h": 204
-      },
-      "sourceSize": {
-        "w": 512,
-        "h": 512
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "IronDrill.png": {
       "frame": {
-        "x": 1033,
+        "x": 915,
         "y": 3,
         "w": 410,
         "h": 912
@@ -168,24 +48,312 @@
         "y": 0.5
       }
     },
-    "DiamondIcon.png": {
+    "StatusIcon.webp": {
       "frame": {
-        "x": 1449,
-        "y": 3,
-        "w": 584,
-        "h": 742
+        "x": 3,
+        "y": 922,
+        "w": 840,
+        "h": 295
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 220,
-        "y": 141,
-        "w": 584,
-        "h": 742
+        "x": 89,
+        "y": 388,
+        "w": 840,
+        "h": 295
       },
       "sourceSize": {
         "w": 1024,
         "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BookIcon.webp": {
+      "frame": {
+        "x": 3,
+        "y": 1223,
+        "w": 835,
+        "h": 562
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 95,
+        "y": 231,
+        "w": 835,
+        "h": 562
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BaseTileset.png": {
+      "frame": {
+        "x": 1331,
+        "y": 3,
+        "w": 640,
+        "h": 640
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 640,
+        "h": 640
+      },
+      "sourceSize": {
+        "w": 640,
+        "h": 640
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Mechanic.png": {
+      "frame": {
+        "x": 1331,
+        "y": 649,
+        "w": 512,
+        "h": 418
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 256,
+        "y": 303,
+        "w": 512,
+        "h": 418
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Merchant.png": {
+      "frame": {
+        "x": 844,
+        "y": 1223,
+        "w": 354,
+        "h": 512
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 335,
+        "y": 256,
+        "w": 354,
+        "h": 512
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "InventoryIcon.webp": {
+      "frame": {
+        "x": 1204,
+        "y": 1073,
+        "w": 481,
+        "h": 399
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 271,
+        "y": 312,
+        "w": 481,
+        "h": 399
+      },
+      "sourceSize": {
+        "w": 1024,
+        "h": 1024
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "CrimsonStoneTile.png": {
+      "frame": {
+        "x": 849,
+        "y": 922,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "DirtTile.png": {
+      "frame": {
+        "x": 983,
+        "y": 921,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "FervorStoneTile.png": {
+      "frame": {
+        "x": 1117,
+        "y": 921,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "GaleStoneTile.png": {
+      "frame": {
+        "x": 849,
+        "y": 1056,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "StoneTile.png": {
+      "frame": {
+        "x": 983,
+        "y": 1055,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "boss_core.png": {
+      "frame": {
+        "x": 1691,
+        "y": 1073,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "boss_skin.png": {
+      "frame": {
+        "x": 1691,
+        "y": 1073,
+        "w": 128,
+        "h": 128
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 128
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
       },
       "pivot": {
         "x": 0.5,
@@ -199,8 +367,8 @@
     "image": "game-atlas-3.png",
     "format": "RGBA8888",
     "size": {
-      "w": 2048,
-      "h": 1964
+      "w": 1974,
+      "h": 1788
     },
     "scale": 1
   }
