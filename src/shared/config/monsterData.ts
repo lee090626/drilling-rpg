@@ -72,12 +72,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c2_minos',
-    name: 'Minos (The Judge)',
-    nameKo: '심판자 미노스',
+    id: 'c2_asmodeus',
+    name: 'Asmodeus',
+    nameKo: '아스모데우스',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Lust 서클의 지배자, 어비셜 로드입니다.',
+    description: '3개의 머리 (황소, 인간, 숫양), 불꽃 날개, 뱀 꼬리. 몸 전체에서 붉은 열기가 뿜어져 나옴',
     stats: { maxHp: 15000, power: 120, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 7500, gold: 1500, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -116,12 +116,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c3_cerberus',
-    name: 'Cerberus',
-    nameKo: '케르베로스',
+    id: 'c3_beelzebub',
+    name: 'Beelzebub',
+    nameKo: '벨제붑',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Gluttony 서클의 지배자, 어비셜 로드입니다.',
+    description: '거대한 파리 형태, 썩은 날개, 복부가 비정상적으로 부풀어있음. 주변에 파리 떼가 항상 들끓음',
     stats: { maxHp: 45000, power: 250, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 22500, gold: 4500, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -160,12 +160,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c4_plutus',
-    name: 'Plutus',
-    nameKo: '플루토스',
+    id: 'c4_mammon',
+    name: 'Mammon',
+    nameKo: '마몬',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Greed 서클의 지배자, 어비셜 로드입니다.',
+    description: '황금 갑옷으로 뒤덮인 거대 인간형, 눈이 황금 동전. 몸에서 금화가 흘러내림',
     stats: { maxHp: 120000, power: 500, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 60000, gold: 12000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -204,12 +204,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c5_phlegyas',
-    name: 'Phlegyas',
-    nameKo: '플레기아스',
+    id: 'c5_azazel',
+    name: 'Azazel',
+    nameKo: '아자젤',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Wrath 서클의 지배자, 어비셜 로드입니다.',
+    description: '타락한 천사, 검게 그을린 날개, 온몸에 쇠사슬이 감겨있음. 눈에서 붉은 불꽃',
     stats: { maxHp: 350000, power: 1200, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 175000, gold: 35000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -248,12 +248,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c6_farinata',
-    name: 'Farinata',
-    nameKo: '파리나타',
+    id: 'c6_samael',
+    name: 'Samael',
+    nameKo: '사마엘',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Heresy 서클의 지배자, 어비셜 로드입니다.',
+    description: '검게 물든 천사 날개, 온몸에 독이 흘러내림. 피부는 창백하고 균열이 가득하며 틈에서 보라빛 독액이 흘러나옴. 부러진 후광, 독이 묻은 검',
     stats: { maxHp: 900000, power: 3500, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 450000, gold: 90000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -292,12 +292,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c7_minotaur',
-    name: 'Minotaur',
-    nameKo: '미노타우로스',
+    id: 'c7_belial',
+    name: 'Belial',
+    nameKo: '벨리알',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Violence 서클의 지배자, 어비셜 로드입니다.',
+    description: '불꽃 전차를 탄 타락천사, 두 개의 검은 날개, 온몸이 불꽃으로 이루어진 형태',
     stats: { maxHp: 3000000, power: 15000, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 1500000, gold: 300000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -336,12 +336,12 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
-    id: 'c8_geryon',
-    name: 'Geryon',
-    nameKo: '게리온',
+    id: 'c8_abaddon',
+    name: 'Abaddon',
+    nameKo: '아바돈',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Fraud 서클의 지배자, 어비셜 로드입니다.',
+    description: '거대한 메뚜기 형태, 전갈 꼬리, 철 갑옷을 두른 날개. 주변에 메뚜기 군단이 들끓음',
     stats: { maxHp: 12000000, power: 45000, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 6000000, gold: 1200000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
@@ -385,7 +385,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     nameKo: '루시퍼',
     type: 'boss',
     imagePath: 'oros_face',
-    description: 'Treachery 서클의 지배자, 어비셜 로드입니다.',
+    description: '3개의 얼굴, 거대한 얼음에 하반신이 갇혀있음. 6개의 날개는 부러지고 검게 타있음. 눈물이 얼어붙어 있음',
     stats: { maxHp: 100000000, power: 250000, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: { exp: 50000000, gold: 10000000, drops: [] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
