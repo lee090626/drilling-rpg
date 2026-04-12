@@ -217,8 +217,4 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
     }
   }
 
-  // 보스전 승리 처리
-  if (type === 'boss_core') {
-    handleBossDefeat(world, x, y);
-  }
 }
