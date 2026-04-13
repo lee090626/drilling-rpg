@@ -12,29 +12,6 @@ import { showToast } from './toastSystem';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
 
 /**
- * 플레이어의 영구 스탯(체력, 이속 등)을 마스터리 및 연구 보너스에 맞춰 동기화합니다.
- * (O(1) 단순 사칙연산 형태이므로 매 프레임 호출하더라도 문제없음)
- */
-function syncPermanentStats(player: any, masteryBonuses: any, artifactBonuses: any) {
-  // 1. 최대 체력 동기화: (기본 100 + 마스터리고정 + 유물고정) * (1 + 마스터리배율)
-  const baseHp = 100 + masteryBonuses.maxHp + (artifactBonuses?.maxHp || 0);
-  const finalMaxHp = Math.floor(baseHp * (1 + masteryBonuses.maxHpMult));
-  
-  // 현재 체력 비율 유지하며 최대 체력 갱신
-  const hpRatio = player.stats.maxHp > 0 ? player.stats.hp / player.stats.maxHp : 1;
-  player.stats.maxHp = finalMaxHp;
-  player.stats.hp = Math.floor(finalMaxHp * hpRatio);
-
-  // 2. 이동 속도 동기화: (기본 이속 + 유물 이속) * (기본 배율 1.0 + 마스터리 배율)
-  const baseMoveSpeed = 100 + (artifactBonuses?.moveSpeed || 0) + masteryBonuses.moveSpeed;
-  const totalMoveSpeedMult = 1.0 + masteryBonuses.moveSpeedMult;
-  player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
-  
-  // 3. 공격력(Power) 동기화: 기본 공격력 + 유물 공격력
-  player.stats.power = 10 + (artifactBonuses?.power || 0);
-}
-
-/**
  * 프레임당 1회 계산될 공통 캐시 (GC 및 CPU 최적화)
  */
 interface FrameCache {
@@ -50,17 +27,14 @@ interface FrameCache {
 export const miningSystem = (world: GameWorld, now: number) => {
   const { player, tileMap, intent } = world;
 
-  // --- 성능 최적화 (Memory & CPU) ---
-  // 한 프레임에 여러 개의 타일이 동시 파괴될 때마다 매번 O(N) 탐색을 하는 것을 방지
+  // --- 채굴을 위한 보너스 캐시 계산 ---
   const masteryBonuses = getMasteryBonuses(player.stats);
-  // 1. 매 프레임 영구 스탯 즉시 동기화
   const artifactBonuses = calculateArtifactBonuses(player.stats);
-  syncPermanentStats(player, masteryBonuses, artifactBonuses);
 
   // [유물] 벨페고르의 눈 (MASTERY_BOOST): 숙련도 획득 속도 +300% (4배)
   let masteryExpMultiplier = 1.0 + masteryBonuses.masteryExpMult;
   if (hasArtifactEffect(player.stats, 'MASTERY_BOOST')) {
-    masteryExpMultiplier += 3.0; // 300% 추가
+    masteryExpMultiplier += 3.0;
   }
 
   const frameCache: FrameCache = {

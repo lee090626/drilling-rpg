@@ -14,6 +14,7 @@ import { orosAiSystem } from '@/features/game/ecs/systems/orosAiSystem';
 import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
 import { bossBehaviorSystem } from '@/features/game/ecs/systems/bossBehaviorSystem';
 import { projectileSystem } from '@/features/game/ecs/systems/projectileSystem';
+import { statsSyncSystem } from '@/features/game/ecs/systems/statsSyncSystem';
 import * as PIXI from 'pixi.js';
 import { TILE_SIZE } from '@/shared/config/constants';
 
@@ -146,10 +147,10 @@ export class GameLoop {
       // 1. 게임 시뮬레이션
       inputSystem(this.world);
       statusSystem(this.world, now);
+      statsSyncSystem(this.world.player); // 분리된 스탯 동기화 시스템 호출
       physicsSystem(this.world, now);
       miningSystem(this.world, now);
       interactionSystem(this.world);
-      // [삭제됨] refinerySystem - 용광로 시스템 제거됨
       spawnSystem(this.world);
       monsterAiSystem(this.world, now);
       orosAiSystem(this.world, now);
