@@ -13,7 +13,7 @@ const actionHandlers: Record<string, ActionHandler> = {
   upgrade: handleEconomyAction,
   sell: handleEconomyAction,
   craft: handleEconomyAction,
-  
+
   // 룬 관련
   summonRune: handleRuneAction,
   equipRune: handleRuneAction,
@@ -28,6 +28,6 @@ const actionHandlers: Record<string, ActionHandler> = {
 export function handlePlayerAction(world: GameWorld, payload: any) {
   const { action, data } = payload;
   const handler = actionHandlers[action] || handleWorldAction;
-  
+
   handler(world, action, data);
 }

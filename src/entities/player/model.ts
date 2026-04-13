@@ -31,7 +31,7 @@ export interface Player {
 
 /**
  * 새로운 게임 시작 시 초기 플레이어 상태를 생성합니다.
- * 
+ *
  * @param seed - 월드 생성을 위한 시드 값 (통계 저장용)
  * @returns 초기화된 Player 객체
  */
@@ -49,14 +49,31 @@ export const createInitialPlayer = (seed: number): Player => ({
     power: 10,
     moveSpeed: 100,
     inventory: {
-      crimsonstone: 0, galestone: 0, fervorstone: 0,
-      moldstone: 0, siltstone: 0, gorestone: 0,
-      goldstone: 0, luststone: 0, midasite: 0,
-      ragestone: 0, cinderstone: 0, furystone: 0,
-      ashstone: 0, blightstone: 0, vexite: 0,
-      thornstone: 0, bloodstone: 0, cruelite: 0,
-      mimicite: 0, lurerstone: 0, phantomite: 0,
-      froststone: 0, glacialite: 0, abyssstone: 0, stone: 0,
+      crimsonstone: 0,
+      galestone: 0,
+      fervorstone: 0,
+      moldstone: 0,
+      siltstone: 0,
+      gorestone: 0,
+      goldstone: 0,
+      luststone: 0,
+      midasite: 0,
+      ragestone: 0,
+      cinderstone: 0,
+      furystone: 0,
+      ashstone: 0,
+      blightstone: 0,
+      vexite: 0,
+      thornstone: 0,
+      bloodstone: 0,
+      cruelite: 0,
+      mimicite: 0,
+      lurerstone: 0,
+      phantomite: 0,
+      froststone: 0,
+      glacialite: 0,
+      abyssstone: 0,
+      stone: 0,
     },
     equippedDroneId: null,
     ownedDroneIds: [],

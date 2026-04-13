@@ -4,7 +4,12 @@ import { TILE_SIZE } from '@/shared/config/constants';
 /**
  * 투사체(Projectile) 렌더링 및 회전 애니메이션을 처리합니다.
  */
-export function updateProjectileRenderer(idx: number, soa: any, container: PIXI.Container, textures: any) {
+export function updateProjectileRenderer(
+  idx: number,
+  soa: any,
+  container: PIXI.Container,
+  textures: any,
+) {
   const ew = soa.width[idx] || TILE_SIZE;
   const eh = soa.height[idx] || TILE_SIZE;
 
@@ -21,7 +26,7 @@ export function updateProjectileRenderer(idx: number, soa: any, container: PIXI.
     }
     body.width = ew;
     body.height = eh;
-    
+
     // 투사체 회전 (진행 방향 기반)
     const angle = Math.atan2(soa.vy[idx], soa.vx[idx]);
     body.rotation = angle + Math.PI / 2;

@@ -44,7 +44,7 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
 
   // 2. 공격 패턴 타이머 관리 (soa.lastAttackTime[bossIdx] 활용)
   const patternInterval = phase === 3 ? 1500 : phase === 2 ? 2500 : 3500;
-  
+
   // 보스 위치 (중앙 기준)
   const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
   const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
@@ -57,12 +57,12 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   if (now - soa.lastAttackTime[bossIdx] > patternInterval) {
     const shotCount = phase === 3 ? 5 : phase === 2 ? 3 : 1;
     const speed = phase === 3 ? 12 : phase === 2 ? 8 : 5;
-    
+
     // 플레이어 방향 벡터 계산
     const dx = px - bx;
     const dy = py - by;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    
+
     if (dist > 0) {
       const vx = (dx / dist) * speed;
       const vy = (dy / dist) * speed;
@@ -81,7 +81,7 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
           const idx = entities.getIndex(pIdx);
           soa.vx[idx] = finalVx;
           soa.vy[idx] = finalVy;
-          soa.attack[idx] = 15 + (phase * 5); // 페이즈별 대미지 증가
+          soa.attack[idx] = 15 + phase * 5; // 페이즈별 대미지 증가
           soa.lastAttackTime[idx] = now; // 생성 시간 저장
           soa.width[idx] = 24;
           soa.height[idx] = 24;
@@ -98,7 +98,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     const dy = by - py;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < TILE_SIZE * 10) { // 일정 거리 안에서만 작동
+    if (dist < TILE_SIZE * 10) {
+      // 일정 거리 안에서만 작동
       world.environmentalForce.vx = (dx / dist) * pullStrength;
       world.environmentalForce.vy = (dy / dist) * pullStrength;
     } else {
@@ -115,7 +116,7 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     const lureCycle = now % 5000;
     if (lureCycle < 2000) {
       // CONFUSION 효과가 없으면 추가
-      if (!player.stats.activeEffects?.some(e => e.type === 'CONFUSION')) {
+      if (!player.stats.activeEffects?.some((e) => e.type === 'CONFUSION')) {
         if (!player.stats.activeEffects) player.stats.activeEffects = [];
         player.stats.activeEffects.push({
           type: 'CONFUSION',

@@ -17,7 +17,8 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
   const drill = DRILLS[drillId];
   if (!drill) return null;
 
-  const equipmentState = equipmentStates[drillId] || createInitialMasteryState(drillId, drill.maxSkillSlots);
+  const equipmentState =
+    equipmentStates[drillId] || createInitialMasteryState(drillId, drill.maxSkillSlots);
   const nextExp = getNextLevelExp(equipmentState.level);
   const expPercent = Math.min(100, (equipmentState.exp / nextExp) * 100);
   const unlockedSlots = drill.maxSkillSlots || 0;
@@ -54,7 +55,12 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
         {[
           ['ATTACK', drill.basePower],
           ['SPEED', `${drill.cooldownMs}ms`],
-          ['Mobility', drill.moveSpeedMult && drill.moveSpeedMult > 1 ? `+${Math.round((drill.moveSpeedMult - 1) * 100)}%` : 'BASIC'],
+          [
+            'Mobility',
+            drill.moveSpeedMult && drill.moveSpeedMult > 1
+              ? `+${Math.round((drill.moveSpeedMult - 1) * 100)}%`
+              : 'BASIC',
+          ],
         ].map(([l, v]) => (
           <div
             key={l as string}
@@ -63,9 +69,7 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
             <div className="text-[10px] md:text-xs text-zinc-500 font-bold mb-1 tracking-widest">
               {l}
             </div>
-            <div className="text-sm md:text-lg font-black text-white">
-              {v}
-            </div>
+            <div className="text-sm md:text-lg font-black text-white">{v}</div>
           </div>
         ))}
       </div>
@@ -74,11 +78,13 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
       <div className="space-y-4 mb-6">
         <div className="space-y-2 opacity-20 pointer-events-none">
           <div className="flex justify-between items-end">
-            <span className="text-xs text-zinc-400 font-bold tracking-widest italic">Drill Mastery (Removed)</span>
+            <span className="text-xs text-zinc-400 font-bold tracking-widest italic">
+              Drill Mastery (Removed)
+            </span>
             <span className="text-xs text-zinc-500 font-bold tabular-nums">0%</span>
           </div>
           <div className="h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-zinc-900">
-            <div 
+            <div
               className="h-full bg-[#eab308] rounded-full transition-all duration-500"
               style={{ width: `${expPercent}%` }}
             />
@@ -92,11 +98,13 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
               const isUnlocked = i < unlockedSlots;
               const hasRune = (equipmentState.slottedRunes || [])[i];
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`w-8 h-8 rounded-xl border flex items-center justify-center text-sm ${
-                    isUnlocked 
-                      ? hasRune ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-transparent'
+                    isUnlocked
+                      ? hasRune
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
+                        : 'bg-zinc-900 border-zinc-800 text-transparent'
                       : 'bg-zinc-950 border-zinc-900 text-zinc-800 opacity-40'
                   }`}
                 >
@@ -104,9 +112,7 @@ function DrillCard({ drillId, isEquipped, equipmentStates, onEquip }: DrillCardP
                 </div>
               );
             })}
-            {!(drill.maxSkillSlots) && (
-              <span className="text-sm text-zinc-700 italic">NONE</span>
-            )}
+            {!drill.maxSkillSlots && <span className="text-sm text-zinc-700 italic">NONE</span>}
           </div>
         </div>
       </div>

@@ -25,67 +25,99 @@ interface HudProps {
  * 게임 메인 화면의 오버레이 UI(체력, 깊이, 퀵 메뉴 등)를 표시하는 컴포넌트입니다.
  * 하위 컴포넌트들로 구성된 레이아웃 매니저 역할을 합니다.
  */
-const Hud: React.FC<HudProps> = React.memo(({ 
-  stats, 
-  pos,
-  onOpenStatus, 
-  onOpenInventory, 
-  onOpenEncyclopedia, 
-  onOpenElevator,
-  onOpenSettings,
-  onOpenGuide,
-  onOpenAltar
-}) => {
-  const config = getCircleConfig(stats.depth);
-  const layerIdx = getLayerFromDepth(stats.depth, config);
-  
-  const layerName = useMemo(() => {
-    switch (layerIdx) {
-      case 1: return 'Upper';
-      case 2: return 'Middle';
-      case 3: return 'Lower';
-      case 4: return 'Deepest';
-      default: return '';
-    }
-  }, [layerIdx]);
+const Hud: React.FC<HudProps> = React.memo(
+  ({
+    stats,
+    pos,
+    onOpenStatus,
+    onOpenInventory,
+    onOpenEncyclopedia,
+    onOpenElevator,
+    onOpenSettings,
+    onOpenGuide,
+    onOpenAltar,
+  }) => {
+    const config = getCircleConfig(stats.depth);
+    const layerIdx = getLayerFromDepth(stats.depth, config);
 
-  const navItems = useMemo(() => [
-    { label: 'Status', key: 'C', iconKey: 'StatusIcon' as const, onClick: onOpenStatus, color: '#eab308' },
-    { label: 'Inventory', key: 'I', iconKey: 'InventoryIcon' as const, onClick: onOpenInventory, color: '#f59e0b' },
-    { label: 'Book', key: 'B', iconKey: 'BookIcon' as const, onClick: onOpenEncyclopedia, color: '#a855f7' },
-    { label: 'Altar', key: 'A', icon: '🔥', onClick: onOpenAltar, color: '#f97316' },
-    { label: 'Setting', key: 'S', iconKey: 'SettingsIcon' as const, onClick: onOpenSettings, color: '#94a3b8' },
-    { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
-  ], [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide, onOpenAltar]);
+    const layerName = useMemo(() => {
+      switch (layerIdx) {
+        case 1:
+          return 'Upper';
+        case 2:
+          return 'Middle';
+        case 3:
+          return 'Lower';
+        case 4:
+          return 'Deepest';
+        default:
+          return '';
+      }
+    }, [layerIdx]);
 
-  const equippedDrill = getDrillData(stats.equippedDrillId);
+    const navItems = useMemo(
+      () => [
+        {
+          label: 'Status',
+          key: 'C',
+          iconKey: 'StatusIcon' as const,
+          onClick: onOpenStatus,
+          color: '#eab308',
+        },
+        {
+          label: 'Inventory',
+          key: 'I',
+          iconKey: 'InventoryIcon' as const,
+          onClick: onOpenInventory,
+          color: '#f59e0b',
+        },
+        {
+          label: 'Book',
+          key: 'B',
+          iconKey: 'BookIcon' as const,
+          onClick: onOpenEncyclopedia,
+          color: '#a855f7',
+        },
+        { label: 'Altar', key: 'A', icon: '🔥', onClick: onOpenAltar, color: '#f97316' },
+        {
+          label: 'Setting',
+          key: 'S',
+          iconKey: 'SettingsIcon' as const,
+          onClick: onOpenSettings,
+          color: '#94a3b8',
+        },
+        { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
+      ],
+      [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide, onOpenAltar],
+    );
 
-  return (
-    <div className="absolute top-0 left-0 w-full h-full p-4 md:p-8 pointer-events-none select-none flex flex-col justify-between overflow-hidden">
-      
-      {/* 상단 섹션: 생존 상태 및 자산 */}
-      <div className="flex justify-between items-start w-full">
-        <HpBar hp={stats.hp} maxHp={stats.maxHp} />
-        <GoldDisplay gold={stats.goldCoins} />
-      </div>
+    const equippedDrill = getDrillData(stats.equippedDrillId);
 
-      {/* 하단 섹션: 장비, 네비게이션, 월드 정보 */}
-      <div className="flex justify-between items-end w-full relative">
-        <div className="flex gap-4 items-end">
-          <EquipmentInfo 
-            drillName={equippedDrill?.name || 'Standard Drill'} 
-            drillImage={equippedDrill?.image} 
-            pos={pos} 
-          />
+    return (
+      <div className="absolute top-0 left-0 w-full h-full p-4 md:p-8 pointer-events-none select-none flex flex-col justify-between overflow-hidden">
+        {/* 상단 섹션: 생존 상태 및 자산 */}
+        <div className="flex justify-between items-start w-full">
+          <HpBar hp={stats.hp} maxHp={stats.maxHp} />
+          <GoldDisplay gold={stats.goldCoins} />
         </div>
 
-        <QuickNav items={navItems} />
+        {/* 하단 섹션: 장비, 네비게이션, 월드 정보 */}
+        <div className="flex justify-between items-end w-full relative">
+          <div className="flex gap-4 items-end">
+            <EquipmentInfo
+              drillName={equippedDrill?.name || 'Standard Drill'}
+              drillImage={equippedDrill?.image}
+              pos={pos}
+            />
+          </div>
 
-        <WorldInfo layerName={layerName} circleName={config.name} />
+          <QuickNav items={navItems} />
+
+          <WorldInfo layerName={layerName} circleName={config.name} />
+        </div>
       </div>
-
-    </div>
-  );
-});
+    );
+  },
+);
 
 export default Hud;

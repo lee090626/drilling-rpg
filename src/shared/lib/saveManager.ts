@@ -37,7 +37,7 @@ function obfuscate(jsonStr: string): string {
     const charCode = jsonStr.charCodeAt(i) ^ key.charCodeAt(i % key.length);
     obfuscated += String.fromCharCode(charCode);
   }
-  
+
   try {
     // 유니코드 안전한 Base64 인코딩 패턴
     return btoa(unescape(encodeURIComponent(obfuscated)));
@@ -59,7 +59,7 @@ function deobfuscate(encoded: string): string {
   } catch (e) {
     decoded = atob(encoded);
   }
-  
+
   let deobfuscated = '';
   for (let i = 0; i < decoded.length; i++) {
     const charCode = decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length);
@@ -88,7 +88,7 @@ export const saveManager = {
         data.tileMapData = btoa(binary);
         delete data.tileMapBuffer; // 디스크에 저장 불필요
       }
-      
+
       const json = JSON.stringify(data);
       const obfuscatedStr = obfuscate(json);
       localStorage.setItem(SAVE_KEY, obfuscatedStr);
@@ -107,7 +107,7 @@ export const saveManager = {
       if (!saved) return null;
       const json = deobfuscate(saved);
       const data = JSON.parse(json);
-      
+
       // 구 버전 데이터와의 호환성을 위한 패치 로직
       if (data.stats) {
         const s = data.stats;
@@ -123,18 +123,19 @@ export const saveManager = {
         if (!s.tileMastery) s.tileMastery = {};
         if (!s.unlockedMasteryPerks) s.unlockedMasteryPerks = [];
         if (!s.collectionHistory) s.collectionHistory = {};
-        
+
         // 인벤토리 누락 아이템 보정 및 레거시 데이터 마이그레이션
         if (s.inventory) {
-          const validMineralKeys: Set<string> = new Set(MINERALS.map(m => m.key as string));
+          const validMineralKeys: Set<string> = new Set(MINERALS.map((m) => m.key as string));
           const oldInv = s.inventory as any;
           s.inventory = {} as Inventory;
-          
+
           let compensationGold = 0;
           for (const key of Object.keys(oldInv)) {
             // 명시적 마이그레이션: veinstone -> crimsonstone
             if (key === 'veinstone') {
-              (s.inventory as any).crimsonstone = ((s.inventory as any).crimsonstone || 0) + oldInv[key];
+              (s.inventory as any).crimsonstone =
+                ((s.inventory as any).crimsonstone || 0) + oldInv[key];
               console.log(`[SaveManager] migrated 'veinstone' to 'crimsonstone'`);
               continue;
             }
@@ -146,21 +147,21 @@ export const saveManager = {
               compensationGold += oldInv[key] * 10;
             }
           }
-          
+
           if (compensationGold > 0) {
             s.goldCoins = (s.goldCoins || 0) + compensationGold;
             console.log(`[SaveManager] Legacy items converted to ${compensationGold} Gold Coins.`);
           }
 
           // 신규 광물 초기화
-          MINERALS.forEach(m => {
+          MINERALS.forEach((m) => {
             if ((s.inventory as any)[m.key] === undefined) {
               (s.inventory as any)[m.key] = 0;
             }
           });
         }
       }
-      
+
       return data;
     } catch (e) {
       console.error('게임 로드 실패:', e);
@@ -207,5 +208,5 @@ export const saveManager = {
       console.error('세이브 데이터 임포트 실패:', e);
       return null;
     }
-  }
+  },
 };

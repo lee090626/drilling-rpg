@@ -10,59 +10,71 @@ export const useGameUI = (worldRef: React.MutableRefObject<GameWorld>, updateUi:
   /** 모든 모달 창을 닫습니다. */
   const closeAllModals = useCallback(() => {
     const { ui } = worldRef.current;
-    ui.isShopOpen = 
-    ui.isInventoryOpen = 
-    ui.isSettingsOpen = 
-    ui.isCraftingOpen = 
-    ui.isElevatorOpen = 
-    ui.isStatusOpen = 
-    ui.isEncyclopediaOpen = 
-    ui.isLaboratoryOpen = 
-    ui.isRefineryOpen = 
-    ui.isGuideOpen = false;
+    ui.isShopOpen =
+      ui.isInventoryOpen =
+      ui.isSettingsOpen =
+      ui.isCraftingOpen =
+      ui.isElevatorOpen =
+      ui.isStatusOpen =
+      ui.isEncyclopediaOpen =
+      ui.isLaboratoryOpen =
+      ui.isRefineryOpen =
+      ui.isGuideOpen =
+        false;
     updateUi();
   }, [worldRef, updateUi]);
 
-  /** 
-   * 특정 모달의 상태를 반전(토글)시킵니다. 
+  /**
+   * 특정 모달의 상태를 반전(토글)시킵니다.
    * @param target 토글할 UI 상태 키
    */
-  const toggleModal = useCallback((target: keyof GameWorld['ui']) => {
-    const { ui } = worldRef.current;
-    const current = ui[target];
-    
-    // (선택 사항) 새로운 창을 열 때 다른 창을 모두 닫는 로직을 추가할 수 있습니다.
-    // closeAllModals(); 
-    
-    (ui as any)[target] = !current;
-    updateUi();
-  }, [worldRef, updateUi]);
+  const toggleModal = useCallback(
+    (target: keyof GameWorld['ui']) => {
+      const { ui } = worldRef.current;
+      const current = ui[target];
+
+      // (선택 사항) 새로운 창을 열 때 다른 창을 모두 닫는 로직을 추가할 수 있습니다.
+      // closeAllModals();
+
+      (ui as any)[target] = !current;
+      updateUi();
+    },
+    [worldRef, updateUi],
+  );
 
   /** 특정 모달을 닫습니다. */
-  const handleClose = useCallback((target: keyof GameWorld['ui']) => {
-    (worldRef.current.ui as any)[target] = false;
-    updateUi();
-  }, [worldRef, updateUi]);
+  const handleClose = useCallback(
+    (target: keyof GameWorld['ui']) => {
+      (worldRef.current.ui as any)[target] = false;
+      updateUi();
+    },
+    [worldRef, updateUi],
+  );
 
   /** 특정 모달을 엽니다. */
-  const handleOpen = useCallback((target: keyof GameWorld['ui']) => {
-    (worldRef.current.ui as any)[target] = true;
-    updateUi();
-  }, [worldRef, updateUi]);
+  const handleOpen = useCallback(
+    (target: keyof GameWorld['ui']) => {
+      (worldRef.current.ui as any)[target] = true;
+      updateUi();
+    },
+    [worldRef, updateUi],
+  );
 
   /** 현재 열려 있는 모달이 하나라도 있는지 확인합니다. */
   const isAnyModalOpen = useCallback(() => {
     const { ui } = worldRef.current;
-    return ui.isShopOpen || 
-           ui.isInventoryOpen || 
-           ui.isSettingsOpen || 
-           ui.isCraftingOpen || 
-           ui.isElevatorOpen || 
-           ui.isStatusOpen || 
-           ui.isEncyclopediaOpen ||
-           ui.isLaboratoryOpen ||
-           ui.isRefineryOpen ||
-           ui.isGuideOpen;
+    return (
+      ui.isShopOpen ||
+      ui.isInventoryOpen ||
+      ui.isSettingsOpen ||
+      ui.isCraftingOpen ||
+      ui.isElevatorOpen ||
+      ui.isStatusOpen ||
+      ui.isEncyclopediaOpen ||
+      ui.isLaboratoryOpen ||
+      ui.isRefineryOpen ||
+      ui.isGuideOpen
+    );
   }, [worldRef]);
 
   return {
@@ -70,6 +82,6 @@ export const useGameUI = (worldRef: React.MutableRefObject<GameWorld>, updateUi:
     toggleModal,
     handleClose,
     handleOpen,
-    isAnyModalOpen
+    isAnyModalOpen,
   };
 };

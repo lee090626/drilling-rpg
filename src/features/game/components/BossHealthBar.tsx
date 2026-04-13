@@ -11,14 +11,18 @@ const BossHealthBar: React.FC = () => {
   if (!boss || !boss.active) return null;
 
   const hpPercent = Math.max(0, (boss.hp / boss.maxHp) * 100);
-  
+
   // 페이즈별 색상 테마 정의
   const getPhaseColor = (phase: number) => {
     switch (phase) {
-      case 1: return 'from-amber-500 to-orange-600';
-      case 2: return 'from-orange-600 to-red-600';
-      case 3: return 'from-red-600 to-rose-700';
-      default: return 'from-orange-500 to-red-600';
+      case 1:
+        return 'from-amber-500 to-orange-600';
+      case 2:
+        return 'from-orange-600 to-red-600';
+      case 3:
+        return 'from-red-600 to-rose-700';
+      default:
+        return 'from-orange-500 to-red-600';
     }
   };
 
@@ -48,15 +52,15 @@ const BossHealthBar: React.FC = () => {
       <div className="relative h-4 md:h-6 bg-black/60 backdrop-blur-xl rounded-full p-[2px] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
         {/* 배경 그리드 장식 */}
         <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle,rgba(255,255,255,0.2)_1px,transparent_1px)] bg-[size:10px_10px]" />
-        
+
         {/* 페이즈 구분선 표시 */}
         <div className="absolute inset-0 flex pointer-events-none">
-            <div className="w-[30%] h-full border-r border-white/20" />
-            <div className="w-[30%] h-full border-r border-white/20" />
+          <div className="w-[30%] h-full border-r border-white/20" />
+          <div className="w-[30%] h-full border-r border-white/20" />
         </div>
 
         {/* 실제 체력 바 (애니메이션 적용) */}
-        <div 
+        <div
           className={`h-full rounded-full transition-all duration-300 ease-out shadow-[0_0_20px_rgba(225,29,72,0.4)] bg-linear-to-r ${getPhaseColor(boss.phase)} relative`}
           style={{ width: `${hpPercent}%` }}
         >

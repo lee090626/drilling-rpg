@@ -6,12 +6,14 @@ let globalWorker: Worker | null = null;
 
 export function useGameWorker(
   isClient: boolean,
-  snapshots: React.MutableRefObject<{ time: number, data: Float32Array }[]>,
+  snapshots: React.MutableRefObject<{ time: number; data: Float32Array }[]>,
   setIsEngineReady: (ready: boolean) => void,
   isReadyRef: React.MutableRefObject<boolean>,
-  loadAssetsAndTransfer: (sendToWorker: (type: string, payload?: any, transfer?: Transferable[]) => void) => void,
+  loadAssetsAndTransfer: (
+    sendToWorker: (type: string, payload?: any, transfer?: Transferable[]) => void,
+  ) => void,
   handleTravelDimension: (targetDepth: number) => void,
-  handleOpenModal: (target: any) => void
+  handleOpenModal: (target: any) => void,
 ) {
   const workerRef = useRef<Worker | null>(null);
 
@@ -33,16 +35,18 @@ export function useGameWorker(
     const worker = globalWorker;
     const onMessage = (e: MessageEvent) => {
       const { type, payload, buffer } = e.data;
-      
+
       if (type === 'RENDER_SYNC' && buffer) {
         const view = new Float32Array(buffer);
         const timestamp = view[1];
-        
+
         snapshots.current.push({ time: timestamp, data: view });
         if (snapshots.current.length > 2) {
           const old = snapshots.current.shift();
           if (old) {
-            worker.postMessage({ type: 'RETURN_BUFFER', payload: { buffer: old.data.buffer } }, [old.data.buffer]);
+            worker.postMessage({ type: 'RETURN_BUFFER', payload: { buffer: old.data.buffer } }, [
+              old.data.buffer,
+            ]);
           }
         }
 
@@ -67,7 +71,11 @@ export function useGameWorker(
           alert('Save code copied to clipboard!');
         }
       } else if (type === 'PORTAL_TRIGGERED') {
-        if (confirm(`Circle ${payload.nextCircleId}로 하강하시겠습니까?\n새로운 심연 탐험이 시작됩니다!`)) {
+        if (
+          confirm(
+            `Circle ${payload.nextCircleId}로 하강하시겠습니까?\n새로운 심연 탐험이 시작됩니다!`,
+          )
+        ) {
           handleTravelDimension(payload.nextDepth);
         }
       } else if (type === 'DIMENSION_TRAVEL_COMPLETE') {
@@ -88,9 +96,9 @@ export function useGameWorker(
 
     const saved = saveManager.load();
     console.log('[Main] Sending INIT to worker...');
-    worker.postMessage({ 
-      type: 'INIT', 
-      payload: { seed: saved?.stats.mapSeed || 12345, saveData: saved } 
+    worker.postMessage({
+      type: 'INIT',
+      payload: { seed: saved?.stats.mapSeed || 12345, saveData: saved },
     });
 
     loadAssetsAndTransfer(sendToWorker);

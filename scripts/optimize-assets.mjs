@@ -3,9 +3,7 @@ import path from 'path';
 import sharp from 'sharp';
 import { glob } from 'glob'; // We will use manual recursion to avoid glob dependency just in case
 
-const TARGET_DIRS = [
-  'src/shared/assets'
-];
+const TARGET_DIRS = ['src/shared/assets'];
 
 async function walk(dir) {
   let results = [];
@@ -20,7 +18,7 @@ async function walk(dir) {
         results.push(filePath);
       }
     }
-  } catch(e) {
+  } catch (e) {
     // maybe dir not found, skip
   }
   return results;
@@ -40,10 +38,10 @@ async function optimizeImages() {
 
         const img = sharp(file);
         const metadata = await img.metadata();
-        
+
         let shouldProcess = false;
         let chain = img;
-        
+
         // Resize if too large
         if (metadata.width > 256 || metadata.height > 256) {
           chain = chain.resize({ width: 256, height: 256, fit: 'inside' });
@@ -52,14 +50,16 @@ async function optimizeImages() {
 
         // Even if not resized, compress if it's over 100KB
         if (shouldProcess || originalSize > 100000) {
-          const buffer = await chain.png({ palette: true, quality: 80, compressionLevel: 9 }).toBuffer();
+          const buffer = await chain
+            .png({ palette: true, quality: 80, compressionLevel: 9 })
+            .toBuffer();
           const newSize = buffer.length;
-          
+
           if (newSize < originalSize) {
             await fs.writeFile(file, buffer);
             const savedKb = ((originalSize - newSize) / 1024).toFixed(1);
             console.log(`[OPTIMIZED] ${path.basename(file)}: saved ${savedKb} KB`);
-            totalSaved += (originalSize - newSize);
+            totalSaved += originalSize - newSize;
             fileCount++;
           }
         }

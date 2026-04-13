@@ -36,11 +36,13 @@ const ATLAS_FILES_FILE = path.join(__dirname, '../src/shared/config/atlasFiles.t
 
 function generate() {
   console.log('Generating Atlas Map Automatically...');
-  
+
   const atlasMap = {};
   const fileMapping = {};
-  const atlasFiles = fs.readdirSync(ASSETS_DIR).filter(f => f.startsWith('game-atlas-') && f.endsWith('.json'));
-  
+  const atlasFiles = fs
+    .readdirSync(ASSETS_DIR)
+    .filter((f) => f.startsWith('game-atlas-') && f.endsWith('.json'));
+
   // 1. 모든 아틀라스 JSON을 스캔하여 프레임 수집
   for (const atlasJsonFile of atlasFiles) {
     const atlasIndex = parseInt(atlasJsonFile.match(/game-atlas-(\d+)\.json/)[1]);
@@ -60,15 +62,15 @@ function generate() {
         width: frame.w,
         height: frame.h,
         atlasWidth: metaSize.w,
-        atlasHeight: metaSize.h
+        atlasHeight: metaSize.h,
       };
     }
   }
 
   // 2. atlasFiles.ts 생성 (알파벳 순 정렬)
   const sortedIds = Object.keys(fileMapping).sort();
-  const fileMappingStr = sortedIds.map(id => `  ${id}: '${fileMapping[id]}',`).join('\n');
-  
+  const fileMappingStr = sortedIds.map((id) => `  ${id}: '${fileMapping[id]}',`).join('\n');
+
   const atlasFilesContent = `// [자동 생성됨] 이 파일은 scripts/generateAtlasMap.js 스크립트에 의해 생성되었습니다.
 // 에셋이 추가되면 이 파일이 자동으로 업데이트됩니다.
 

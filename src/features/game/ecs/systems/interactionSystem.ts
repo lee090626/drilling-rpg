@@ -4,7 +4,7 @@ import { getCircleConfig, CIRCLES } from '@/shared/config/circleData';
 
 /**
  * 플레이어와 NPC(엔티티) 또는 포탈 간의 상호작용을 관리하는 시스템입니다.
- * 
+ *
  * @param world - 게임 월드 상태 객체
  */
 export const interactionSystem = (world: GameWorld) => {
@@ -19,10 +19,10 @@ export const interactionSystem = (world: GameWorld) => {
 
     for (const entity of world.staticEntities) {
       if (!entity) continue;
-      
+
       const entW = entity.width || 1;
       const entH = entity.height || 1;
-      
+
       // (0,0) 탑-레프트 기준 렌더링을 고려하여, 실제 중심점은 y + h/2가 되어야 함
       const centerX = entity.x + entW / 2;
       const centerY = entity.y + entH / 2;
@@ -42,7 +42,9 @@ export const interactionSystem = (world: GameWorld) => {
 
     if (nearbyEntity) {
       if (!world.ui.showInteractionPrompt) {
-        console.log(`[Interaction] Nearby entity sensed: ${nearbyEntity.name} (ID: ${nearbyEntity.id}, Type: ${nearbyEntity.interactionType})`);
+        console.log(
+          `[Interaction] Nearby entity sensed: ${nearbyEntity.name} (ID: ${nearbyEntity.id}, Type: ${nearbyEntity.interactionType})`,
+        );
       }
       world.ui.showInteractionPrompt = true;
       world.ui.activeInteractionType = nearbyEntity.interactionType;
@@ -92,16 +94,16 @@ const handleEntityInteraction = (world: GameWorld, entity: Entity) => {
  */
 const handlePortalInteraction = (world: GameWorld) => {
   const { player } = world;
-  
+
   if (world.intent.action === 'interact') {
     const currentCircle = getCircleConfig(player.stats.depth);
-    const nextCircle = CIRCLES.find(c => c.id === currentCircle.id + 1);
-    
+    const nextCircle = CIRCLES.find((c) => c.id === currentCircle.id + 1);
+
     if (nextCircle) {
       // 워커에서는 confirm/alert을 사용할 수 없으므로 메인 스레드에 이벤트를 보냅니다.
       self.postMessage({
         type: 'PORTAL_TRIGGERED',
-        payload: { nextDepth: nextCircle.depthStart, nextCircleId: nextCircle.id }
+        payload: { nextDepth: nextCircle.depthStart, nextCircleId: nextCircle.id },
       });
     }
 

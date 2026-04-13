@@ -1,6 +1,16 @@
 import { TileMap } from '../tile/TileMap';
 import { Player } from '../player/model';
-import { Entity, GameAssets, Particle, FloatingText, DroppedItem, InteractionType, TILE_TYPE_TO_ID, ID_TO_TILE_TYPE, TileType } from '@/shared/types/game';
+import {
+  Entity,
+  GameAssets,
+  Particle,
+  FloatingText,
+  DroppedItem,
+  InteractionType,
+  TILE_TYPE_TO_ID,
+  ID_TO_TILE_TYPE,
+  TileType,
+} from '@/shared/types/game';
 import { ObjectPool } from '@/shared/lib/effectPool';
 import { EntityManager } from '@/features/game/lib/EntityManager';
 import { SpatialHash } from '@/features/game/lib/SpatialHash';
@@ -20,7 +30,7 @@ export class DroppedItemManager {
   public vy: Float32Array;
   public amount: Uint32Array;
   public life: Float32Array;
-  
+
   public blockedDropCount: number = 0;
   private nextIdx: number = 0;
 
@@ -38,7 +48,14 @@ export class DroppedItemManager {
   }
 
   /** 새로운 아이템을 풀에서 활성화 (generation-based ID 반환) */
-  public spawn(type: TileType, x: number, y: number, vx: number, vy: number, amount: number = 1): number {
+  public spawn(
+    type: TileType,
+    x: number,
+    y: number,
+    vx: number,
+    vy: number,
+    amount: number = 1,
+  ): number {
     const start = this.nextIdx;
     do {
       const idx = this.nextIdx;
@@ -53,10 +70,10 @@ export class DroppedItemManager {
         this.vy[idx] = vy;
         this.amount[idx] = amount;
         this.life[idx] = 0;
-        
+
         // 0xFFFF 오버플로우는 & 연산으로 안전하게 처리
-        this.generation[idx] = (this.generation[idx] + 1) & 0xFFFF;
-        
+        this.generation[idx] = (this.generation[idx] + 1) & 0xffff;
+
         return (this.generation[idx] << 16) | idx;
       }
     } while (this.nextIdx !== start);
@@ -125,7 +142,7 @@ export interface GameWorld {
     moveY: number;
     action: 'none' | 'interact' | 'artifact';
     /** 현재 채굴 조준 중인 타일의 좌표 */
-    miningTarget: { x: number, y: number } | null;
+    miningTarget: { x: number; y: number } | null;
   };
   /** 각종 동작의 마지막 실행 시간을 관리하는 타임스탬프 객체 */
   timestamp: {
@@ -164,7 +181,7 @@ export interface GameWorld {
   /** 이미 몬스터 생성이 확인된 타일 좌표 세트 ("x,y") */
   spawnedCoords: Set<string>;
   /** 환경적인 힘 (보스의 인척력 등) */
-  environmentalForce: { vx: number, vy: number };
+  environmentalForce: { vx: number; vy: number };
   /** 보스 전투 상태 (UI 동기화용) */
   bossCombatStatus: {
     active: boolean;
@@ -178,7 +195,7 @@ export interface GameWorld {
 
 /**
  * 게임 시작 시 사용할 초기 월드 상태를 생성합니다.
- * 
+ *
  * @param seed - 월드 생성을 위한 랜덤 시드
  * @returns 초기화된 GameWorld 객체
  */
@@ -204,14 +221,31 @@ export const createInitialWorld = (seed: number): GameWorld => {
         power: 10,
         moveSpeed: 100,
         inventory: {
-          crimsonstone: 0, galestone: 0, fervorstone: 0,
-          moldstone: 0, siltstone: 0, gorestone: 0,
-          goldstone: 0, luststone: 0, midasite: 0,
-          ragestone: 0, cinderstone: 0, furystone: 0,
-          ashstone: 0, blightstone: 0, vexite: 0,
-          thornstone: 0, bloodstone: 0, cruelite: 0,
-          mimicite: 0, lurerstone: 0, phantomite: 0,
-          froststone: 0, glacialite: 0, abyssstone: 0, stone: 0,
+          crimsonstone: 0,
+          galestone: 0,
+          fervorstone: 0,
+          moldstone: 0,
+          siltstone: 0,
+          gorestone: 0,
+          goldstone: 0,
+          luststone: 0,
+          midasite: 0,
+          ragestone: 0,
+          cinderstone: 0,
+          furystone: 0,
+          ashstone: 0,
+          blightstone: 0,
+          vexite: 0,
+          thornstone: 0,
+          bloodstone: 0,
+          cruelite: 0,
+          mimicite: 0,
+          lurerstone: 0,
+          phantomite: 0,
+          froststone: 0,
+          glacialite: 0,
+          abyssstone: 0,
+          stone: 0,
         },
         inventoryRunes: [],
         goldCoins: 0,
@@ -239,13 +273,31 @@ export const createInitialWorld = (seed: number): GameWorld => {
     },
     entities: new EntityManager(5000),
     staticEntities: [],
-    particlePool: new ObjectPool<Particle>(() => ({
-      x: 0, y: 0, vx: 0, vy: 0, life: 0, color: '#fff', size: 2, active: false
-    }), 1000),
+    particlePool: new ObjectPool<Particle>(
+      () => ({
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        life: 0,
+        color: '#fff',
+        size: 2,
+        active: false,
+      }),
+      1000,
+    ),
     particles: [],
-    floatingTextPool: new ObjectPool<FloatingText>(() => ({
-      x: 0, y: 0, text: '', color: '#fff', life: 0, active: false
-    }), 100),
+    floatingTextPool: new ObjectPool<FloatingText>(
+      () => ({
+        x: 0,
+        y: 0,
+        text: '',
+        color: '#fff',
+        life: 0,
+        active: false,
+      }),
+      100,
+    ),
     floatingTexts: [],
     droppedItemPool: new DroppedItemManager(500),
     activeDrone: null,
@@ -308,6 +360,6 @@ export const createInitialWorld = (seed: number): GameWorld => {
 
   result.particles = result.particlePool.getPool();
   result.floatingTexts = result.floatingTextPool.getPool();
-  
+
   return result;
 };

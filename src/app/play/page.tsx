@@ -23,7 +23,7 @@ export default function Play() {
             Deep Abyss Exploration
           </h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl text-white font-medium uppercase tracking-widest text-[10px]">
           <div className="space-y-2">
             <h3 className="font-black text-zinc-500">Resource Extraction</h3>

@@ -1,7 +1,15 @@
 /**
  * 광물 및 아이템의 희귀 등급을 정의합니다.
  */
-export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Radiant' | 'Legendary' | 'Mythic' | 'Ancient';
+export type Rarity =
+  | 'Common'
+  | 'Uncommon'
+  | 'Rare'
+  | 'Epic'
+  | 'Radiant'
+  | 'Legendary'
+  | 'Mythic'
+  | 'Ancient';
 
 /**
  * 게임 내 타일의 종류를 정의합니다.
@@ -90,10 +98,13 @@ export const TILE_TYPE_TO_ID: Record<string, number> = {
 };
 
 /** ID-타일 타입 역매핑 */
-export const ID_TO_TILE_TYPE: Record<number, TileType> = Object.entries(TILE_TYPE_TO_ID).reduce((acc, [key, value]) => {
-  acc[value] = key as TileType;
-  return acc;
-}, {} as Record<number, TileType>);
+export const ID_TO_TILE_TYPE: Record<number, TileType> = Object.entries(TILE_TYPE_TO_ID).reduce(
+  (acc, [key, value]) => {
+    acc[value] = key as TileType;
+    return acc;
+  },
+  {} as Record<number, TileType>,
+);
 
 /**
  * 타일 객체의 구조를 정의합니다.
@@ -114,7 +125,18 @@ export interface Tile {
  * 광물 종류별로 수량을 저장합니다.
  */
 export type Inventory = {
-  [K in Exclude<TileType, 'empty' | 'wall' | 'portal' | 'boss_core' | 'boss_skin' | 'monster_nest' | 'monster' | 'lava' | 'dungeon_bricks'>]: number;
+  [K in Exclude<
+    TileType,
+    | 'empty'
+    | 'wall'
+    | 'portal'
+    | 'boss_core'
+    | 'boss_skin'
+    | 'monster_nest'
+    | 'monster'
+    | 'lava'
+    | 'dungeon_bricks'
+  >]: number;
 } & {
   [key: string]: number;
 };
@@ -152,7 +174,17 @@ export interface Artifact {
  * 연구(스킬트리) 효과의 종류와 수치를 정의합니다.
  */
 export interface ResearchEffect {
-  type: 'power' | 'miningSpeed' | 'moveSpeed' | 'luck' | 'maxHp' | 'maxHpMult' | 'defense' | 'masteryExp' | 'critRate' | 'critDmg';
+  type:
+    | 'power'
+    | 'miningSpeed'
+    | 'moveSpeed'
+    | 'luck'
+    | 'maxHp'
+    | 'maxHpMult'
+    | 'defense'
+    | 'masteryExp'
+    | 'critRate'
+    | 'critDmg';
   value: number;
 }
 
@@ -290,12 +322,12 @@ export interface SkillRuneItem {
 export interface PlayerStats {
   /** 현재 도달한 깊이 (y 좌표 기반) */
   depth: number;
-  
+
   /** 현재 장착 중인 드릴의 ID */
   equippedDrillId: string;
   /** 보유하고 있는 모든 드릴의 ID 목록 */
   ownedDrillIds: string[];
-  
+
   /** 현재 장착 중인 드론의 ID (장착 해제 시 null) */
   equippedDroneId: string | null;
   /** 보유하고 있는 모든 드론의 ID 목록 */
@@ -335,20 +367,20 @@ export interface PlayerStats {
   goldCoins: number;
   /** 월드 생성을 위한 맵 시드 번호 */
   mapSeed: number;
-  
+
   /** 발견한 광물 종류 목록 (도감용) */
   discoveredMinerals: string[];
   /** 조우한 보스 ID 목록 */
   encounteredBossIds: string[];
   /** 현재 탐험 중인 차원 번호 */
   dimension: number;
-  
+
   /** 각 드릴별 숙련도 및 스킬 장착 상태 관리 */
   equipmentStates: { [drillId: string]: MasteryState };
 
   /** 각 타일 종류별 숙련도 관리 */
   tileMastery: { [tileType: string]: MasteryState };
-  
+
   /** 해금된 연구(스킬트리) ID 목록 */
   unlockedResearchIds: string[];
 
@@ -389,7 +421,23 @@ export interface ToastMessage {
 /**
  * 상태 이상의 종류를 정의합니다.
  */
-export type StatusType = 'STUN' | 'SLOW' | 'BURN' | 'FREEZE' | 'POISON' | 'BUFF_POWER' | 'BUFF_SPEED' | 'WEAKEN' | 'SHIELD' | 'LUCKY' | 'INVINCIBLE' | 'FATIGUE' | 'BLEED' | 'CONFUSION' | 'CURSE' | 'ENRAGE';
+export type StatusType =
+  | 'STUN'
+  | 'SLOW'
+  | 'BURN'
+  | 'FREEZE'
+  | 'POISON'
+  | 'BUFF_POWER'
+  | 'BUFF_SPEED'
+  | 'WEAKEN'
+  | 'SHIELD'
+  | 'LUCKY'
+  | 'INVINCIBLE'
+  | 'FATIGUE'
+  | 'BLEED'
+  | 'CONFUSION'
+  | 'CURSE'
+  | 'ENRAGE';
 
 /**
  * 활성화된 캐릭터 상태 효과 정보입니다.

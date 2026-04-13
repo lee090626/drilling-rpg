@@ -21,12 +21,10 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
   if (lastPickupEventTime > 0 && now - lastPickupEventTime > AGGREGATION_WINDOW) {
     const entries = Object.entries(pickupBuffer);
     if (entries.length > 0) {
-      const message = entries
-        .map(([type, count]) => `${type.toUpperCase()} x${count}`)
-        .join(', ');
-      
+      const message = entries.map(([type, count]) => `${type.toUpperCase()} x${count}`).join(', ');
+
       showToast(`${message} Acquired!`, 'info', 2000);
-      
+
       // Reset buffer
       for (const key in pickupBuffer) {
         delete pickupBuffer[key];
@@ -51,7 +49,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     p.y += p.vy * dtFactor;
     p.vy += 0.2 * dtFactor;
     p.life -= 0.02 * dtFactor;
-    
+
     if (p.life <= 0) {
       p.active = false;
     }
@@ -63,22 +61,22 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     if (!ft.active) continue;
 
     const dtFactor = deltaTime / 16.6;
-    
+
     if (ft.vx !== undefined && ft.vy !== undefined) {
       ft.x += ft.vx * dtFactor;
       ft.y += ft.vy * dtFactor;
       ft.vy += 0.25 * dtFactor;
       ft.vx *= 0.98;
-      
+
       const isResource = ft.text.includes('G') || ft.text.includes('+');
       if (isResource && ft.life < 0.7) {
         const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
         const py = world.player.visualPos.y * TILE_SIZE + TILE_SIZE / 2;
-        
+
         const dx = px - ft.x;
         const dy = py - ft.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (dist > 5) {
           const force = 0.15 * dtFactor;
           ft.vx += (dx / dist) * force;
@@ -89,7 +87,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     } else {
       ft.y -= 1 * dtFactor;
     }
-    
+
     ft.life -= 0.012 * dtFactor;
 
     if (ft.life <= 0) {
@@ -124,7 +122,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
           dp.y[i] = tileY * TILE_SIZE - 1;
         } else {
           dp.vy[i] = 0;
-          dp.y[i] += dp.vy[i]; 
+          dp.y[i] += dp.vy[i];
         }
         dp.x[i] += dp.vx[i];
       } else {
@@ -135,7 +133,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
       // Pickup phase
       const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
       const py = world.player.visualPos.y * TILE_SIZE + TILE_SIZE / 2;
-      
+
       const dx = px - dp.x[i];
       const dy = py - dp.y[i];
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -146,7 +144,7 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
       if (dist < pickupRadius) {
         // Collect
         const amount = dp.amount[i];
-        
+
         // 인벤토리 추가
         if (world.player.stats.inventory[type] !== undefined) {
           world.player.stats.inventory[type] += amount;
@@ -157,16 +155,17 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
           if (!world.player.stats.collectionHistory) {
             world.player.stats.collectionHistory = {};
           }
-          world.player.stats.collectionHistory[type] = (world.player.stats.collectionHistory[type] || 0) + amount;
+          world.player.stats.collectionHistory[type] =
+            (world.player.stats.collectionHistory[type] || 0) + amount;
         }
-        
+
         // Record for aggregation (UI Snapshot happens implicitly by name)
         pickupBuffer[type] = (pickupBuffer[type] || 0) + amount;
         lastPickupEventTime = now;
-        
+
         // Visual feedback
         createParticles(world, px - TILE_SIZE / 2, py - TILE_SIZE / 2, '#ffffff', 4);
-        
+
         // Remove from world
         dp.kill(i);
       } else {

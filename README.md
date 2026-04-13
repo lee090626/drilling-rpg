@@ -19,12 +19,14 @@
 ## 🛠️ 기술 스택 (Tech Stack)
 
 ### **Core**
+
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
 - **State Management**: [Zustand](https://github.com/pmndrs/zustand)
 - **Styling**: Tailwind CSS 4
 
 ### **Game Engine**
+
 - **Rendering**: [PixiJS v8](https://pixijs.com/) (with OffscreenCanvas)
 - **Architecture**: FSD (Feature-Sliced Design) + ECS (Entity Component System)
 - **Concurrency**: Web Workers (Multi-threading)

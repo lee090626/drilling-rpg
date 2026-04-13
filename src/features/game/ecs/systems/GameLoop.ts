@@ -31,7 +31,7 @@ export class GameLoop {
   private lastUiSyncTime: number = 0;
   private lastSaveTime: number = 0;
   private readonly uiSyncInterval: number = 500; // 2Hz (Optimized to reduce cloning load)
-  public readonly syncInterval: number = 16.66;  // 60Hz Target
+  public readonly syncInterval: number = 16.66; // 60Hz Target
 
   // 의존성 주입(DI) 데이터
   private world: GameWorld;
@@ -47,7 +47,7 @@ export class GameLoop {
     layers: any | null,
     textures: { [key: string]: PIXI.Texture },
     lightingFilter: any | null,
-    bufferPool: ArrayBuffer[]
+    bufferPool: ArrayBuffer[],
   ) {
     this.world = world;
     this.pixiApp = pixiApp;
@@ -62,7 +62,7 @@ export class GameLoop {
     pixiApp: PIXI.Application | null,
     layers: any | null,
     textures: { [key: string]: PIXI.Texture },
-    lightingFilter: any | null
+    lightingFilter: any | null,
   ) {
     this.world = world;
     this.pixiApp = pixiApp;
@@ -96,22 +96,22 @@ export class GameLoop {
       payload: {
         stats: this.world.player.stats,
         ui: this.world.ui,
-      }
+      },
     });
 
     // 약간의 딜레이를 주어 메시지가 전송될 시간을 확보 (필요 시)
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     // 3. Clear (풀 비우기)
-    this.world.particlePool.getPool().forEach(p => p.active = false);
-    this.world.floatingTextPool.getPool().forEach(f => f.active = false);
+    this.world.particlePool.getPool().forEach((p) => (p.active = false));
+    this.world.floatingTextPool.getPool().forEach((f) => (f.active = false));
     this.world.droppedItemPool.clear();
     this.world.entities.clear(); // [v4] Protocol: Reuse instance, just clear data
     this.world.spawnedCoords.clear();
 
     // 4. Reset (타일맵 리셋)
     this.world.tileMap.reset(newSeed, nextDim);
-    
+
     // 플레이어 위치 초기화
     this.world.player.pos = { x: 15, y: 8 };
     this.world.player.visualPos = { x: 15, y: 8 };
@@ -140,7 +140,7 @@ export class GameLoop {
           this.world.entities.soa.x[i],
           this.world.entities.soa.y[i],
           this.world.entities.soa.width[i],
-          this.world.entities.soa.height[i]
+          this.world.entities.soa.height[i],
         );
       }
 
@@ -162,7 +162,14 @@ export class GameLoop {
 
       // 2. 렌더링 호출
       if (this.pixiApp && this.layers) {
-        renderSystem(this.world, this.pixiApp, this.layers, now, this.textures, this.lightingFilter);
+        renderSystem(
+          this.world,
+          this.pixiApp,
+          this.layers,
+          now,
+          this.textures,
+          this.lightingFilter,
+        );
       }
 
       // 3. UI 동기화 방출
@@ -176,9 +183,9 @@ export class GameLoop {
             boss: this.world.bossCombatStatus,
             // Optimization Monitoring
             metrics: {
-              blockedDrops: this.world.droppedItemPool.blockedDropCount
-            }
-          }
+              blockedDrops: this.world.droppedItemPool.blockedDropCount,
+            },
+          },
         });
       }
 
@@ -187,12 +194,12 @@ export class GameLoop {
         this.lastSyncTime = now;
         const buffer = this.bufferPool.shift()!;
         const view = new Float32Array(buffer);
-        
+
         // Culling (1200px 반경)
         const visibleIndices = this.world.spatialHash.query(
           this.world.player.visualPos.x * TILE_SIZE,
           this.world.player.visualPos.y * TILE_SIZE,
-          1200
+          1200,
         );
 
         // Header
@@ -218,8 +225,8 @@ export class GameLoop {
           // 여기서는 성능을 위해 Simulation 레이어에서 마킹한 dirtyFlags만 사용합니다.
           // (만약 클라이언트가 해당 엔티티를 처음 본다면 강제 동기화가 필요할 수 있음)
           if (soa.dirtyFlags[idx] === 0 && offset > HEADER_SIZE) {
-             // Skip if not dirty (but keep player and first entry for stability)
-             // continue; 
+            // Skip if not dirty (but keep player and first entry for stability)
+            // continue;
           }
 
           view[offset + 0] = soa.type[idx];
@@ -236,7 +243,7 @@ export class GameLoop {
 
           offset += ENTITY_STRIDE;
         }
-        
+
         (self as any).postMessage({ type: 'RENDER_SYNC', buffer }, [buffer]);
       }
 
@@ -244,18 +251,21 @@ export class GameLoop {
       if (now - this.lastSaveTime > 10000) {
         this.lastSaveTime = now;
         const tileMapBuffer = this.world.tileMap.serializeToBuffer();
-        
+
         // Use (self as any) to bypass TypeScript WorkerGlobalScope inference issues
-        (self as any).postMessage({
-          type: 'SAVE',
-          payload: {
-            version: 1,
-            timestamp: Date.now(),
-            stats: this.world.player.stats,
-            position: this.world.player.pos,
-            tileMapBuffer: tileMapBuffer,
-          }
-        }, [tileMapBuffer.buffer]);
+        (self as any).postMessage(
+          {
+            type: 'SAVE',
+            payload: {
+              version: 1,
+              timestamp: Date.now(),
+              stats: this.world.player.stats,
+              position: this.world.player.pos,
+              tileMapBuffer: tileMapBuffer,
+            },
+          },
+          [tileMapBuffer.buffer],
+        );
       }
     } catch (err) {
       console.error('[Worker Loop Error]', err);

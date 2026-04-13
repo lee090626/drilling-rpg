@@ -10,16 +10,16 @@ export const handleBossDefeat = (world: GameWorld, x: number, y: number) => {
   const { player, tileMap } = world;
   const config = getCircleConfig(player.stats.depth);
   const circleId = config.id;
-  
+
   // 유물 획득
   const artifactId = `circle_${circleId}_core`;
   if (!player.stats.artifacts.includes(artifactId)) {
     player.stats.artifacts.push(artifactId);
-    
+
     if (!player.stats.equippedArtifactId) {
       player.stats.equippedArtifactId = artifactId;
     }
-    
+
     createFloatingText(world, x, y - 40, `Artifact Unlocked: Circle ${circleId} Core`, '#a855f7');
   }
 
@@ -30,7 +30,7 @@ export const handleBossDefeat = (world: GameWorld, x: number, y: number) => {
   player.stats.inventoryRunes.push({
     id: `rune_${Date.now()}_unique`,
     runeId: 'lucky_charm_rune',
-    rarity: 'Unique'
+    rarity: 'Unique',
   });
   createFloatingText(world, x, y - 60, 'Unique Skill Rune Acquired!', '#22d3ee');
 

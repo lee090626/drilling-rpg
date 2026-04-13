@@ -36,34 +36,36 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
 
   /** 현재 선택된 룬 정보 계산 */
   const selectedRuneInstance = useMemo(
-    () => stats.inventoryRunes?.find(g => g.id === selectedRuneId),
-    [stats.inventoryRunes, selectedRuneId]
+    () => stats.inventoryRunes?.find((g) => g.id === selectedRuneId),
+    [stats.inventoryRunes, selectedRuneId],
   );
   const selectedRuneConfig = useMemo(
-    () => selectedRuneInstance ? SKILL_RUNES[selectedRuneInstance.runeId] : null,
-    [selectedRuneInstance]
+    () => (selectedRuneInstance ? SKILL_RUNES[selectedRuneInstance.runeId] : null),
+    [selectedRuneInstance],
   );
 
   /** 젬 등급별 색상 및 시각 효과 정의 */
   const rarityColors: Record<string, string> = {
     Common: 'bg-zinc-900 border-zinc-700 text-zinc-400 shadow-[0_0_10px_rgba(161,161,170,0.1)]',
-    Uncommon: 'bg-emerald-950/30 border-emerald-900 text-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.1)]',
+    Uncommon:
+      'bg-emerald-950/30 border-emerald-900 text-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.1)]',
     Rare: 'bg-blue-950/30 border-blue-900 text-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.1)]',
     Epic: 'bg-purple-950/30 border-purple-900 text-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.15)]',
     Radiant: 'bg-rose-950/30 border-rose-900 text-rose-400 shadow-[0_0_20px_rgba(251,113,133,0.2)]',
-    Legendary: 'bg-amber-950/30 border-amber-900/50 text-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.25)]',
+    Legendary:
+      'bg-amber-950/30 border-amber-900/50 text-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.25)]',
     Mythic: 'bg-red-950/30 border-red-900/50 text-red-500 shadow-[0_0_30px_rgba(239,68,68,0.3)]',
-    Unique: 'bg-cyan-950/30 border-cyan-900/50 text-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.35)]',
+    Unique:
+      'bg-cyan-950/30 border-cyan-900/50 text-cyan-400 shadow-[0_0_35px_rgba(34,211,238,0.35)]',
   };
 
   /** 현재 선택된 광물 정보 계산 */
-  const selectedMineral = useMemo(
-    () => MINERALS.find((m) => m.key === selectedKey),
-    [selectedKey],
-  );
+  const selectedMineral = useMemo(() => MINERALS.find((m) => m.key === selectedKey), [selectedKey]);
   /** 현재 장착된 드릴 정보 및 숙련도 데이터 계산 */
   const equippedDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const equipmentState = stats.equipmentStates[stats.equippedDrillId] || createInitialMasteryState(stats.equippedDrillId, equippedDrill.maxSkillSlots);
+  const equipmentState =
+    stats.equipmentStates[stats.equippedDrillId] ||
+    createInitialMasteryState(stats.equippedDrillId, equippedDrill.maxSkillSlots);
   const unlockedSlots = equippedDrill.maxSkillSlots || 0; // Decoupled from mastery level
 
   /** 모든 드릴에 현재 장착 중인 룬 인스턴스 ID 목록 */
@@ -77,7 +79,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
   });
 
   /** 장착되지 않은 룬만 필터 (인벤토리 표시용) */
-  const availableRunes = (stats.inventoryRunes || []).filter(r => !equippedRuneIds.has(r.id));
+  const availableRunes = (stats.inventoryRunes || []).filter((r) => !equippedRuneIds.has(r.id));
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
@@ -118,7 +120,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="GoldIcon" size={32} />
+              <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -157,7 +159,10 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                       style={{ borderColor: isSelected ? m.color : undefined }}
                     >
                       {isSelected && (
-                         <div className="absolute inset-0 opacity-10" style={{ backgroundColor: m.color }} />
+                        <div
+                          className="absolute inset-0 opacity-10"
+                          style={{ backgroundColor: m.color }}
+                        />
                       )}
                       <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 group-hover:scale-105 transition-transform flex items-center justify-center">
                         {m.image ? (
@@ -186,11 +191,14 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
               {selectedMineral ? (
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="flex justify-start mb-8">
-                    <span className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest uppercase" style={{ 
-                      backgroundColor: `${selectedMineral.color}20`,
-                      borderColor: selectedMineral.color,
-                      color: selectedMineral.color
-                    }}>
+                    <span
+                      className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest uppercase"
+                      style={{
+                        backgroundColor: `${selectedMineral.color}20`,
+                        borderColor: selectedMineral.color,
+                        color: selectedMineral.color,
+                      }}
+                    >
                       Mineral
                     </span>
                   </div>
@@ -226,9 +234,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
                   <div className="text-5xl mb-6">📦</div>
-                  <p className="text-xs font-bold text-zinc-500 tracking-widest">
-                    Select an item
-                  </p>
+                  <p className="text-xs font-bold text-zinc-500 tracking-widest">Select an item</p>
                 </div>
               )}
             </div>
@@ -274,7 +280,9 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 ) : (
                   <div className="col-span-full h-64 flex flex-col items-center justify-center text-center opacity-20">
                     <div className="text-5xl mb-6">🪨</div>
-                    <p className="text-xs font-bold text-zinc-500 tracking-widest">No Runes Owned</p>
+                    <p className="text-xs font-bold text-zinc-500 tracking-widest">
+                      No Runes Owned
+                    </p>
                   </div>
                 )}
               </div>
@@ -283,14 +291,13 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
             <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0 h-auto lg:h-full flex flex-col bg-[#252526] rounded-2xl md:rounded-4xl p-4 md:p-6 lg:p-8 border border-zinc-800 relative shadow-2xl overflow-y-auto custom-scrollbar min-h-0">
               {selectedRuneConfig && selectedRuneInstance ? (
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="flex justify-start mb-8">
-                  </div>
+                  <div className="flex justify-start mb-8"></div>
 
                   <div className="w-44 h-44 md:w-64 md:h-64 bg-zinc-950 rounded-3xl shadow-2xl border border-zinc-800 flex items-center justify-center mx-auto mb-10 overflow-hidden relative group">
-                    <SkillRuneIcon 
-                      runeId={selectedRuneInstance.runeId} 
-                      rarity={selectedRuneInstance.rarity as any} 
-                      size={200} 
+                    <SkillRuneIcon
+                      runeId={selectedRuneInstance.runeId}
+                      rarity={selectedRuneInstance.rarity as any}
+                      size={200}
                     />
                   </div>
 
@@ -300,12 +307,14 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
 
                   <div className="mt-auto space-y-4">
                     <div className="bg-zinc-950 p-8 rounded-3xl border border-zinc-800">
-                       <div className="space-y-4">
-                         <div className="flex justify-between items-center text-xs md:text-sm font-bold">
-                           <span className="text-zinc-500">Type</span>
-                           <span className="text-blue-400 tracking-widest">{selectedRuneConfig.effectType}</span>
-                         </div>
-                       </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center text-xs md:text-sm font-bold">
+                          <span className="text-zinc-500">Type</span>
+                          <span className="text-blue-400 tracking-widest">
+                            {selectedRuneConfig.effectType}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <button

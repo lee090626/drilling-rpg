@@ -8,9 +8,7 @@ import sharp from 'sharp';
  * 아틀라스(Atlas) 생성에 포함할 에셋들의 경로 목록입니다.
  * 각 카테고리별 PNG 파일들을 재귀적으로 찾아 포함합니다.
  */
-const ASSET_SOURCES = [
-  'src/shared/assets/**/*.{png,webp}'
-];
+const ASSET_SOURCES = ['src/shared/assets/**/*.{png,webp}'];
 
 /** 결과물이 저장될 디렉토리 및 파일명의 기본 베이스입니다. */
 const OUTPUT_DIR = 'public/assets';
@@ -22,14 +20,14 @@ const ATLAS_NAME = 'game-atlas';
  */
 async function generateAtlas() {
   console.log('🚀 아틀라스 생성을 시작합니다...');
-  
+
   // 1. 안전 확인 및 카운트다운
   // 기존 파일을 덮어쓰기 때문에 사용자가 작업을 취소할 수 있도록 유도합니다.
   console.log('⚠️ [경고] public/assets 폴더의 기존 파일들이 덮어씌워집니다!');
   console.log('중요한 변경 사항이 있다면 Ctrl+C로 지금 취소하세요.');
   for (let i = 3; i > 0; i--) {
     process.stdout.write(`${i}... `);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
   }
   console.log('\n🏗️ 에셋 패킹 중...');
 
@@ -38,7 +36,7 @@ async function generateAtlas() {
     // 에셋 개수가 줄어들었을 때 이전 실행에서 생성된 파일이 남는 현상을 방지합니다.
     const oldFiles = await glob(`${OUTPUT_DIR}/${ATLAS_NAME}-*.{json,webp}`);
     const oldManifest = path.join(OUTPUT_DIR, 'manifest.json');
-    
+
     for (const file of oldFiles) {
       await fs.unlink(file).catch(() => {});
     }
@@ -53,11 +51,9 @@ async function generateAtlas() {
          * free-tex-packer-core가 webp를 직접 읽지 못하는 문제를 해결하기 위해
          * sharp를 사용하여 모든 입력을 PNG 버퍼로 변환하여 전달합니다.
          */
-        const content = await sharp(p)
-          .toFormat('png')
-          .toBuffer();
+        const content = await sharp(p).toFormat('png').toBuffer();
 
-        const name = path.basename(p); 
+        const name = path.basename(p);
         filesToPack.push({ path: name, contents: content });
       }
     }
@@ -70,16 +66,16 @@ async function generateAtlas() {
     // 3. 텍스처 패커 옵션 설정
     const options = {
       textureName: ATLAS_NAME,
-      exporter: 'Pixi',      // PixiJS 엔진에서 바로 사용할 수 있는 포맷으로 내보냅니다.
-      width: 2048,          // 생성될 최대 이미지 가로 크기
-      height: 2048,         // 생성될 최대 이미지 세로 크기
-      fixedSize: false,     // 에셋 양에 맞춰 이미지 크기를 유동적으로 조절합니다.
-      padding: 2,           // 스프라이트 간의 간격 (이미지 뭉침 방지)
-      extrude: 1,           // 텍스처 블리딩(픽셀 경계선 노이즈) 방지 옵션
+      exporter: 'Pixi', // PixiJS 엔진에서 바로 사용할 수 있는 포맷으로 내보냅니다.
+      width: 2048, // 생성될 최대 이미지 가로 크기
+      height: 2048, // 생성될 최대 이미지 세로 크기
+      fixedSize: false, // 에셋 양에 맞춰 이미지 크기를 유동적으로 조절합니다.
+      padding: 2, // 스프라이트 간의 간격 (이미지 뭉침 방지)
+      extrude: 1, // 텍스처 블리딩(픽셀 경계선 노이즈) 방지 옵션
       allowRotation: false, // 스프라이트 회전을 금지합니다 (간결한 렌더링 유지).
-      allowTrim: true,      // 이미지 주변의 투명한 여백을 제거하여 용량을 줄입니다.
-      detectIdentical: true,// 중복되는 이미지는 하나로 통합하여 용량을 효율화합니다.
-      packer: 'OptimalPacker'// 최적의 배치를 찾는 알고리즘을 사용합니다.
+      allowTrim: true, // 이미지 주변의 투명한 여백을 제거하여 용량을 줄입니다.
+      detectIdentical: true, // 중복되는 이미지는 하나로 통합하여 용량을 효율화합니다.
+      packer: 'OptimalPacker', // 최적의 배치를 찾는 알고리즘을 사용합니다.
     };
 
     // 4. 실제로 패킹 작업을 실행합니다.
@@ -111,7 +107,7 @@ async function generateAtlas() {
         await fs.writeFile(outputPath, finalBuffer);
         totalSize += finalBuffer.length;
         console.log(`✅ 저장됨: ${finalName} (${(finalBuffer.length / 1024).toFixed(1)} KB)`);
-        
+
         // 생성된 JSON 파일 목록을 수집하여 매니페스트를 만듭니다.
         if (finalName.endsWith('.json')) webpFiles.push(finalName);
       }
@@ -121,17 +117,18 @@ async function generateAtlas() {
        * 게임 클라이언트가 이 파일을 먼저 읽어 모든 아틀라스를 한 번에 로드할 수 있게 함입니다.
        */
       const manifest = {
-        atlasFiles: webpFiles
+        atlasFiles: webpFiles,
       };
       await fs.writeFile(path.join(OUTPUT_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
       console.log('✅ 저장됨: manifest.json');
 
       console.log('---');
       console.log(`🎉 아틀라스 생성이 완료되었습니다!`);
-      console.log(`${filesToPack.length}개의 스프라이트를 ${packedFiles.length}개의 파일로 묶었습니다.`);
+      console.log(
+        `${filesToPack.length}개의 스프라이트를 ${packedFiles.length}개의 파일로 묶었습니다.`,
+      );
       console.log(`전체 아틀라스 용량: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
     });
-
   } catch (err) {
     console.error('❌ 아틀라스 생성 중 오류 발생:', err);
   }

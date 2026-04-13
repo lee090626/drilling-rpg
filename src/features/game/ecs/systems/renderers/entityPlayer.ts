@@ -6,7 +6,12 @@ import { updateStatusVFX } from './uiComponents';
 /**
  * 플레이어 전용 절차적 애니메이션 및 렌더링을 처리합니다.
  */
-export function updatePlayerRenderer(world: GameWorld, entity: any, container: PIXI.Container, now: number) {
+export function updatePlayerRenderer(
+  world: GameWorld,
+  entity: any,
+  container: PIXI.Container,
+  now: number,
+) {
   const body = container.getChildByLabel('body') as PIXI.Sprite;
   if (!body) return;
 

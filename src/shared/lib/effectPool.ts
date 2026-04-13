@@ -22,7 +22,7 @@ export class ObjectPool<T extends Poolable> {
     do {
       const obj = this.pool[this.nextAvailableIndex];
       this.nextAvailableIndex = (this.nextAvailableIndex + 1) % this.pool.length;
-      
+
       if (!obj.active) {
         obj.active = true;
         return obj;

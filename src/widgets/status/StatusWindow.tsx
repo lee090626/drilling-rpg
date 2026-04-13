@@ -5,9 +5,9 @@ import { DRILLS } from '@/shared/config/drillData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { MINERALS } from '@/shared/config/mineralData';
-import { 
-  getNextLevelExp, 
-  getMasteryMultiplier, 
+import {
+  getNextLevelExp,
+  getMasteryMultiplier,
   getUnlockedSlotCount,
   createInitialMasteryState,
   createInitialEquipmentState,
@@ -29,14 +29,14 @@ interface StatusWindowProps {
 }
 
 function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: StatusWindowProps) {
-  const [hoveredTooltip, setHoveredTooltip] = React.useState<{ 
-    type: 'perk' | 'stat',
-    id: string, 
-    name: string, 
-    desc: string,
-    details?: { label: string, value: string | number, color?: string }[],
-    x: number, 
-    y: number 
+  const [hoveredTooltip, setHoveredTooltip] = React.useState<{
+    type: 'perk' | 'stat';
+    id: string;
+    name: string;
+    desc: string;
+    details?: { label: string; value: string | number; color?: string }[];
+    x: number;
+    y: number;
   } | null>(null);
 
   const {
@@ -69,22 +69,25 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         desc: '',
         details,
         x: rect.left + rect.width / 2,
-        y: rect.top - 10
+        y: rect.top - 10,
       });
     }
   };
 
-  const handleHoverPerk = useCallback((e: React.MouseEvent, perkId: string, name: string, desc: string) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setHoveredTooltip({
-      type: 'perk',
-      id: perkId,
-      name,
-      desc,
-      x: rect.left + rect.width / 2,
-      y: rect.top - 10
-    });
-  }, []);
+  const handleHoverPerk = useCallback(
+    (e: React.MouseEvent, perkId: string, name: string, desc: string) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setHoveredTooltip({
+        type: 'perk',
+        id: perkId,
+        name,
+        desc,
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10,
+      });
+    },
+    [],
+  );
 
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
@@ -104,7 +107,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="GoldIcon" size={32} />
+              <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -122,259 +125,309 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-6 space-y-8">
         {/* TOP SECTION: 3 COLUMN GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {/* COLUMN 1: COMBAT & MINING */}
-        <div className="space-y-4">
-          <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-            Combat & Mining
-          </h3>
+          {/* COLUMN 1: COMBAT & MINING */}
+          <div className="space-y-4">
+            <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
+              Combat & Mining
+            </h3>
 
-          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
-            {[
-              { id: 'power', label: 'Total Power', value: finalPower, bonus: runePowerBonus, color: 'text-emerald-400' },
-              { id: 'hp', label: 'Max HP', value: stats.maxHp, color: 'text-rose-400' },
-              { id: 'critRate', label: 'Crit Rate', value: `${(finalCritRate * 100).toFixed(1)}%`, bonus: runeCritRate > 0 ? `(${(runeCritRate * 100).toFixed(1)}%)` : null, color: 'text-emerald-400' },
-              { id: 'critDmg', label: 'Crit Damage', value: `${(finalCritDmg * 100).toFixed(0)}%`, bonus: runeCritDmg > 0 ? `(+${(runeCritDmg * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
-              { id: 'miningSpeed', label: 'Mining Speed', value: `${finalMiningInterval}ms`, bonus: runeSpeedBonus > 0 ? `(-${(runeSpeedBonus * 100).toFixed(0)}%)` : null, color: 'text-emerald-400' },
-            ].map((stat, i) => (
-              <div 
-                key={i} 
-                className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
-                onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
-                onMouseLeave={() => setHoveredTooltip(null)}
-              >
-                <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
-                  {stat.label}
-                </div>
-                <div className={`text-sm font-black ${stat.color} tabular-nums flex items-center gap-1.5`}>
-                  {stat.value}
-                  {stat.bonus && stat.bonus !== 0 && (
-                    <span className="text-[10px] text-blue-400 font-bold">
-                      {typeof stat.bonus === 'number' ? `(+${stat.bonus})` : stat.bonus}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mt-6 mb-4 border-b border-zinc-800 pb-2">
-            Exploration & Utility
-          </h3>
-          
-          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
-            {[
-              { id: 'moveSpeed', label: 'Move Speed', value: `${(finalMoveSpeedMult * 100).toFixed(0)}%`, bonus: runeMoveSpeed > 0 ? `(+${runeMoveSpeed}%)` : null },
-              { id: 'luck', label: 'Luck (Drop Bonus)', value: `+${finalLuck}`, bonus: runeLuck > 0 ? `(+${(runeLuck * 100).toFixed(0)})` : null },
-            ].map((stat, i) => (
-              <div 
-                key={i} 
-                className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
-                onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
-                onMouseLeave={() => setHoveredTooltip(null)}
-              >
-                <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
-                  {stat.label}
-                </div>
-                <div className="text-sm font-black text-[#eab308] tabular-nums flex items-center gap-1.5">
-                  {stat.value}
-                  {stat.bonus && (
-                    <span className="text-[10px] text-blue-400 font-bold">
-                      {stat.bonus}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* COLUMN 2: PLAYER DETAILS & RECORDS */}
-        <div className="space-y-6 flex flex-col">
-          <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-            Player Status
-          </h3>
-
-          <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 space-y-4">
-            {/* HP BAR */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-end">
-                <span className="text-[10px] font-bold text-zinc-400">Health</span>
-                <span className="text-sm font-black text-white tabular-nums">
-                  {Math.floor(stats.hp)} <span className="text-zinc-500">/ {stats.maxHp}</span>
-                </span>
-              </div>
-              <div className="h-4 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-[2px]">
+            <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
+              {[
+                {
+                  id: 'power',
+                  label: 'Total Power',
+                  value: finalPower,
+                  bonus: runePowerBonus,
+                  color: 'text-emerald-400',
+                },
+                { id: 'hp', label: 'Max HP', value: stats.maxHp, color: 'text-rose-400' },
+                {
+                  id: 'critRate',
+                  label: 'Crit Rate',
+                  value: `${(finalCritRate * 100).toFixed(1)}%`,
+                  bonus: runeCritRate > 0 ? `(${(runeCritRate * 100).toFixed(1)}%)` : null,
+                  color: 'text-emerald-400',
+                },
+                {
+                  id: 'critDmg',
+                  label: 'Crit Damage',
+                  value: `${(finalCritDmg * 100).toFixed(0)}%`,
+                  bonus: runeCritDmg > 0 ? `(+${(runeCritDmg * 100).toFixed(0)}%)` : null,
+                  color: 'text-emerald-400',
+                },
+                {
+                  id: 'miningSpeed',
+                  label: 'Mining Speed',
+                  value: `${finalMiningInterval}ms`,
+                  bonus: runeSpeedBonus > 0 ? `(-${(runeSpeedBonus * 100).toFixed(0)}%)` : null,
+                  color: 'text-emerald-400',
+                },
+              ].map((stat, i) => (
                 <div
-                  className="h-full bg-rose-600 rounded-full transition-all duration-500"
-                  style={{ width: `${(stats.hp / stats.maxHp) * 100}%` }}
-                />
-              </div>
+                  key={i}
+                  className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
+                  onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
+                  onMouseLeave={() => setHoveredTooltip(null)}
+                >
+                  <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
+                    {stat.label}
+                  </div>
+                  <div
+                    className={`text-sm font-black ${stat.color} tabular-nums flex items-center gap-1.5`}
+                  >
+                    {stat.value}
+                    {stat.bonus && stat.bonus !== 0 && (
+                      <span className="text-[10px] text-blue-400 font-bold">
+                        {typeof stat.bonus === 'number' ? `(+${stat.bonus})` : stat.bonus}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* RECORDS */}
-            <div className="flex flex-col gap-2 pt-4 border-t border-zinc-700/50">
-               <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-zinc-400">Max Depth</span>
-                 <span className="text-xs font-black text-blue-400">{stats.maxDepthReached || 0}m</span>
-               </div>
-               <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-zinc-400">Current Depth</span>
-                 <span className="text-xs font-black text-purple-400">{Math.floor(stats.depth)}m</span>
-               </div>
-               <div className="flex justify-between items-center">
-                 <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>
-                 <span className="text-xs font-black text-emerald-400">{stats.discoveredMinerals?.length || 0}</span>
-               </div>
+            <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mt-6 mb-4 border-b border-zinc-800 pb-2">
+              Exploration & Utility
+            </h3>
+
+            <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
+              {[
+                {
+                  id: 'moveSpeed',
+                  label: 'Move Speed',
+                  value: `${(finalMoveSpeedMult * 100).toFixed(0)}%`,
+                  bonus: runeMoveSpeed > 0 ? `(+${runeMoveSpeed}%)` : null,
+                },
+                {
+                  id: 'luck',
+                  label: 'Luck (Drop Bonus)',
+                  value: `+${finalLuck}`,
+                  bonus: runeLuck > 0 ? `(+${(runeLuck * 100).toFixed(0)})` : null,
+                },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className={`flex justify-between items-center group ${stat.id ? 'cursor-help' : ''}`}
+                  onMouseEnter={(e) => stat.id && handleStatHover(e, stat.id, stat.label)}
+                  onMouseLeave={() => setHoveredTooltip(null)}
+                >
+                  <div className="text-[11px] font-bold text-zinc-400 tracking-tight group-hover:text-zinc-200 transition-colors">
+                    {stat.label}
+                  </div>
+                  <div className="text-sm font-black text-[#eab308] tabular-nums flex items-center gap-1.5">
+                    {stat.value}
+                    {stat.bonus && (
+                      <span className="text-[10px] text-blue-400 font-bold">{stat.bonus}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* ARTIFACTS SECTION - Taking more space now */}
-          <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col min-h-[300px] flex-1">
-            <h4 className="text-[10px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2 flex justify-between items-center">
-              <span>Unlocked Artifacts</span>
-              <span className="text-purple-500">{stats.artifacts.length}</span>
-            </h4>
-            <div className="space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1">
-              {stats.unlockedResearchIds.filter(id => id.startsWith('relic_')).length > 0 ? (
-                stats.unlockedResearchIds.filter(id => id.startsWith('relic_')).map((artifactId, idx) => {
-                  const info = ARTIFACT_DATA[artifactId];
-                  
-                  return (
-                    <div
-                      key={idx}
-                      className="p-3 rounded-xl border bg-emerald-900/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]"
-                    >
-                      <div className="flex items-center gap-3">
-                         <span className="text-2xl">💎</span>
-                        <div className="flex flex-col flex-1">
-                          <span className="text-xs font-black text-white tracking-tight">
-                            {info?.nameKo || info?.name || artifactId}
-                          </span>
-                          <span className="text-[9px] text-emerald-400 font-bold leading-tight">
-                            Active Passive
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-zinc-500">
-                           Constant
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest">
-                  No Unique Artifacts Found
+          {/* COLUMN 2: PLAYER DETAILS & RECORDS */}
+          <div className="space-y-6 flex flex-col">
+            <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
+              Player Status
+            </h3>
+
+            <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 space-y-4">
+              {/* HP BAR */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-[10px] font-bold text-zinc-400">Health</span>
+                  <span className="text-sm font-black text-white tabular-nums">
+                    {Math.floor(stats.hp)} <span className="text-zinc-500">/ {stats.maxHp}</span>
+                  </span>
                 </div>
-              )}
+                <div className="h-4 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-[2px]">
+                  <div
+                    className="h-full bg-rose-600 rounded-full transition-all duration-500"
+                    style={{ width: `${(stats.hp / stats.maxHp) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* RECORDS */}
+              <div className="flex flex-col gap-2 pt-4 border-t border-zinc-700/50">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-zinc-400">Max Depth</span>
+                  <span className="text-xs font-black text-blue-400">
+                    {stats.maxDepthReached || 0}m
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-zinc-400">Current Depth</span>
+                  <span className="text-xs font-black text-purple-400">
+                    {Math.floor(stats.depth)}m
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>
+                  <span className="text-xs font-black text-emerald-400">
+                    {stats.discoveredMinerals?.length || 0}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ARTIFACTS SECTION - Taking more space now */}
+            <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col min-h-[300px] flex-1">
+              <h4 className="text-[10px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2 flex justify-between items-center">
+                <span>Unlocked Artifacts</span>
+                <span className="text-purple-500">{stats.artifacts.length}</span>
+              </h4>
+              <div className="space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1">
+                {stats.unlockedResearchIds.filter((id) => id.startsWith('relic_')).length > 0 ? (
+                  stats.unlockedResearchIds
+                    .filter((id) => id.startsWith('relic_'))
+                    .map((artifactId, idx) => {
+                      const info = ARTIFACT_DATA[artifactId];
+
+                      return (
+                        <div
+                          key={idx}
+                          className="p-3 rounded-xl border bg-emerald-900/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">💎</span>
+                            <div className="flex flex-col flex-1">
+                              <span className="text-xs font-black text-white tracking-tight">
+                                {info?.nameKo || info?.name || artifactId}
+                              </span>
+                              <span className="text-[9px] text-emerald-400 font-bold leading-tight">
+                                Active Passive
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-zinc-500">Constant</div>
+                          </div>
+                        </div>
+                      );
+                    })
+                ) : (
+                  <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest">
+                    No Unique Artifacts Found
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* COLUMN 3: EQUIPPED HARDWARE */}
+          <div className="space-y-6">
+            <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
+              Equipment
+            </h3>
+
+            <div className="bg-[#252526] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl flex flex-col items-center text-center relative group overflow-hidden">
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
+                {equippedDrill.image ? (
+                  <AtlasIcon name={equippedDrill.image as AtlasIconName} size={96} />
+                ) : (
+                  <span className="text-4xl md:text-6xl">{equippedDrill.icon}</span>
+                )}
+              </div>
+
+              <h4 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-2 md:mb-4">
+                {equippedDrill.name}
+              </h4>
+
+              <div className="grid grid-cols-2 gap-4 w-full mt-4 border-t border-zinc-800 pt-6">
+                <div className="text-center">
+                  <div className="text-[9px] text-zinc-500 font-bold mb-1">Power</div>
+                  <div className="text-xl font-black text-white flex items-center gap-2 justify-center">
+                    {equippedDrill.basePower}
+                    {levelMasteryBonus > 0 && (
+                      <span className="text-[10px] text-emerald-500">+{levelMasteryBonus}</span>
+                    )}
+                    {runePowerBonus > 0 && (
+                      <span className="text-[10px] text-blue-400">+{runePowerBonus}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-[9px] text-zinc-500 font-bold mb-1">Speed</div>
+                  <div className="text-xl font-black text-white">{equippedDrill.cooldownMs}ms</div>
+                </div>
+              </div>
+
+              {/* REMOVED MASTERY & EXP SECTION FROM DRILL */}
+              <div className="w-full mt-4 md:mt-6 space-y-4 border-t border-zinc-800/50 pt-4 md:pt-6">
+                <div className="text-left">
+                  <div className="text-[9px] text-zinc-500 font-bold mb-2 tracking-widest flex justify-between items-center">
+                    <span>Skill Rune Slots</span>
+                    <span className="text-zinc-600 font-black">
+                      {equippedDrill.maxSkillSlots || 0} / {equippedDrill.maxSkillSlots || 0}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {Array.from({ length: equippedDrill.maxSkillSlots || 0 }).map((_, i) => {
+                      const isUnlocked = true; // ALL SLOTS UNLOCKED BY DEFAULT OR DRILL PROPERTY
+                      const slottedRuneId = (equipmentState.slottedRunes || [])[i];
+
+                      return (
+                        <button
+                          key={i}
+                          disabled={!isUnlocked || !slottedRuneId}
+                          onClick={() =>
+                            isUnlocked && slottedRuneId && onUnequipRune?.(stats.equippedDrillId, i)
+                          }
+                          className={`w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl border flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 ${
+                            isUnlocked
+                              ? slottedRuneId
+                                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:bg-emerald-500/20 active:scale-90 group/rune'
+                                : 'bg-zinc-900 border-zinc-700 text-zinc-600 shadow-inner'
+                              : 'bg-zinc-950 border-zinc-900 text-zinc-800 grayscale opacity-40 cursor-not-allowed'
+                          }`}
+                          title={slottedRuneId ? 'Click to unequip' : ''}
+                        >
+                          {isUnlocked ? (
+                            slottedRuneId ? (
+                              (() => {
+                                const runeItem = stats.inventoryRunes.find(
+                                  (r) => r.id === slottedRuneId,
+                                );
+                                const runeConfig = runeItem ? SKILL_RUNES[runeItem.runeId] : null;
+                                return (
+                                  <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl">
+                                    {runeItem && (
+                                      <SkillRuneIcon
+                                        runeId={runeItem.runeId}
+                                        rarity={runeItem.rarity as any}
+                                        size={32}
+                                      />
+                                    )}
+                                    <span className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover/rune:opacity-100 transition-opacity z-20">
+                                      <span className="text-[10px] text-white font-black">✕</span>
+                                    </span>
+                                  </div>
+                                );
+                              })()
+                            ) : (
+                              <span className="text-[8px] md:text-[10px] opacity-20">EMPTY</span>
+                            )
+                          ) : (
+                            <span className="text-xs md:text-[14px]">🔒</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                    {!equippedDrill.maxSkillSlots && (
+                      <span className="text-[9px] md:text-[10px] text-zinc-600">
+                        No Slots Available
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* COLUMN 3: EQUIPPED HARDWARE */}
-        <div className="space-y-6">
-          <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-            Equipment
-          </h3>
-
-          <div className="bg-[#252526] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl flex flex-col items-center text-center relative group overflow-hidden">
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
-              {equippedDrill.image ? (
-                <AtlasIcon name={equippedDrill.image as AtlasIconName} size={96} />
-              ) : (
-                <span className="text-4xl md:text-6xl">{equippedDrill.icon}</span>
-              )}
-            </div>
-
-            <h4 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-2 md:mb-4">
-              {equippedDrill.name}
-            </h4>
-
-            <div className="grid grid-cols-2 gap-4 w-full mt-4 border-t border-zinc-800 pt-6">
-              <div className="text-center">
-                <div className="text-[9px] text-zinc-500 font-bold mb-1">
-                  Power
-                </div>
-                <div className="text-xl font-black text-white flex items-center gap-2 justify-center">
-                  {equippedDrill.basePower}
-                  {levelMasteryBonus > 0 && (
-                    <span className="text-[10px] text-emerald-500">+{levelMasteryBonus}</span>
-                  )}
-                  {runePowerBonus > 0 && (
-                    <span className="text-[10px] text-blue-400">+{runePowerBonus}</span>
-                  )}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-[9px] text-zinc-500 font-bold mb-1">
-                  Speed
-                </div>
-                <div className="text-xl font-black text-white">
-                  {equippedDrill.cooldownMs}ms
-                </div>
-              </div>
-            </div>
-
-            {/* REMOVED MASTERY & EXP SECTION FROM DRILL */}
-            <div className="w-full mt-4 md:mt-6 space-y-4 border-t border-zinc-800/50 pt-4 md:pt-6">
-              <div className="text-left">
-                <div className="text-[9px] text-zinc-500 font-bold mb-2 tracking-widest flex justify-between items-center">
-                  <span>Skill Rune Slots</span>
-                  <span className="text-zinc-600 font-black">{equippedDrill.maxSkillSlots || 0} / {equippedDrill.maxSkillSlots || 0}</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {Array.from({ length: equippedDrill.maxSkillSlots || 0 }).map((_, i) => {
-                    const isUnlocked = true; // ALL SLOTS UNLOCKED BY DEFAULT OR DRILL PROPERTY
-                    const slottedRuneId = (equipmentState.slottedRunes || [])[i];
-                    
-                    return (
-                      <button 
-                        key={i} 
-                        disabled={!isUnlocked || !slottedRuneId}
-                        onClick={() => isUnlocked && slottedRuneId && onUnequipRune?.(stats.equippedDrillId, i)}
-                        className={`w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl border flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 ${
-                          isUnlocked 
-                            ? slottedRuneId 
-                              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:bg-emerald-500/20 active:scale-90 group/rune' 
-                              : 'bg-zinc-900 border-zinc-700 text-zinc-600 shadow-inner'
-                            : 'bg-zinc-950 border-zinc-900 text-zinc-800 grayscale opacity-40 cursor-not-allowed'
-                        }`}
-                        title={slottedRuneId ? 'Click to unequip' : ''}
-                      >
-                        {isUnlocked ? (
-                          slottedRuneId ? (
-                            (() => {
-                              const runeItem = stats.inventoryRunes.find(r => r.id === slottedRuneId);
-                              const runeConfig = runeItem ? SKILL_RUNES[runeItem.runeId] : null;
-                              return (
-                                <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl">
-                                  {runeItem && <SkillRuneIcon runeId={runeItem.runeId} rarity={runeItem.rarity as any} size={32} />}
-                                  <span className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover/rune:opacity-100 transition-opacity z-20">
-                                    <span className="text-[10px] text-white font-black">✕</span>
-                                  </span>
-                                </div>
-                              );
-                            })()
-                          ) : <span className="text-[8px] md:text-[10px] opacity-20">EMPTY</span>
-                        ) : (
-                          <span className="text-xs md:text-[14px]">🔒</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                  {!(equippedDrill.maxSkillSlots) && (
-                    <span className="text-[9px] md:text-[10px] text-zinc-600">No Slots Available</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
         {/* BOTTOM SECTION: TILE MASTERY (FULL WIDTH) */}
         <div className="bg-[#1e1e1f] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-emerald-500/0 via-emerald-500/50 to-emerald-500/0" />
-          
+
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
               <span className="text-xl">⛏️</span>
@@ -392,26 +445,31 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
               {stats.discoveredMinerals
                 .filter((tileKey) => MINERALS.some((m) => m.key === tileKey))
                 .sort((a, b) => {
-                  const idxA = MINERALS.findIndex(m => m.key === a);
-                  const idxB = MINERALS.findIndex(m => m.key === b);
+                  const idxA = MINERALS.findIndex((m) => m.key === a);
+                  const idxB = MINERALS.findIndex((m) => m.key === b);
                   return idxA - idxB;
                 })
                 .map((tileKey) => (
-                  <TileMasteryCard 
-                     key={tileKey}
-                     tileKey={tileKey}
-                     mastery={(stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey)}
-                     unlockedPerks={stats.unlockedMasteryPerks}
-                     hoveredTooltipId={hoveredTooltip?.id}
-                     onHoverPerk={handleHoverPerk}
-                     onLeavePerk={() => setHoveredTooltip(null)}
+                  <TileMasteryCard
+                    key={tileKey}
+                    tileKey={tileKey}
+                    mastery={
+                      (stats.tileMastery && stats.tileMastery[tileKey]) ||
+                      createInitialMasteryState(tileKey)
+                    }
+                    unlockedPerks={stats.unlockedMasteryPerks}
+                    hoveredTooltipId={hoveredTooltip?.id}
+                    onHoverPerk={handleHoverPerk}
+                    onLeavePerk={() => setHoveredTooltip(null)}
                   />
                 ))}
             </div>
           ) : (
             <div className="py-20 flex flex-col items-center justify-center bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800 opacity-30">
               <span className="text-4xl mb-4">🔦</span>
-              <span className="text-xs font-black tracking-widest">Start mining to unlock Tile Mastery!</span>
+              <span className="text-xs font-black tracking-widest">
+                Start mining to unlock Tile Mastery!
+              </span>
             </div>
           )}
         </div>

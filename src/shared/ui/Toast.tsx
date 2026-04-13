@@ -14,7 +14,7 @@ const Toast: React.FC<ToastProps> = ({ toast, onRemove }) => {
   useEffect(() => {
     // Mount animation
     const timer = setTimeout(() => setIsVisible(true), 10);
-    
+
     // Auto remove timer
     const removeTimer = setTimeout(() => {
       setIsVisible(false);
@@ -29,10 +29,14 @@ const Toast: React.FC<ToastProps> = ({ toast, onRemove }) => {
 
   const getStyleByType = (type: ToastType) => {
     switch (type) {
-      case 'success': return 'border-emerald-500/50 bg-emerald-950/40 text-emerald-400';
-      case 'error': return 'border-rose-500/50 bg-rose-950/40 text-rose-400';
-      case 'warning': return 'border-amber-500/50 bg-amber-950/40 text-amber-400';
-      default: return 'border-blue-500/50 bg-blue-950/40 text-blue-400';
+      case 'success':
+        return 'border-emerald-500/50 bg-emerald-950/40 text-emerald-400';
+      case 'error':
+        return 'border-rose-500/50 bg-rose-950/40 text-rose-400';
+      case 'warning':
+        return 'border-amber-500/50 bg-amber-950/40 text-amber-400';
+      default:
+        return 'border-blue-500/50 bg-blue-950/40 text-blue-400';
     }
   };
 

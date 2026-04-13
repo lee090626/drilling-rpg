@@ -20,9 +20,9 @@ export function TileMasteryCard({
   unlockedPerks = [],
   hoveredTooltipId,
   onHoverPerk,
-  onLeavePerk
+  onLeavePerk,
 }: TileMasteryCardProps) {
-  const mineral = MINERALS.find(m => m.key === tileKey);
+  const mineral = MINERALS.find((m) => m.key === tileKey);
   const nextExp = getNextLevelExp(mastery.level);
   const expPercent = Math.min(100, (mastery.exp / nextExp) * 100);
   const masteryMult = getMasteryMultiplier(mastery.level);
@@ -39,40 +39,45 @@ export function TileMasteryCard({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-end gap-2 mb-2">
-            <span className="text-[12px] font-black text-zinc-300 tracking-tighter leading-none">{mineral?.name || tileKey}</span>
-            <span className="text-[10px] font-black text-emerald-500 shrink-0 ml-auto">LV.{mastery.level}</span>
+            <span className="text-[12px] font-black text-zinc-300 tracking-tighter leading-none">
+              {mineral?.name || tileKey}
+            </span>
+            <span className="text-[10px] font-black text-emerald-500 shrink-0 ml-auto">
+              LV.{mastery.level}
+            </span>
           </div>
           <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800/50">
-            <div 
-              className="h-full bg-linear-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000" 
-              style={{ width: `${expPercent}%` }} 
+            <div
+              className="h-full bg-linear-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-1000"
+              style={{ width: `${expPercent}%` }}
             />
           </div>
         </div>
       </div>
-      
+
       <div className="flex flex-col gap-3 pt-4 border-t border-zinc-800/50">
         <div className="flex justify-between items-center text-[9px] font-black tracking-widest">
           <span className="text-zinc-500">Damage Buff</span>
           <span className="text-emerald-400 text-xs">+{((masteryMult - 1) * 100).toFixed(0)}%</span>
         </div>
-        
+
         {/* BREAKTHROUGH BADGES */}
         <div className="flex justify-between items-center gap-1.5 mt-1">
-          {[50, 100, 150, 200].map(level => {
+          {[50, 100, 150, 200].map((level) => {
             const isUnlocked = mastery.level >= level;
             const perkId = `perk_${tileKey}_${level}`;
-            const perk = MASTERY_PERKS.find(p => p.id === perkId);
+            const perk = MASTERY_PERKS.find((p) => p.id === perkId);
             const hasPerk = unlockedPerks.includes(perkId);
-            
+
             return (
-              <div 
+              <div
                 key={level}
                 className={`
                   flex-1 flex items-center justify-center h-8 rounded-lg border text-[10px] font-black transition-all cursor-help
-                  ${isUnlocked 
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]' 
-                    : 'bg-zinc-900 border-zinc-800 text-zinc-600'
+                  ${
+                    isUnlocked
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                      : 'bg-zinc-900 border-zinc-800 text-zinc-600'
                   }
                   ${hoveredTooltipId === perkId ? 'scale-110 border-emerald-400! bg-emerald-500/20!' : ''}
                 `}
@@ -91,7 +96,9 @@ export function TileMasteryCard({
 
         <div className="flex justify-between items-center text-[8px] font-bold tabular-nums">
           <span className="text-zinc-600">Experience</span>
-          <span className="text-zinc-400">{mastery.exp} <span className="text-zinc-700">/</span> {nextExp}</span>
+          <span className="text-zinc-400">
+            {mastery.exp} <span className="text-zinc-700">/</span> {nextExp}
+          </span>
         </div>
       </div>
     </div>

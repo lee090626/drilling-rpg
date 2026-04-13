@@ -1,4 +1,4 @@
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
 
 export default defineCloudflareConfig({
   // 필요한 경우 여기에 커스텀 설정을 추가할 수 있습니다.

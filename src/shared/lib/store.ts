@@ -3,7 +3,7 @@ import { PlayerStats } from '../types/game';
 
 /**
  * 게임의 UI 상태 및 저빈도 데이터를 관리하는 Zustand 스토어입니다.
- * 고성능 물리/랜더링 데이터는 워커에서 관리하며, 
+ * 고성능 물리/랜더링 데이터는 워커에서 관리하며,
  * UI 표시에 필요한 통계 데이터만 이 스토어를 통해 동기화됩니다.
  */
 interface GameState {
@@ -57,34 +57,40 @@ export const useGameStore = create<GameState>((set) => ({
     activeInteractionType: null,
   },
   boss: null,
-  
-  updateStats: (newStats) => set((state) => ({
-    stats: state.stats ? { ...state.stats, ...newStats } : (newStats as PlayerStats),
-  })),
 
-  updateUI: (newUi) => set((state) => ({
-    ui: { ...state.ui, ...newUi }
-  })),
+  updateStats: (newStats) =>
+    set((state) => ({
+      stats: state.stats ? { ...state.stats, ...newStats } : (newStats as PlayerStats),
+    })),
 
-  updateSettings: (newSettings) => set((state) => ({
-    settings: { ...state.settings, ...newSettings }
-  })),
+  updateUI: (newUi) =>
+    set((state) => ({
+      ui: { ...state.ui, ...newUi },
+    })),
 
-  updateBoss: (newBoss) => set((state) => ({
-    boss: newBoss === null ? null : (state.boss ? { ...state.boss, ...newBoss } : (newBoss as any))
-  })),
+  updateSettings: (newSettings) =>
+    set((state) => ({
+      settings: { ...state.settings, ...newSettings },
+    })),
+
+  updateBoss: (newBoss) =>
+    set((state) => ({
+      boss: newBoss === null ? null : state.boss ? { ...state.boss, ...newBoss } : (newBoss as any),
+    })),
 
   setStats: (stats) => set({ stats }),
-  
+
   toasts: [],
-  addToast: (message, type, duration = 3000) => set((state) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const newToast = { id, message, type, duration };
-    return { toasts: [...state.toasts, newToast] };
-  }),
-  removeToast: (id) => set((state) => ({
-    toasts: state.toasts.filter((t) => t.id !== id),
-  })),
+  addToast: (message, type, duration = 3000) =>
+    set((state) => {
+      const id = Math.random().toString(36).substring(2, 9);
+      const newToast = { id, message, type, duration };
+      return { toasts: [...state.toasts, newToast] };
+    }),
+  removeToast: (id) =>
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    })),
 }));
 
 /**

@@ -11,7 +11,7 @@ export function syncPermanentStats(player: any) {
   // 1. 최대 체력 동기화: (기본 100 + 마스터리고정 + 유물고정) * (1 + 마스터리배율)
   const baseHp = 100 + masteryBonuses.maxHp + (artifactBonuses?.maxHp || 0);
   const finalMaxHp = Math.floor(baseHp * (1 + masteryBonuses.maxHpMult));
-  
+
   // 현재 체력 비율 유지하며 최대 체력 갱신
   const hpRatio = player.stats.maxHp > 0 ? player.stats.hp / player.stats.maxHp : 1;
   player.stats.maxHp = finalMaxHp;
@@ -21,7 +21,7 @@ export function syncPermanentStats(player: any) {
   const baseMoveSpeed = 100 + (artifactBonuses?.moveSpeed || 0) + masteryBonuses.moveSpeed;
   const totalMoveSpeedMult = 1.0 + masteryBonuses.moveSpeedMult;
   player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
-  
+
   // 3. 공격력(Power) 동기화: 기본 공격력 + 유물 공격력
   player.stats.power = 10 + (artifactBonuses?.power || 0);
 }

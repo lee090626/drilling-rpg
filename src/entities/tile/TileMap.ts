@@ -10,9 +10,9 @@ export const MAP_HEIGHT = 3000;
 export const CHUNK_WIDTH = 64;
 
 /** Bit masks and shift constants */
-const TYPE_MASK = 0xFF; // Lower 8 bits: Tile Type ID
+const TYPE_MASK = 0xff; // Lower 8 bits: Tile Type ID
 const HP_BITS = 8;
-const HP_MASK = 0xFFFF; // Next 16 bits: Health
+const HP_MASK = 0xffff; // Next 16 bits: Health
 const GEN_FLAG = 1 << 24; // Bit 24: Generated flag
 const MOD_FLAG = 1 << 25; // Bit 25: Modified flag
 const SPOT_FLAG = 1 << 26; // Bit 26: 광물 스팟(true) vs 배경 타일(false) 구분
@@ -25,7 +25,7 @@ const SPOT_FLAG = 1 << 26; // Bit 26: 광물 스팟(true) vs 배경 타일(false
 export class TileMap {
   /** [Type 8bit | HP 16bit | Flags 8bit] 구조의 고속 데이터 청크 맵 */
   private chunks: Map<number, Int32Array> = new Map();
-  
+
   /** 월드 생성을 위한 랜덤 시드 */
   seed: number;
   /** 현재 월드의 차원(Dimension) 번호 */
@@ -41,7 +41,7 @@ export class TileMap {
   /** 가로 좌표를 청크 인덱스 및 로컬 X로 변환 */
   private getChunkInfo(x: number) {
     const chunkX = Math.floor(x / CHUNK_WIDTH);
-    const localX = x - (chunkX * CHUNK_WIDTH);
+    const localX = x - chunkX * CHUNK_WIDTH;
     return { chunkX, localX };
   }
 
@@ -63,8 +63,9 @@ export class TileMap {
   /** 타일 초기 생성 (가로 제한 없음) */
   private calculateOriginalTile(x: number, y: number): Tile & { isSpot: boolean } {
     // 깊이 제한은 유지 (지상/지하 구분)
-    if (y < 0 || y >= MAP_HEIGHT) return { type: 'wall', health: 1000000, maxHealth: 1000000, isSpot: false };
-    
+    if (y < 0 || y >= MAP_HEIGHT)
+      return { type: 'wall', health: 1000000, maxHealth: 1000000, isSpot: false };
+
     // 지상 구역 (Depth < BASE_DEPTH)
     if (y < BASE_DEPTH) {
       // 베이스 캠프 구역 (x >= 0 && x < row.length 인 경우만 레이아웃 적용)
@@ -78,7 +79,8 @@ export class TileMap {
     // Layer 4 (Boss Zone)는 기본적으로 빈 공간으로 반환 (심리스 전투 구역)
     if (layer === 4) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
 
-    if (this.getInitialMonster(x, y)) return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
+    if (this.getInitialMonster(x, y))
+      return { type: 'empty', health: 0, maxHealth: 0, isSpot: false };
 
     /** 배경 타일: circleData의 bgType 사용 (기본값 'stone') */
     let type: TileType = (config.bgType ?? 'stone') as TileType;
@@ -88,36 +90,50 @@ export class TileMap {
     const PADDING = 1;
     const sectorX = Math.floor(x / SECTOR_SIZE);
     const sectorY = Math.floor(y / SECTOR_SIZE);
-    
+
     // Mineral Spot 계산 (무한 가로에서도 동일한 그리드 해시 적용)
-    const SAFE_RANGE = SECTOR_SIZE - (2 * PADDING);
-    const spawnChance = this.hash(sectorX, sectorY);
-    if (spawnChance <= 0.85) {
-      const rx = Math.floor(this.hash(sectorX + 123, sectorY + 456) * SAFE_RANGE) + PADDING;
-      const ry = Math.floor(this.hash(sectorX + 789, sectorY + 101) * SAFE_RANGE) + PADDING;
+    const SAFE_RANGE = SECTOR_SIZE - 2 * PADDING;
+
+    // 섹터당 1~3개의 광물 개수 결정 (결정론적 해시)
+    const countHash = this.hash(sectorX * 31, sectorY * 37);
+    const targetCount = Math.floor(countHash * 3) + 1; // 1, 2, or 3
+
+    for (let i = 0; i < targetCount; i++) {
+      // 각 개체별 고유 위치 계산 (i를 시드에 섞음)
+      const rx = Math.floor(this.hash(sectorX + 123 + i, sectorY + 456 + i) * SAFE_RANGE) + PADDING;
+      const ry = Math.floor(this.hash(sectorX + 789 + i, sectorY + 101 + i) * SAFE_RANGE) + PADDING;
       const spotX = sectorX * SECTOR_SIZE + rx;
       const spotY = sectorY * SECTOR_SIZE + ry;
 
       if (spotX === x && spotY === y) {
         const roll = this.hash(x + 500, y + 600);
-        let cumulative = 0;
+
+        // 1. 가중치 합계 계산 (모든 광물 대상 - 층 구분 제거)
         const valuableMinerals = config.minerals;
+        let totalWeight = 0;
         for (const rule of valuableMinerals) {
-          if (!rule.minLayer || layer >= rule.minLayer) {
-            let chance = rule.threshold;
-            if (rule.peakLayer && rule.range) {
-              const dist = Math.abs(layer - rule.peakLayer);
-              const depthFactor = Math.max(0, 1 - dist / rule.range);
-              chance *= depthFactor;
-            }
-            cumulative += chance;
-            if (roll < cumulative) {
-              type = rule.type;
-              isSpot = true;
-              break;
-            }
+          totalWeight += rule.threshold;
+        }
+
+        // 2. 가중치 기반 선택
+        let cumulative = 0;
+        const weightedRoll = roll * totalWeight;
+
+        for (const rule of valuableMinerals) {
+          cumulative += rule.threshold;
+          if (weightedRoll <= cumulative) {
+            type = rule.type;
+            isSpot = true;
+            break;
           }
         }
+
+        // 만약 선택되지 않았다면 첫 번째 광물로 강제 할당 (안정성)
+        if (!isSpot && valuableMinerals.length > 0) {
+          type = valuableMinerals[0].type;
+          isSpot = true;
+        }
+        break; // 해당 타일이 스팟으로 결정되면 루프 종료
       }
     }
 
@@ -139,7 +155,11 @@ export class TileMap {
     if (!(packed & GEN_FLAG)) {
       const original = this.calculateOriginalTile(x, y);
       const typeId = TILE_TYPE_TO_ID[original.type] ?? 0;
-      packed = (typeId & TYPE_MASK) | ((original.health & HP_MASK) << HP_BITS) | GEN_FLAG | (original.isSpot ? SPOT_FLAG : 0);
+      packed =
+        (typeId & TYPE_MASK) |
+        ((original.health & HP_MASK) << HP_BITS) |
+        GEN_FLAG |
+        (original.isSpot ? SPOT_FLAG : 0);
       chunk[idx] = packed;
     }
 
@@ -192,20 +212,31 @@ export class TileMap {
     const config = getCircleConfig(y - BASE_DEPTH);
     const layer = getLayerFromDepth(y - BASE_DEPTH, config);
 
-    const available = config.monsters.filter(m => layer >= m.minLayer && (!m.maxLayer || layer <= m.maxLayer));
+    const available = config.monsters.filter(
+      (m) => layer >= m.minLayer && (!m.maxLayer || layer <= m.maxLayer),
+    );
     if (available.length === 0) return null;
 
     const mobHash = this.hash(x + 100, y + 100);
     for (const rule of available) {
       if (mobHash < rule.chance) {
-        const mob = MONSTER_LIST.find(m => m.id === rule.monsterId);
+        const mob = MONSTER_LIST.find((m) => m.id === rule.monsterId);
         if (!mob) continue;
         return {
           id: `mob_${x}_${y}_${mob.id}`,
-          type: 'monster', name: mob.name, x, y,
+          type: 'monster',
+          name: mob.name,
+          x,
+          y,
           interactionType: 'none',
           imagePath: mob.imagePath,
-          stats: { hp: mob.stats.maxHp, maxHp: mob.stats.maxHp, attack: mob.stats.power, speed: mob.stats.speed, defense: mob.stats.defense },
+          stats: {
+            hp: mob.stats.maxHp,
+            maxHp: mob.stats.maxHp,
+            attack: mob.stats.power,
+            speed: mob.stats.speed,
+            defense: mob.stats.defense,
+          },
           state: 'idle',
         };
       }
@@ -219,7 +250,7 @@ export class TileMap {
    */
   serializeToBuffer(): Uint32Array {
     let modCount = 0;
-    const validCoords: {x: number, y: number, packed: number}[] = [];
+    const validCoords: { x: number; y: number; packed: number }[] = [];
 
     for (const coordStr of this.modifiedCoords) {
       const [x, y] = coordStr.split(',').map(Number);
@@ -246,7 +277,7 @@ export class TileMap {
 
     let ptr = HEADER_SIZE;
     for (const item of validCoords) {
-      buffer[ptr++] = item.x >= 0 ? item.x : (item.x >>> 0); // Handle negative x with bitwise unsigned if needed, or just store as is
+      buffer[ptr++] = item.x >= 0 ? item.x : item.x >>> 0; // Handle negative x with bitwise unsigned if needed, or just store as is
       // Actually Uint32 will wrap negative values. Deserializer should handle it.
       buffer[ptr++] = item.y;
       buffer[ptr++] = item.packed;
@@ -266,10 +297,10 @@ export class TileMap {
   deserializeFromBuffer(buffer: ArrayBuffer, seed?: number, dimension?: number): void {
     if (seed !== undefined) this.seed = seed;
     if (dimension !== undefined) this.dimension = dimension;
-    
+
     this.chunks.clear();
     this.modifiedCoords.clear();
-    
+
     if (!buffer || buffer.byteLength === 0) return;
 
     const data32 = new Uint32Array(buffer);
@@ -279,7 +310,7 @@ export class TileMap {
     const version = data32[0];
     const savedMapWidth = data32[1];
     const dataCount = data32[2];
-    
+
     let ptr = HEADER_SIZE;
     if (version >= 2) {
       // Version 2: [x, y, packed] format
@@ -288,7 +319,7 @@ export class TileMap {
         const x = data32[ptr++] | 0; // Convert to signed int32
         const y = data32[ptr++];
         const packed = data32[ptr++];
-        
+
         const { chunkX, localX } = this.getChunkInfo(x);
         const chunk = this.getChunk(chunkX);
         const idx = y * CHUNK_WIDTH + localX;
@@ -302,10 +333,10 @@ export class TileMap {
         if (ptr + 1 >= data32.length) break;
         const savedIndex = data32[ptr++];
         const packed = data32[ptr++];
-        
+
         const x = (savedIndex % savedMapWidth) - savedHalfWidth;
         const y = Math.floor(savedIndex / savedMapWidth);
-        
+
         const { chunkX, localX } = this.getChunkInfo(x);
         const chunk = this.getChunk(chunkX);
         const idx = y * CHUNK_WIDTH + localX;
@@ -321,7 +352,7 @@ export class TileMap {
     if (dimension !== undefined) this.dimension = dimension;
     this.chunks.clear();
     this.modifiedCoords.clear();
-    
+
     if (!data) return;
 
     for (const [key, tileData] of Object.entries(data as Record<string, [number, number]>)) {
@@ -329,7 +360,7 @@ export class TileMap {
       const { chunkX, localX } = this.getChunkInfo(x);
       const chunk = this.getChunk(chunkX);
       const idx = y * CHUNK_WIDTH + localX;
-      
+
       const [typeId, health] = tileData;
       const packed = (typeId & TYPE_MASK) | ((health & HP_MASK) << HP_BITS) | GEN_FLAG | MOD_FLAG;
       chunk[idx] = packed;

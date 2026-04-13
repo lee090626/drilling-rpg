@@ -13,9 +13,15 @@ export const inputSystem = (world: GameWorld) => {
 
   // 현재 모달창(상점, 인벤토리 등)이 하나라도 열려있는지 확인
   const { ui } = world;
-  const isAnyModalOpen = ui.isShopOpen || ui.isInventoryOpen || ui.isSettingsOpen || 
-                         ui.isCraftingOpen || ui.isElevatorOpen || ui.isStatusOpen || ui.isEncyclopediaOpen;
-  
+  const isAnyModalOpen =
+    ui.isShopOpen ||
+    ui.isInventoryOpen ||
+    ui.isSettingsOpen ||
+    ui.isCraftingOpen ||
+    ui.isElevatorOpen ||
+    ui.isStatusOpen ||
+    ui.isEncyclopediaOpen;
+
   // 모달이 열려있거나 사망 상태면 입력을 차단함
   if (isAnyModalOpen || world.player.stats.hp <= 0) return;
 

@@ -7,7 +7,16 @@ import { GameWorld } from '@/entities/world/model';
  */
 export const handleRuneAction = (world: GameWorld, action: string, data: any) => {
   const stats = world.player.stats;
-  const rarities: Rarity[] = ['Common', 'Uncommon', 'Rare', 'Epic', 'Radiant', 'Legendary', 'Mythic', 'Ancient'];
+  const rarities: Rarity[] = [
+    'Common',
+    'Uncommon',
+    'Rare',
+    'Epic',
+    'Radiant',
+    'Legendary',
+    'Mythic',
+    'Ancient',
+  ];
 
   switch (action) {
     case 'summonRune': {
@@ -20,12 +29,15 @@ export const handleRuneAction = (world: GameWorld, action: string, data: any) =>
         const availableRunes = Object.values(SKILL_RUNES);
 
         for (let i = 0; i < count; i++) {
-          const finalTierIdx = Math.min(data.tier + (Math.random() < 0.05 ? 1 : 0), rarities.length - 1);
+          const finalTierIdx = Math.min(
+            data.tier + (Math.random() < 0.05 ? 1 : 0),
+            rarities.length - 1,
+          );
           const rune = availableRunes[Math.floor(Math.random() * availableRunes.length)];
           stats.inventoryRunes.push({
             id: `rune_${Date.now()}_${Math.floor(Math.random() * 10000)}_${i}`,
             runeId: rune.id,
-            rarity: rarities[finalTierIdx]
+            rarity: rarities[finalTierIdx],
           });
         }
       }
@@ -47,13 +59,14 @@ export const handleRuneAction = (world: GameWorld, action: string, data: any) =>
 
     case 'unequipRune': {
       const state = stats.equipmentStates[data.drillId];
-      if (state && state.slottedRunes && state.slottedRunes[data.slotIndex]) state.slottedRunes[data.slotIndex] = null;
+      if (state && state.slottedRunes && state.slottedRunes[data.slotIndex])
+        state.slottedRunes[data.slotIndex] = null;
       break;
     }
 
     case 'synthesizeRunes': {
       const runeGroups = new Map<string, any[]>();
-      
+
       for (const rune of stats.inventoryRunes) {
         const key = `${rune.runeId}_${rune.rarity}`;
         if (!runeGroups.has(key)) runeGroups.set(key, []);
@@ -64,11 +77,11 @@ export const handleRuneAction = (world: GameWorld, action: string, data: any) =>
         if (group.length >= 5) {
           const sample = group[0];
           const currentTierIdx = rarities.indexOf(sample.rarity as Rarity);
-          
+
           if (currentTierIdx !== -1 && currentTierIdx < rarities.length - 1) {
             // 5개 제거
             let removedCount = 0;
-            stats.inventoryRunes = stats.inventoryRunes.filter(r => {
+            stats.inventoryRunes = stats.inventoryRunes.filter((r) => {
               if (removedCount < 5 && group.includes(r)) {
                 removedCount++;
                 return false;
@@ -80,10 +93,12 @@ export const handleRuneAction = (world: GameWorld, action: string, data: any) =>
             stats.inventoryRunes.push({
               id: `rune_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
               runeId: sample.runeId,
-              rarity: rarities[currentTierIdx + 1]
+              rarity: rarities[currentTierIdx + 1],
             });
-            
-            console.log(`[Worker] Synthesized 5 ${sample.rarity} ${sample.runeId} into 1 ${rarities[currentTierIdx + 1]}`);
+
+            console.log(
+              `[Worker] Synthesized 5 ${sample.rarity} ${sample.runeId} into 1 ${rarities[currentTierIdx + 1]}`,
+            );
           }
           break; // 한 번에 한 종류만 합성
         }

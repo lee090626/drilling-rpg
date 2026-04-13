@@ -20,30 +20,36 @@ export const statusSystem = (world: GameWorld, now: number) => {
   // 1. 환경 디버프(Circle Hazards) 체크 및 갱신 (1초마다 수행)
   if (!world.timestamp) (world as any).timestamp = {};
   const lastHazardCheck = (world.timestamp as any).lastHazardCheck || 0;
-  
+
   if (now - lastHazardCheck > 1000) {
     (world.timestamp as any).lastHazardCheck = now;
     applyEnvironmentHazards(world, now);
   }
 
   // 2. 플레이어 상태 이상 업데이트 및 만료 처리
-  player.stats.activeEffects = player.stats.activeEffects.filter(effect => {
+  player.stats.activeEffects = player.stats.activeEffects.filter((effect) => {
     const isExpired = now >= effect.endTime;
     if (isExpired) return false;
 
     const startTime = effect.startTime || now;
     const elapsed = now - startTime;
-    
+
     // BURN (화상): 0.5초마다 최대 HP의 2% 대미지
     if (effect.type === 'BURN') {
       const interval = 500;
       const currentTicks = Math.floor(elapsed / interval);
       const prevTicks = Math.floor((elapsed - 20) / interval);
-      
+
       if (currentTicks > prevTicks && currentTicks > 0) {
         const damage = Math.max(1, Math.floor(player.stats.maxHp * 0.02));
         player.stats.hp -= damage;
-        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, "-" + damage, '#f97316');
+        createFloatingText(
+          world,
+          player.visualPos.x * TILE_SIZE,
+          player.visualPos.y * TILE_SIZE - 20,
+          '-' + damage,
+          '#f97316',
+        );
       }
     }
 
@@ -52,11 +58,17 @@ export const statusSystem = (world: GameWorld, now: number) => {
       const interval = 1000;
       const currentTicks = Math.floor(elapsed / interval);
       const prevTicks = Math.floor((elapsed - 20) / interval);
-      
+
       if (currentTicks > prevTicks && currentTicks > 0) {
-        const damage = 5 + (player.stats.dimension * 2);
+        const damage = 5 + player.stats.dimension * 2;
         player.stats.hp -= damage;
-        createFloatingText(world, player.visualPos.x * TILE_SIZE, player.visualPos.y * TILE_SIZE - 20, "-" + damage, '#a855f7');
+        createFloatingText(
+          world,
+          player.visualPos.x * TILE_SIZE,
+          player.visualPos.y * TILE_SIZE - 20,
+          '-' + damage,
+          '#a855f7',
+        );
       }
     }
 
@@ -66,7 +78,7 @@ export const statusSystem = (world: GameWorld, now: number) => {
   });
 
   // 3. 행동 제어 상태 체크 (STUN) - FREEZE는 속도 저하로 physicsSystem에서 처리
-  const isActionBlocked = player.stats.activeEffects.some(e => e.type === 'STUN');
+  const isActionBlocked = player.stats.activeEffects.some((e) => e.type === 'STUN');
   if (isActionBlocked) {
     world.intent.moveX = 0;
     world.intent.moveY = 0;
@@ -121,15 +133,19 @@ const applyEnvironmentHazards = (world: GameWorld, now: number) => {
 /**
  * 대상에게 상태 이상을 부여하는 유틸리티 함수
  */
-export const applyStatusEffect = (world: GameWorld, effect: Omit<ActiveEffect, 'endTime' | 'startTime'>, durationMs: number) => {
+export const applyStatusEffect = (
+  world: GameWorld,
+  effect: Omit<ActiveEffect, 'endTime' | 'startTime'>,
+  durationMs: number,
+) => {
   const { player } = world;
   const now = Date.now();
-  
+
   if (!player.stats.activeEffects) {
     player.stats.activeEffects = [];
   }
 
-  const existing = player.stats.activeEffects.find(e => e.type === effect.type);
+  const existing = player.stats.activeEffects.find((e) => e.type === effect.type);
   if (existing) {
     existing.endTime = now + durationMs;
     if (effect.value !== undefined) existing.value = effect.value;
@@ -137,7 +153,7 @@ export const applyStatusEffect = (world: GameWorld, effect: Omit<ActiveEffect, '
     player.stats.activeEffects.push({
       ...effect,
       startTime: now,
-      endTime: now + durationMs
+      endTime: now + durationMs,
     });
   }
 };

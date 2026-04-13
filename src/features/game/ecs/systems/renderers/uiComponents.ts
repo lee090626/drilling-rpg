@@ -15,8 +15,14 @@ const STYLES = {
 /**
  * 상태 이상 시각 효과(VFX) 렌더링 (STUN 등)
  */
-export function updateStatusVFX(container: PIXI.Container, effects: any[], width: number, height: number, now: number) {
-  const isStunned = effects.some(e => e.type === 'STUN');
+export function updateStatusVFX(
+  container: PIXI.Container,
+  effects: any[],
+  width: number,
+  height: number,
+  now: number,
+) {
+  const isStunned = effects.some((e) => e.type === 'STUN');
   let stunVFX = container.getChildByLabel('stunVFX') as PIXI.Container;
 
   if (isStunned) {
@@ -24,7 +30,7 @@ export function updateStatusVFX(container: PIXI.Container, effects: any[], width
       stunVFX = new PIXI.Container();
       stunVFX.label = 'stunVFX';
       stunVFX.y = -TILE_SIZE * 0.4;
-      
+
       for (let i = 0; i < 3; i++) {
         const star = new PIXI.Text({ text: '⭐', style: { fontSize: 14 } });
         star.anchor.set(0.5, 0.5);
@@ -34,12 +40,12 @@ export function updateStatusVFX(container: PIXI.Container, effects: any[], width
       container.addChild(stunVFX);
     }
     stunVFX.visible = true;
-    
+
     const count = stunVFX.children.length;
     for (let i = 0; i < count; i++) {
       const star = stunVFX.children[i];
-      const angle = (now / 200) + (i * (Math.PI * 2 / 3));
-      star.x = (width / 2) + Math.cos(angle) * 20;
+      const angle = now / 200 + i * ((Math.PI * 2) / 3);
+      star.x = width / 2 + Math.cos(angle) * 20;
       star.y = Math.sin(angle) * 8;
     }
   } else if (stunVFX) {
@@ -50,7 +56,12 @@ export function updateStatusVFX(container: PIXI.Container, effects: any[], width
 /**
  * 공격 예고 인디케이터 (!) 업데이트
  */
-export function updateAttackIndicatorFromSoA(idx: number, soa: any, container: PIXI.Container, now: number) {
+export function updateAttackIndicatorFromSoA(
+  idx: number,
+  soa: any,
+  container: PIXI.Container,
+  now: number,
+) {
   const indicator = container.getChildByLabel('attackIndicator') as PIXI.Text;
   if (!indicator) return;
 
@@ -93,7 +104,7 @@ export function updateHPBarFromSoA(idx: number, soa: any, player: any, container
   const barX = 6;
   const barY = entH - barH - 4;
   const currentRatio = Math.max(0, Math.min(1, hp / maxHp));
-  
+
   hpBar.clear();
   hpBar
     .roundRect(barX - 1, barY - 1, barW + 2, barH + 2, 2)
@@ -105,8 +116,6 @@ export function updateHPBarFromSoA(idx: number, soa: any, player: any, container
     if (currentRatio < 0.25) hpColor = STYLES.HP_ROSE;
     else if (currentRatio < 0.5) hpColor = STYLES.HP_AMBER;
 
-    hpBar
-      .roundRect(barX, barY, barW * currentRatio, barH, 1)
-      .fill(hpColor);
+    hpBar.roundRect(barX, barY, barW * currentRatio, barH, 1).fill(hpColor);
   }
 }

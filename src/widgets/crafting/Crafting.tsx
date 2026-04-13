@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
 
-
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import RecipeDetail from './RecipeDetail';
 
@@ -42,7 +41,7 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
       specialEffect: drill.specialEffect,
       maxSkillSlots: drill.maxSkillSlots,
       image: drill.image,
-      type: 'drill'
+      type: 'drill',
     }));
 
   const recipes = [...drillRecipes];
@@ -63,14 +62,19 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
   return (
     <div className="flex flex-col w-full h-full text-[#d1d5db] font-sans p-4 md:p-8 bg-[#1a1a1b] border border-zinc-800 rounded-xl md:rounded-3xl shadow-2xl relative overflow-hidden">
       {/* 배경 장식 요소 */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #ffffff 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 2px 2px, #ffffff 1px, transparent 0)',
+          backgroundSize: '24px 24px',
+        }}
+      />
       <div className="absolute top-0 left-0 w-full h-64 bg-linear-to-b from-rose-500/5 to-transparent pointer-events-none" />
 
       {/* HEADER SECTION - Bento Style Floating Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 md:mb-10 px-4 py-4 md:px-8 md:py-5 bg-zinc-900/90 backdrop-blur-xl border border-zinc-800/50 rounded-2xl md:rounded-3xl shadow-2xl shrink-0 gap-4 md:gap-6 relative z-10">
         <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent rounded-2xl md:rounded-3xl pointer-events-none" />
-        
+
         <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-8 w-full md:w-auto relative z-10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 md:w-14 md:h-14 bg-rose-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl border border-rose-500/20 shadow-inner">
@@ -80,7 +84,9 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-rose-500 leading-none">
                 Forge
               </h2>
-              <span className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1 opacity-60">Heavy Forge</span>
+              <span className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1 opacity-60">
+                Heavy Forge
+              </span>
             </div>
           </div>
         </div>
@@ -88,11 +94,13 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end relative z-10">
           <div className="flex items-center justify-center gap-3 md:gap-4 bg-black/40 px-5 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-3xl border border-white/5 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="GoldIcon" size={32} />
+              <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-2xl font-black text-white tabular-nums tracking-tighter flex items-baseline gap-2">
               {stats.goldCoins.toLocaleString()}
-              <span className="text-rose-500 text-[10px] md:text-xs uppercase tracking-widest font-black opacity-60">Gold</span>
+              <span className="text-rose-500 text-[10px] md:text-xs uppercase tracking-widest font-black opacity-60">
+                Gold
+              </span>
             </span>
           </div>
           <button
@@ -105,7 +113,6 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 lg:gap-6 overflow-hidden">
-        
         {/* 중간 열: 제작 가능한 아이템 목록(Blueprints) */}
         <div className="flex-1 flex flex-col h-auto lg:h-full overflow-hidden min-h-0 relative z-10">
           <div className="bg-zinc-900/60 backdrop-blur-xl p-2 rounded-3xl md:rounded-[3rem] flex flex-col h-full overflow-hidden shadow-2xl border border-white/5">
@@ -136,7 +143,7 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                       }`}
                     >
                       <div className="absolute inset-0 bg-linear-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                      
+
                       <div
                         className={`w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-3xl bg-black/40 border border-white/5 flex items-center justify-center text-4xl transition-all shrink-0 overflow-hidden shadow-inner group-hover:border-rose-500/30`}
                       >
@@ -147,31 +154,39 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
                             className={owned ? 'opacity-40 grayscale' : ''}
                           />
                         ) : (
-                          <span className={`${owned ? 'opacity-40 grayscale' : ''}`}>{rcp.icon}</span>
+                          <span className={`${owned ? 'opacity-40 grayscale' : ''}`}>
+                            {rcp.icon}
+                          </span>
                         )}
                       </div>
-                      
+
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                           <div className={`text-xl md:text-2xl font-black tracking-tighter leading-tight ${active ? 'text-white' : 'text-zinc-300'}`}>
-                              {rcp.name}
-                           </div>
-                           {owned && (
-                             <div className="px-2 py-0.5 bg-zinc-800 rounded-md border border-white/5">
-                               <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest leading-none">Owned</span>
-                             </div>
-                           )}
+                          <div
+                            className={`text-xl md:text-2xl font-black tracking-tighter leading-tight ${active ? 'text-white' : 'text-zinc-300'}`}
+                          >
+                            {rcp.name}
+                          </div>
+                          {owned && (
+                            <div className="px-2 py-0.5 bg-zinc-800 rounded-md border border-white/5">
+                              <span className="text-[8px] font-black text-zinc-500 uppercase tracking-widest leading-none">
+                                Owned
+                              </span>
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-2">
-                           <div className={`h-1.5 w-16 bg-black/40 rounded-full overflow-hidden border border-white/5`}>
-                              <div 
-                                className={`h-full bg-rose-500 transition-all duration-1000 ${craftable ? 'opacity-100' : 'opacity-20'}`}
-                                style={{ width: craftable ? '100%' : '20%' }}
-                              />
-                           </div>
+                          <div
+                            className={`h-1.5 w-16 bg-black/40 rounded-full overflow-hidden border border-white/5`}
+                          >
+                            <div
+                              className={`h-full bg-rose-500 transition-all duration-1000 ${craftable ? 'opacity-100' : 'opacity-20'}`}
+                              style={{ width: craftable ? '100%' : '20%' }}
+                            />
+                          </div>
                         </div>
                       </div>
-                      
+
                       {active && (
                         <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
                       )}
@@ -185,7 +200,7 @@ function Crafting({ stats, onCraft, onClose }: CraftingProps) {
 
         {/* 오른쪽 열: 선택된 아이템의 상세 정보 및 제작 버튼 */}
         <div className="w-full lg:w-[320px] xl:w-[420px] flex flex-col h-auto lg:h-full shrink-0 min-h-0 mt-4 lg:mt-0 relative z-10">
-          <RecipeDetail 
+          <RecipeDetail
             selectedRecipe={selectedRecipe}
             stats={stats}
             canCraft={canCraft}

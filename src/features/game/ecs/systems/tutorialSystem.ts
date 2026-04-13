@@ -30,7 +30,7 @@ function triggerGuide(guideId: string) {
   if (typeof self !== 'undefined' && self.postMessage) {
     self.postMessage({
       type: 'TUTORIAL_TRIGGER',
-      payload: { guideId: guideId }
+      payload: { guideId: guideId },
     });
   }
 }

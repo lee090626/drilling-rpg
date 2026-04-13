@@ -13,16 +13,16 @@ interface EncyclopediaProps {
   onClose: () => void;
 }
 
-const BOSSES = MONSTER_LIST.filter(m => m.type === 'boss').map(m => {
-  const circle = CIRCLES.find(c => c.boss?.id === m.id);
+const BOSSES = MONSTER_LIST.filter((m) => m.type === 'boss').map((m) => {
+  const circle = CIRCLES.find((c) => c.boss?.id === m.id);
   return {
     id: m.id,
     name: m.nameKo || m.name,
     icon: m.imagePath,
-    depth: circle ? circle.depthEnd : 0, 
+    depth: circle ? circle.depthEnd : 0,
     description: m.description,
     imagePath: m.imagePath,
-    stats: m.stats
+    stats: m.stats,
   };
 });
 
@@ -46,25 +46,36 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-purple-400 leading-none">
                 Books
               </h2>
-              <span className="text-[10px] text-zinc-600 font-bold tracking-widest uppercase mt-1">Discovery Archive</span>
+              <span className="text-[10px] text-zinc-600 font-bold tracking-widest uppercase mt-1">
+                Discovery Archive
+              </span>
             </div>
           </div>
 
           <div className="flex bg-zinc-950 p-1 rounded-xl md:rounded-2xl border border-zinc-800 w-full sm:w-auto">
             <button
-              onClick={() => { setActiveTab('minerals'); setSelectedId(null); }}
+              onClick={() => {
+                setActiveTab('minerals');
+                setSelectedId(null);
+              }}
               className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'minerals' ? 'bg-zinc-800 text-purple-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               Minerals
             </button>
             <button
-              onClick={() => { setActiveTab('bosses'); setSelectedId(null); }}
+              onClick={() => {
+                setActiveTab('bosses');
+                setSelectedId(null);
+              }}
               className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'bosses' ? 'bg-zinc-800 text-purple-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               Bosses
             </button>
             <button
-              onClick={() => { setActiveTab('artifact'); setSelectedId(null); }}
+              onClick={() => {
+                setActiveTab('artifact');
+                setSelectedId(null);
+              }}
               className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'artifact' ? 'bg-zinc-800 text-orange-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               Artifact
@@ -75,7 +86,7 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
         <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center justify-center gap-2 md:gap-4 bg-zinc-950 px-4 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-zinc-800 shadow-inner">
             <div className="flex items-center justify-center">
-               <AtlasIcon name="GoldIcon" size={32} />
+              <AtlasIcon name="GoldIcon" size={32} />
             </div>
             <span className="text-sm md:text-xl font-black text-white tabular-nums tracking-tighter">
               {stats.goldCoins.toLocaleString()}
@@ -94,116 +105,128 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
         {/* LIST SECTION */}
         <div className="flex-1 overflow-y-auto pr-2 md:pr-4 custom-scrollbar pb-10 pt-1">
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-            {activeTab === 'minerals' ? (
-              MINERALS.map((m) => {
-                const isDiscovered = stats.discoveredMinerals.includes(m.key);
-                const isSelected = selectedId === m.key;
+            {activeTab === 'minerals'
+              ? MINERALS.map((m) => {
+                  const isDiscovered = stats.discoveredMinerals.includes(m.key);
+                  const isSelected = selectedId === m.key;
 
-                return (
-                  <button
-                    key={m.key}
-                    onClick={() => setSelectedId(m.key)}
-                    className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
-                      isSelected
-                        ? 'bg-[#252526] border-purple-400 shadow-2xl scale-[1.02]'
-                        : !isDiscovered
-                          ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
-                          : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
-                    }`}
-                  >
-                    <div className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isDiscovered ? 'filter blur-md grayscale opacity-50' : ''}`}>
-                      {isDiscovered ? (m.image ? <AtlasIcon name={m.image} size={64} /> : <span className="text-6xl">{m.icon}</span>) : '?'}
-                    </div>
-                    <div className="text-[20px] text-zinc-500 font-bold tracking-widest">
-                      {isDiscovered ? m.name : 'Unknown'}
-                    </div>
-                    {!isDiscovered && (
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                         <span className="text-zinc-800 text-6xl font-black opacity-20">?</span>
+                  return (
+                    <button
+                      key={m.key}
+                      onClick={() => setSelectedId(m.key)}
+                      className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
+                        isSelected
+                          ? 'bg-[#252526] border-purple-400 shadow-2xl scale-[1.02]'
+                          : !isDiscovered
+                            ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
+                            : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div
+                        className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isDiscovered ? 'filter blur-md grayscale opacity-50' : ''}`}
+                      >
+                        {isDiscovered ? (
+                          m.image ? (
+                            <AtlasIcon name={m.image} size={64} />
+                          ) : (
+                            <span className="text-6xl">{m.icon}</span>
+                          )
+                        ) : (
+                          '?'
+                        )}
                       </div>
-                    )}
-                  </button>
-                );
-              })
-            ) : activeTab === 'bosses' ? (
-              BOSSES.map((b) => {
-                const isEncountered = stats.encounteredBossIds.includes(b.id);
-                const isSelected = selectedId === b.id;
-
-                return (
-                  <button
-                    key={b.id}
-                    onClick={() => setSelectedId(b.id)}
-                    className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
-                      isSelected
-                        ? 'bg-[#252526] border-[#a855f7] shadow-2xl scale-[1.02]'
-                        : !isEncountered
-                          ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
-                          : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
-                    }`}
-                  >
-                    <div className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isEncountered ? 'filter blur-md grayscale opacity-50' : ''}`}>
-                      {isEncountered ? <AtlasIcon name={b.imagePath as any} size={64} /> : <span className="text-6xl">💀</span>}
-                    </div>
-                    <div className="text-[10px] text-zinc-500 font-bold tracking-widest">
-                      {isEncountered ? b.name : 'Classified'}
-                    </div>
-                  </button>
-                );
-              })
-            ) : (
-                // Artifact (Unified)
-                ARTIFACT_LIST.map((item) => {
-                    const isStackable = item.type === 'stackable';
-                    const isUnlocked = isStackable 
-                        ? (stats.collectionHistory?.[item.id] || 0) > 0 
-                        : (stats.unlockedResearchIds?.includes(item.id));
-                    const count = isStackable ? (stats.collectionHistory?.[item.id] || 0) : 0;
-                    const isSelected = selectedId === item.id;
-                    
-                    return (
-                        <button
-                          key={item.id}
-                          onClick={() => setSelectedId(item.id)}
-                          className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
-                            isSelected
-                              ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
-                              : !isUnlocked
-                                ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
-                                : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
-                          }`}
-                        >
-                          <div className={`w-20 h-20 flex items-center justify-center text-4xl mb-4 transition-all ${!isUnlocked ? 'filter grayscale opacity-50' : ''}`}>
-                             <span className="text-3xl">💎</span>
-                          </div>
-                          <div className="text-[10px] text-zinc-500 font-bold tracking-widest text-center">
-                            {item.nameKo}
-                          </div>
-                          {isStackable && count > 0 && (
-                             <div className="absolute top-2 right-2 bg-orange-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                                x{count}
-                             </div>
-                          )}
-                          {!isStackable && isUnlocked && (
-                             <div className="absolute top-2 right-2 bg-emerald-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                                UNIQUE
-                             </div>
-                          )}
-                        </button>
-                    );
+                      <div className="text-[20px] text-zinc-500 font-bold tracking-widest">
+                        {isDiscovered ? m.name : 'Unknown'}
+                      </div>
+                      {!isDiscovered && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <span className="text-zinc-800 text-6xl font-black opacity-20">?</span>
+                        </div>
+                      )}
+                    </button>
+                  );
                 })
-            )}
+              : activeTab === 'bosses'
+                ? BOSSES.map((b) => {
+                    const isEncountered = stats.encounteredBossIds.includes(b.id);
+                    const isSelected = selectedId === b.id;
+
+                    return (
+                      <button
+                        key={b.id}
+                        onClick={() => setSelectedId(b.id)}
+                        className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
+                          isSelected
+                            ? 'bg-[#252526] border-[#a855f7] shadow-2xl scale-[1.02]'
+                            : !isEncountered
+                              ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
+                              : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div
+                          className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isEncountered ? 'filter blur-md grayscale opacity-50' : ''}`}
+                        >
+                          {isEncountered ? (
+                            <AtlasIcon name={b.imagePath as any} size={64} />
+                          ) : (
+                            <span className="text-6xl">💀</span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-zinc-500 font-bold tracking-widest">
+                          {isEncountered ? b.name : 'Classified'}
+                        </div>
+                      </button>
+                    );
+                  })
+                : // Artifact (Unified)
+                  ARTIFACT_LIST.map((item) => {
+                    const isStackable = item.type === 'stackable';
+                    const isUnlocked = isStackable
+                      ? (stats.collectionHistory?.[item.id] || 0) > 0
+                      : stats.unlockedResearchIds?.includes(item.id);
+                    const count = isStackable ? stats.collectionHistory?.[item.id] || 0 : 0;
+                    const isSelected = selectedId === item.id;
+
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setSelectedId(item.id)}
+                        className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
+                          isSelected
+                            ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
+                            : !isUnlocked
+                              ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
+                              : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
+                        }`}
+                      >
+                        <div
+                          className={`w-20 h-20 flex items-center justify-center text-4xl mb-4 transition-all ${!isUnlocked ? 'filter grayscale opacity-50' : ''}`}
+                        >
+                          <span className="text-3xl">💎</span>
+                        </div>
+                        <div className="text-[10px] text-zinc-500 font-bold tracking-widest text-center">
+                          {item.nameKo}
+                        </div>
+                        {isStackable && count > 0 && (
+                          <div className="absolute top-2 right-2 bg-orange-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                            x{count}
+                          </div>
+                        )}
+                        {!isStackable && isUnlocked && (
+                          <div className="absolute top-2 right-2 bg-emerald-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                            UNIQUE
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
           </div>
         </div>
 
         {/* DETAIL SECTION */}
         <div className="w-full lg:w-[350px] xl:w-[400px] shrink-0 h-auto lg:h-full flex flex-col bg-[#252526] rounded-2xl md:rounded-4xl p-5 md:p-8 border border-zinc-800 relative shadow-2xl overflow-y-auto custom-scrollbar min-h-0">
           {selectedId ? (
-            <DetailContent 
-              id={selectedId} 
-              tab={activeTab} 
-              stats={stats} 
-            />
+            <DetailContent id={selectedId} tab={activeTab} stats={stats} />
           ) : (
             <div className="h-full py-8 md:py-0 flex flex-col items-center justify-center text-center">
               <div className="text-4xl md:text-6xl mb-4 md:mb-6 opacity-20 animate-pulse">📡</div>
@@ -213,19 +236,19 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
               <p className="text-[9px] md:text-[10px] text-zinc-800 mt-2 font-bold tracking-widest uppercase">
                 Select an entry for analysis
               </p>
-              
+
               <div className="mt-8 md:mt-12 w-full space-y-3">
-                <ProgressBox 
-                  label="Minerals Discovery" 
-                  current={discoveredCount} 
-                  total={totalMinerals} 
-                  color="#a855f7" 
+                <ProgressBox
+                  label="Minerals Discovery"
+                  current={discoveredCount}
+                  total={totalMinerals}
+                  color="#a855f7"
                 />
-                <ProgressBox 
-                  label="Boss Encounters" 
-                  current={encounteredBossCount} 
-                  total={totalBosses} 
-                  color="#ef4444" 
+                <ProgressBox
+                  label="Boss Encounters"
+                  current={encounteredBossCount}
+                  total={totalBosses}
+                  color="#ef4444"
                 />
               </div>
             </div>
@@ -236,38 +259,54 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
   );
 }
 
-function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'bosses' | 'artifact', stats: PlayerStats }) {
+function DetailContent({
+  id,
+  tab,
+  stats,
+}: {
+  id: string;
+  tab: 'minerals' | 'bosses' | 'artifact';
+  stats: PlayerStats;
+}) {
   if (tab === 'artifact') {
     const item = ARTIFACT_DATA[id];
     if (!item) return null;
 
     const isStackable = item.type === 'stackable';
-    const isUnlocked = isStackable 
-        ? (stats.collectionHistory?.[item.id] || 0) > 0 
-        : (stats.unlockedResearchIds?.includes(item.id));
-    const count = isStackable ? (stats.collectionHistory?.[item.id] || 0) : 1;
+    const isUnlocked = isStackable
+      ? (stats.collectionHistory?.[item.id] || 0) > 0
+      : stats.unlockedResearchIds?.includes(item.id);
+    const count = isStackable ? stats.collectionHistory?.[item.id] || 0 : 1;
 
     // 보너스 수치 계산 (스택형일 경우만 합산)
-    const bonusValue = isStackable ? count * (item.bonus?.value || 0) : (item.bonus?.value || 0);
+    const bonusValue = isStackable ? count * (item.bonus?.value || 0) : item.bonus?.value || 0;
 
     return (
       <div className="animate-in fade-in slide-in-from-right-4 duration-300">
         <div className="flex justify-between items-start mb-8">
-          <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase ${isStackable ? 'bg-orange-900/20 border-orange-500/50 text-orange-400' : 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400'}`}>
+          <span
+            className={`text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase ${isStackable ? 'bg-orange-900/20 border-orange-500/50 text-orange-400' : 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400'}`}
+          >
             {isStackable ? 'Stackable Artifact' : 'Unique Artifact'}
           </span>
           <span className="text-[9px] font-black text-zinc-600 tracking-widest">
-            {isStackable ? `COLLECTED: ${count}` : (isUnlocked ? 'STATE: UNLOCKED' : 'STATE: LOCKED')}
+            {isStackable ? `COLLECTED: ${count}` : isUnlocked ? 'STATE: UNLOCKED' : 'STATE: LOCKED'}
           </span>
         </div>
 
         <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
           <div className={!isUnlocked ? 'filter grayscale opacity-20' : ''}>
-             <span className="text-6xl">💎</span>
+            <span className="text-6xl">💎</span>
           </div>
-          {!isUnlocked && <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">LOCKED</div>}
+          {!isUnlocked && (
+            <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">
+              LOCKED
+            </div>
+          )}
           {isUnlocked && (
-             <div className={`absolute inset-0 rounded-3xl opacity-20 ${isStackable ? 'shadow-[inset_0_0_50px_#f97316]' : 'shadow-[inset_0_0_50px_#10b981]'}`} />
+            <div
+              className={`absolute inset-0 rounded-3xl opacity-20 ${isStackable ? 'shadow-[inset_0_0_50px_#f97316]' : 'shadow-[inset_0_0_50px_#10b981]'}`}
+            />
           )}
         </div>
 
@@ -275,27 +314,33 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
           {item.nameKo}
         </h3>
         <p className="text-[10px] text-zinc-500 text-center font-bold tracking-widest uppercase mb-8">
-            {item.name}
+          {item.name}
         </p>
 
         {/* 패시브 보너스 표시 */}
         {item.bonus && (
           <div className="bg-zinc-950 p-6 rounded-2xl border border-orange-950/30 mb-4 flex flex-col items-center">
-              <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">Stat Bonus</div>
-              <div className="text-2xl font-black text-orange-400 flex items-center gap-2">
-                  <span>+ {bonusValue.toLocaleString()}</span>
-                  <span className="text-xs text-zinc-600 tracking-tight">{item.bonus.stat.toUpperCase()}</span>
-              </div>
+            <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">
+              Stat Bonus
+            </div>
+            <div className="text-2xl font-black text-orange-400 flex items-center gap-2">
+              <span>+ {bonusValue.toLocaleString()}</span>
+              <span className="text-xs text-zinc-600 tracking-tight">
+                {item.bonus.stat.toUpperCase()}
+              </span>
+            </div>
           </div>
         )}
 
         {/* 고유 효과 표시 (Unique Artifact 전용) */}
         {!isStackable && item.effectId && (
           <div className="bg-zinc-950 p-6 rounded-2xl border border-emerald-950/30 mb-4 flex flex-col items-center">
-              <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">Unique Passive</div>
-              <div className="text-sm font-black text-emerald-400 text-center leading-tight">
-                  {item.effectDescriptionKo}
-              </div>
+            <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">
+              Unique Passive
+            </div>
+            <div className="text-sm font-black text-emerald-400 text-center leading-tight">
+              {item.effectDescriptionKo}
+            </div>
           </div>
         )}
 
@@ -307,18 +352,21 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
   }
 
   if (tab === 'minerals') {
-    const mineral = MINERALS.find(m => m.key === id);
+    const mineral = MINERALS.find((m) => m.key === id);
     const isDiscovered = stats.discoveredMinerals.includes(id);
     if (!mineral) return null;
 
     return (
       <div className="animate-in fade-in slide-in-from-right-4 duration-300">
         <div className="flex justify-between items-start mb-8">
-          <span className="text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase" style={{ 
-            backgroundColor: isDiscovered ? `${mineral.color}20` : '#18181b',
-            borderColor: isDiscovered ? mineral.color : '#27272a',
-            color: isDiscovered ? mineral.color : '#52525b'
-          }}>
+          <span
+            className="text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase"
+            style={{
+              backgroundColor: isDiscovered ? `${mineral.color}20` : '#18181b',
+              borderColor: isDiscovered ? mineral.color : '#27272a',
+              color: isDiscovered ? mineral.color : '#52525b',
+            }}
+          >
             {isDiscovered ? 'Mineral' : 'Unknown'}
           </span>
           <span className="text-[9px] font-black text-zinc-600 tracking-widest">
@@ -327,12 +375,29 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
         </div>
 
         <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
-          <div className={`w-36 h-36 flex items-center justify-center ${!isDiscovered ? 'filter blur-xl opacity-20' : ''}`}>
-            {isDiscovered ? (mineral.image ? <AtlasIcon name={mineral.image} size={112} /> : <span className="text-8xl">{mineral.icon}</span>) : '?'}
+          <div
+            className={`w-36 h-36 flex items-center justify-center ${!isDiscovered ? 'filter blur-xl opacity-20' : ''}`}
+          >
+            {isDiscovered ? (
+              mineral.image ? (
+                <AtlasIcon name={mineral.image} size={112} />
+              ) : (
+                <span className="text-8xl">{mineral.icon}</span>
+              )
+            ) : (
+              '?'
+            )}
           </div>
-          {!isDiscovered && <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">LOCKED</div>}
+          {!isDiscovered && (
+            <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">
+              LOCKED
+            </div>
+          )}
           {isDiscovered && (
-            <div className="absolute inset-0 rounded-3xl opacity-20" style={{ boxShadow: `inset 0 0 40px ${mineral.color}` }} />
+            <div
+              className="absolute inset-0 rounded-3xl opacity-20"
+              style={{ boxShadow: `inset 0 0 40px ${mineral.color}` }}
+            />
           )}
         </div>
 
@@ -341,23 +406,33 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
         </h3>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <StatBox label="Min Depth" value={isDiscovered ? `${mineral.minDepth}m` : '???'} color="#94a3b8" />
+          <StatBox
+            label="Min Depth"
+            value={isDiscovered ? `${mineral.minDepth}m` : '???'}
+            color="#94a3b8"
+          />
           <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-900 text-center flex flex-col items-center justify-center">
-            <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest uppercase">Base Value</div>
+            <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest uppercase">
+              Base Value
+            </div>
             <div className="flex items-center gap-1.5">
-               <span className="text-sm font-black text-amber-500">{isDiscovered ? mineral.basePrice.toLocaleString() : '???'}</span>
-               {isDiscovered && <AtlasIcon name="GoldIcon" size={14} />}
+              <span className="text-sm font-black text-amber-500">
+                {isDiscovered ? mineral.basePrice.toLocaleString() : '???'}
+              </span>
+              {isDiscovered && <AtlasIcon name="GoldIcon" size={14} />}
             </div>
           </div>
         </div>
 
         <div className="bg-zinc-950/50 p-6 rounded-2xl border border-zinc-800 leading-relaxed text-xs text-zinc-400 text-center italic">
-          {isDiscovered ? mineral.description : 'Data is Locked. Please mine this mineral to unlock the data.'}
+          {isDiscovered
+            ? mineral.description
+            : 'Data is Locked. Please mine this mineral to unlock the data.'}
         </div>
       </div>
     );
   } else {
-    const boss = BOSSES.find(b => b.id === id);
+    const boss = BOSSES.find((b) => b.id === id);
     const isEncountered = stats.encounteredBossIds.includes(id);
     if (!boss) return null;
 
@@ -374,9 +449,17 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
 
         <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-10 relative">
           <div className={!isEncountered ? 'filter blur-xl opacity-20' : ''}>
-            {isEncountered ? <AtlasIcon name={boss.imagePath as any} size={128} /> : <span className="text-8xl">💀</span>}
+            {isEncountered ? (
+              <AtlasIcon name={boss.imagePath as any} size={128} />
+            ) : (
+              <span className="text-8xl">💀</span>
+            )}
           </div>
-          {!isEncountered && <div className="absolute inset-0 flex items-center justify-center text-rose-900 font-black text-5xl opacity-40">MISSING</div>}
+          {!isEncountered && (
+            <div className="absolute inset-0 flex items-center justify-center text-rose-900 font-black text-5xl opacity-40">
+              MISSING
+            </div>
+          )}
         </div>
 
         <h3 className="text-3xl font-black text-white text-center mb-6 tracking-tighter">
@@ -384,29 +467,51 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
         </h3>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <StatBox label="HP" value={isEncountered && boss.stats ? boss.stats.maxHp.toLocaleString() : '???'} color="#ef4444" />
-          <StatBox label="ATK" value={isEncountered && boss.stats ? boss.stats.power.toLocaleString() : '???'} color="#f59e0b" />
+          <StatBox
+            label="HP"
+            value={isEncountered && boss.stats ? boss.stats.maxHp.toLocaleString() : '???'}
+            color="#ef4444"
+          />
+          <StatBox
+            label="ATK"
+            value={isEncountered && boss.stats ? boss.stats.power.toLocaleString() : '???'}
+            color="#f59e0b"
+          />
         </div>
 
         <div className="bg-zinc-950/50 p-6 rounded-2xl border border-zinc-800 leading-relaxed text-xs text-zinc-400 text-center">
-          {isEncountered ? boss.description : 'Strong biological signals detected in the depths. Data will be recorded upon encounter.'}
+          {isEncountered
+            ? boss.description
+            : 'Strong biological signals detected in the depths. Data will be recorded upon encounter.'}
         </div>
       </div>
     );
   }
 }
 
-function ProgressBox({ label, current, total, color }: { label: string, current: number, total: number, color: string }) {
+function ProgressBox({
+  label,
+  current,
+  total,
+  color,
+}: {
+  label: string;
+  current: number;
+  total: number;
+  color: string;
+}) {
   const percent = (current / total) * 100;
   return (
     <div className="bg-zinc-950/40 p-4 rounded-xl border border-zinc-900">
       <div className="flex justify-between items-end mb-2">
         <span className="text-[9px] font-black text-zinc-600 tracking-widest">{label}</span>
-        <span className="text-xs font-black text-white tabular-nums">{current} / {total}</span>
+        <span className="text-xs font-black text-white tabular-nums">
+          {current} / {total}
+        </span>
       </div>
       <div className="h-1.5 bg-zinc-900 rounded-full overflow-hidden">
-        <div 
-          className="h-full transition-all duration-1000" 
+        <div
+          className="h-full transition-all duration-1000"
           style={{ width: `${percent}%`, backgroundColor: color }}
         />
       </div>
@@ -414,11 +519,13 @@ function ProgressBox({ label, current, total, color }: { label: string, current:
   );
 }
 
-function StatBox({ label, value, color }: { label: string, value: string, color: string }) {
+function StatBox({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-900 text-center">
       <div className="text-[8px] text-zinc-600 font-bold mb-1 tracking-widest">{label}</div>
-      <div className="text-sm font-black" style={{ color }}>{value}</div>
+      <div className="text-sm font-black" style={{ color }}>
+        {value}
+      </div>
     </div>
   );
 }

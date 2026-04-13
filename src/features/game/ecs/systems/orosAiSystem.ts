@@ -18,7 +18,7 @@ export const orosAiSystem = (world: GameWorld, now: number) => {
     // 보스 전용 상태 관리 (공유 SoA의 state 활용 가능하나, 커스텀 데이터 필요 시 확장)
     // 여기서는 간단하게 시간 기반 FSM 구현
     if (!soa.lastAttackTime[i]) soa.lastAttackTime[i] = now;
-    
+
     const cycleTime = 8000; // 전체 패턴 주기 8초
     const elapsed = (now - soa.lastAttackTime[i]) % cycleTime;
 
@@ -52,12 +52,12 @@ export const orosAiSystem = (world: GameWorld, now: number) => {
         soa.state[i] = 4;
         entities.markDirty(i);
         world.shake = 15;
-        
+
         const bx = soa.x[i] + (soa.width[i] || TILE_SIZE) / 2;
         const by = soa.y[i] + (soa.height[i] || TILE_SIZE) / 2;
         const px = player.pos.x * TILE_SIZE;
         const py = player.pos.y * TILE_SIZE;
-        
+
         const dist = Math.sqrt((bx - px) ** 2 + (by - py) ** 2);
         if (dist < TILE_SIZE * 8) {
           applyStatusEffect(world, { type: 'STUN', vfxId: 'stars' }, 2000);

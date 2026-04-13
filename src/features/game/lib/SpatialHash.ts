@@ -12,7 +12,7 @@ export class SpatialHash {
   constructor(cellSize: number = 120) {
     this.cellSize = cellSize;
     // 엔티티 ID가 5000개라고 가정할 때 넉넉하게 할당
-    this.visited = new Uint8Array(10000); 
+    this.visited = new Uint8Array(10000);
   }
 
   /** 그리드 가상 초기화 (배열 객체는 유지하고 길이만 0으로) */
@@ -46,7 +46,7 @@ export class SpatialHash {
   public query(x: number, y: number, radius: number): number[] {
     const results = this.queryResults;
     results.length = 0;
-    
+
     const ixStart = Math.floor((x - radius) / this.cellSize);
     const iyStart = Math.floor((y - radius) / this.cellSize);
     const ixEnd = Math.floor((x + radius) / this.cellSize);

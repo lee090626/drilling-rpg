@@ -30,21 +30,17 @@ export const projectileSystem = (world: GameWorld, deltaTime: number, now: numbe
     const ew = soa.width[i] || 16;
     const eh = soa.height[i] || 16;
 
-    const isHitPlayer = 
-      ex < px + pw &&
-      ex + ew > px &&
-      ey < py + ph &&
-      ey + eh > py;
+    const isHitPlayer = ex < px + pw && ex + ew > px && ey < py + ph && ey + eh > py;
 
     if (isHitPlayer) {
       // 대미지 적용
       const damage = soa.attack[i] || 10;
       player.stats.hp -= damage;
       player.lastHitTime = now;
-      
+
       createFloatingText(world, px + TILE_SIZE / 2, py, `-${damage}`, '#ef4444');
       world.shake = Math.max(world.shake, 5);
-      
+
       entities.destroy(i);
       continue;
     }
@@ -52,7 +48,7 @@ export const projectileSystem = (world: GameWorld, deltaTime: number, now: numbe
     // 3. 타일 충돌 및 맵 경계 체크
     const tx = Math.floor(ex / TILE_SIZE);
     const ty = Math.floor(ey / TILE_SIZE);
-    
+
     // 월드 경계 밖으로 나감
     if (ty < 0 || ty >= 3000) {
       entities.destroy(i);

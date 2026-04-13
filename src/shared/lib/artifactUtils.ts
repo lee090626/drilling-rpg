@@ -27,9 +27,9 @@ export function isArtifactUnlocked(stats: PlayerStats, artifactId: string): bool
  */
 export function hasArtifactEffect(stats: PlayerStats, effectId: string): boolean {
   if (!stats.unlockedResearchIds) return false;
-  
+
   // 해당 효과를 가진 유물이 하나라도 해금되어 있는지 체크
-  return stats.unlockedResearchIds.some(id => {
+  return stats.unlockedResearchIds.some((id) => {
     const data = ARTIFACT_DATA[id];
     return data && data.effectId === effectId;
   });
@@ -65,7 +65,7 @@ export function calculateArtifactBonuses(stats: PlayerStats): ArtifactBonuses {
 
   // 2. 고유 유물 (Unique) 기본 스택 보너스 계산 (있는 경우)
   if (stats.unlockedResearchIds) {
-    stats.unlockedResearchIds.forEach(id => {
+    stats.unlockedResearchIds.forEach((id) => {
       const data = ARTIFACT_DATA[id];
       if (data && data.type === 'unique' && data.bonus) {
         bonuses[data.bonus.stat] += data.bonus.value;

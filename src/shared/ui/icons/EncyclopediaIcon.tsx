@@ -6,11 +6,11 @@ interface IconProps {
 
 export const EncyclopediaIcon: React.FC<IconProps> = ({ color }) => {
   return (
-    <svg 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke={color} 
-      strokeWidth="1.5" 
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="1.5"
       className="w-10 h-10"
       style={{ shapeRendering: 'crispEdges' } as React.CSSProperties}
     >

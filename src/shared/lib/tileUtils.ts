@@ -10,20 +10,27 @@ import { MINERALS } from '../config/mineralData';
 export function getTileColor(type: TileType): string {
   // 1. 특수 타일 등 하드코딩
   switch (type) {
-    case 'lava': return '#f97316';
-    case 'dungeon_bricks': return '#374151';
-    case 'monster_nest': return '#b91c1c';
+    case 'lava':
+      return '#f97316';
+    case 'dungeon_bricks':
+      return '#374151';
+    case 'monster_nest':
+      return '#b91c1c';
     case 'boss_skin':
-    case 'boss_core': return '#064e3b';
-    case 'portal': return '#a855f7';
-    case 'wall': return '#1a1a1b';
-    case 'empty': return '#000000';
+    case 'boss_core':
+      return '#064e3b';
+    case 'portal':
+      return '#a855f7';
+    case 'wall':
+      return '#1a1a1b';
+    case 'empty':
+      return '#000000';
   }
-  
+
   // 2. 광물 데이터 테이블에서 조회
-  const mineral = MINERALS.find(m => m.key === type);
+  const mineral = MINERALS.find((m) => m.key === type);
   if (mineral && mineral.color) return mineral.color;
-  
+
   return '#455a64'; // fallback string
 }
 
@@ -34,15 +41,24 @@ export function getTileColor(type: TileType): string {
  */
 export function getTileIndex(type: string): number {
   switch (type) {
-    case 'empty': return -1;
-    case 'lava': return 25;
-    case 'dungeon_bricks': return 9; 
-    case 'boss_core': return 32;
-    case 'monster_nest': return 31;
-    case 'wall': return 4; 
-    case 'portal': return 10;
-    case 'boss_skin': return 33;
-    default: return 0; // 광물은 개별 아이콘이나 stone으로 렌더링됨
+    case 'empty':
+      return -1;
+    case 'lava':
+      return 25;
+    case 'dungeon_bricks':
+      return 9;
+    case 'boss_core':
+      return 32;
+    case 'monster_nest':
+      return 31;
+    case 'wall':
+      return 4;
+    case 'portal':
+      return 10;
+    case 'boss_skin':
+      return 33;
+    default:
+      return 0; // 광물은 개별 아이콘이나 stone으로 렌더링됨
   }
 }
 
@@ -55,21 +71,28 @@ export function getTileIndex(type: string): number {
 export function getMineralStats(type: TileType): { health: number } {
   // 1. 특수 타일 및 비광물 처리 (하드코딩된 규칙)
   switch (type) {
-    case 'lava': return { health: Infinity };
+    case 'lava':
+      return { health: Infinity };
     case 'wall':
-    case 'dungeon_bricks': return { health: 1000 };
-    case 'boss_core': return { health: 10000 };
-    case 'boss_skin': return { health: 40000 };
-    case 'monster_nest': return { health: 200 };
-    case 'empty': return { health: 0 };
-    case 'portal': return { health: Infinity };
+    case 'dungeon_bricks':
+      return { health: 1000 };
+    case 'boss_core':
+      return { health: 10000 };
+    case 'boss_skin':
+      return { health: 40000 };
+    case 'monster_nest':
+      return { health: 200 };
+    case 'empty':
+      return { health: 0 };
+    case 'portal':
+      return { health: Infinity };
   }
 
   // 2. 광물 데이터 테이블에서 조회 (단일 진실 공급원 전술)
-  const mineral = MINERALS.find(m => m.key === type);
+  const mineral = MINERALS.find((m) => m.key === type);
   if (mineral) {
-    return { 
-      health: mineral.baseHealth
+    return {
+      health: mineral.baseHealth,
     };
   }
 

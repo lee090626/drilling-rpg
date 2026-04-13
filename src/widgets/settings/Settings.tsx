@@ -30,12 +30,7 @@ interface GameSettings {
 /**
  * 게임의 각종 환경 설정을 관리하고 표시하는 모달 컴포넌트입니다.
  */
-export default function Settings({
-  onReset,
-  onClose,
-  onExport,
-  onImport,
-}: SettingsProps) {
+export default function Settings({ onReset, onClose, onExport, onImport }: SettingsProps) {
   const { screenShake, highPerformance } = useGameStore((state) => state.settings);
   const updateSettings = useGameStore((state) => state.updateSettings);
 
@@ -64,43 +59,44 @@ export default function Settings({
   /**
    * 개별 설정 항목을 토글하는 스위치 컴포넌트입니다 (내부용).
    */
-  const Toggle = ({ 
-    label, 
-    subLabel, 
-    active, 
-    onToggle 
-  }: { 
-    label: string; 
-    subLabel: string; 
-    active: boolean; 
-    onToggle: () => void; 
+  const Toggle = ({
+    label,
+    subLabel,
+    active,
+    onToggle,
+  }: {
+    label: string;
+    subLabel: string;
+    active: boolean;
+    onToggle: () => void;
   }) => (
     <div
       onClick={onToggle}
       onKeyDown={(e) => e.key === 'Enter' && onToggle()}
       tabIndex={0}
       className={`flex justify-between items-center p-6 rounded-xl border transition-all duration-300 cursor-pointer group/toggle relative focus:outline-none focus:ring-2 focus:ring-amber-400/50
-        ${active 
-          ? 'bg-[#eab308]/10 border-[#eab308]/40' 
-          : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}
+        ${
+          active
+            ? 'bg-[#eab308]/10 border-[#eab308]/40'
+            : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'
+        }`}
     >
       <div className="flex flex-col gap-1 relative z-10">
-        <span className={`text-base font-bold tracking-tight transition-colors duration-200 ${active ? 'text-white' : 'text-zinc-400 group-hover/toggle:text-zinc-200'}`}>
+        <span
+          className={`text-base font-bold tracking-tight transition-colors duration-200 ${active ? 'text-white' : 'text-zinc-400 group-hover/toggle:text-zinc-200'}`}
+        >
           {label}
         </span>
-        <span className="text-[10px] text-zinc-600 font-bold tracking-widest">
-          {subLabel}
-        </span>
+        <span className="text-[10px] text-zinc-600 font-bold tracking-widest">{subLabel}</span>
       </div>
 
-      <div className={`w-14 h-7 rounded-full relative transition-all duration-300 p-1 flex items-center
+      <div
+        className={`w-14 h-7 rounded-full relative transition-all duration-300 p-1 flex items-center
         ${active ? 'bg-[#eab308]' : 'bg-zinc-800 border border-zinc-700'}`}
       >
         <div
           className={`w-5 h-5 rounded-full transition-transform duration-300
-            ${active 
-              ? 'translate-x-7 bg-zinc-950' 
-              : 'translate-x-0 bg-zinc-500'}`}
+            ${active ? 'translate-x-7 bg-zinc-950' : 'translate-x-0 bg-zinc-500'}`}
         />
       </div>
     </div>
@@ -117,7 +113,9 @@ export default function Settings({
               <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-zinc-400 leading-none">
                 Settings
               </h2>
-              <span className="text-[10px] text-zinc-600 font-bold tracking-widest uppercase mt-1">System Configuration</span>
+              <span className="text-[10px] text-zinc-600 font-bold tracking-widest uppercase mt-1">
+                System Configuration
+              </span>
             </div>
           </div>
         </div>
@@ -134,7 +132,6 @@ export default function Settings({
 
       <div className="flex-1 overflow-y-auto custom-scrollbar px-10 py-10 flex items-center justify-center">
         <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
-          
           {/* 게임플레이 설정 섹션 */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-2">
@@ -143,7 +140,7 @@ export default function Settings({
                 Gameplay Settings
               </h3>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               <Toggle
                 label="Screen Shake"
@@ -172,7 +169,7 @@ export default function Settings({
                 System & Data
               </h3>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               {/* 백업 그룹 */}
               <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl">
@@ -195,20 +192,16 @@ export default function Settings({
                 </div>
               </div>
 
-
               {/* 초기화 그룹 */}
               <div className="bg-rose-950/10 border border-rose-900/30 p-6 rounded-2xl group/reset relative overflow-hidden">
                 <div className="flex flex-col relative z-10">
-                  <h4 className="text-sm font-bold text-rose-500">
-                    Data Reset
-                  </h4>
+                  <h4 className="text-sm font-bold text-rose-500">Data Reset</h4>
                   <p className="text-[9px] text-zinc-600 font-bold tracking-widest mt-1 mb-4 leading-relaxed">
                     Permanently deletes all game progress. This action cannot be undone.
                   </p>
                   <button
                     onClick={() => {
-                      if (confirm('Delete all progress? This action cannot be undone.'))
-                        onReset();
+                      if (confirm('Delete all progress? This action cannot be undone.')) onReset();
                     }}
                     className="w-full h-12 rounded-xl bg-rose-600/20 border border-rose-600/40 text-rose-500 text-[10px] font-bold tracking-[0.2em] hover:bg-rose-600 hover:text-white transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50"
                   >
@@ -218,7 +211,6 @@ export default function Settings({
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

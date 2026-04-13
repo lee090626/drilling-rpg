@@ -5,20 +5,20 @@
 export interface EntitySoA {
   capacity: number;
   count: number;
-  
+
   // 고유 식별 및 유효성 검사 (Handle: Generation << 16 | Index)
   generation: Uint16Array;
-  
+
   // 기본 정보
-  type: Uint8Array;        // 0: none, 1: monster, 2: boss, 3: npc, 4: object, 5: projectile
-  state: Uint8Array;       // 0: idle, 1: chase, 2: attack
-  
+  type: Uint8Array; // 0: none, 1: monster, 2: boss, 3: npc, 4: object, 5: projectile
+  state: Uint8Array; // 0: idle, 1: chase, 2: attack
+
   // 물리 데이터 (World 좌표)
   x: Float32Array;
   y: Float32Array;
   vx: Float32Array;
   vy: Float32Array;
-  
+
   // 전투 및 스탯
   hp: Float32Array;
   maxHp: Float32Array;
@@ -27,7 +27,7 @@ export interface EntitySoA {
   lastAttackTime: Float32Array;
   /** 개별 공격 쿨타임 (ms). 모스터 정의에서 초기화. */
   attackCooldown: Float32Array;
-  
+
   // 시각 데이터 및 히트박스
   monsterDefIndex: Uint16Array;
   spriteIndex: Uint16Array;
@@ -35,11 +35,11 @@ export interface EntitySoA {
   height: Float32Array;
 
   // Sync optimization
-  dirtyFlags: Uint8Array;   // 0: clean, 1: dirty
+  dirtyFlags: Uint8Array; // 0: clean, 1: dirty
 }
 
-/** 
- * 엔티티를 안전하게 참조하기 위한 핸들 타입 
+/**
+ * 엔티티를 안전하게 참조하기 위한 핸들 타입
  * - 상위 16비트: Generation
  * - 하위 16비트: Index
  */
@@ -75,7 +75,13 @@ export class EntityManager {
   }
 
   /** 새로운 엔티티 생성 ($O(1)$) */
-  public create(type: number, x: number, y: number, id?: string, defIndex: number = 0): EntityHandle {
+  public create(
+    type: number,
+    x: number,
+    y: number,
+    id?: string,
+    defIndex: number = 0,
+  ): EntityHandle {
     if (this.soa.count >= this.soa.capacity) {
       console.warn('[EntityManager] Capacity reached!');
       return -1;
@@ -86,9 +92,9 @@ export class EntityManager {
 
     // ID 매핑 등록
     if (id) {
-        this.idMap.set(id, handle);
+      this.idMap.set(id, handle);
     }
-    
+
     // 기본값 초기화
     this.soa.type[index] = type;
     this.soa.monsterDefIndex[index] = defIndex;
@@ -98,11 +104,11 @@ export class EntityManager {
     this.soa.vy[index] = 0;
     this.soa.state[index] = 0; // Idle
     this.soa.dirtyFlags[index] = 1; // Mark as dirty on creation
-    
+
     return handle;
   }
 
-  /** 
+  /**
    * 엔티티 삭제 ($O(1)$ - Swap-and-Pop)
    * - 삭제할 위치에 마지막 원소를 덮어씌워 배열의 연속성을 유지합니다.
    * - 세대(Generation)를 증가시켜 기존 핸들을 무효화합니다.
@@ -115,7 +121,7 @@ export class EntityManager {
 
     // 세대 증가 (기존 핸들 무효화)
     this.soa.generation[index]++;
-    
+
     const lastIndex = --this.soa.count;
     if (index !== lastIndex) {
       // 마지막 원소의 데이터를 삭제된 위치로 이동 (Swap)
@@ -165,14 +171,14 @@ export class EntityManager {
 
   /** 핸들이 유효한지 검사 */
   public isValid(handle: EntityHandle): boolean {
-    const index = handle & 0xFFFF;
+    const index = handle & 0xffff;
     const gen = handle >> 16;
     return index < this.soa.count && this.soa.generation[index] === gen;
   }
 
   /** 핸들로부터 현재 인덱스 획득 */
   public getIndex(handle: EntityHandle): number {
-    return handle & 0xFFFF;
+    return handle & 0xffff;
   }
 
   /** 모든 엔티티 데이터 초기화 (차원 이동 시) */

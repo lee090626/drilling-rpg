@@ -36,13 +36,14 @@ export const handleEconomyAction = (world: GameWorld, action: string, data: any)
       if (data.req) {
         Object.entries(data.req).forEach(([res, amt]) => {
           if (res === 'goldCoins') stats.goldCoins -= amt as number;
-          else if (stats.inventory[res as any] !== undefined) (stats.inventory as any)[res] -= amt as number;
+          else if (stats.inventory[res as any] !== undefined)
+            (stats.inventory as any)[res] -= amt as number;
         });
       }
       if (data.res.drillId && !stats.ownedDrillIds.includes(data.res.drillId)) {
         stats.ownedDrillIds.push(data.res.drillId);
         if (!stats.equipmentStates[data.res.drillId]) {
-           stats.equipmentStates[data.res.drillId] = createInitialEquipmentState(data.res.drillId);
+          stats.equipmentStates[data.res.drillId] = createInitialEquipmentState(data.res.drillId);
         }
       }
       break;

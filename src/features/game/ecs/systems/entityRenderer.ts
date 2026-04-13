@@ -20,10 +20,10 @@ const entityPool: PIXI.Container[] = [];
  * 모든 시각적 요소를 렌더링하는 메인 엔트리 포인트입니다.
  */
 export const renderEntities = (
-  world: GameWorld, 
-  layers: { staticLayer: PIXI.Container; entityLayer: PIXI.Container; effectLayer: PIXI.Container }, 
+  world: GameWorld,
+  layers: { staticLayer: PIXI.Container; entityLayer: PIXI.Container; effectLayer: PIXI.Container },
   now: number,
-  textures: { [key: string]: PIXI.Texture }
+  textures: { [key: string]: PIXI.Texture },
 ) => {
   const { entities, player } = world;
   const { staticLayer, entityLayer } = layers;
@@ -32,7 +32,11 @@ export const renderEntities = (
   // 1. 플레이어 렌더링
   let playerContainer = entityContainerMap.get('player');
   if (!playerContainer) {
-    playerContainer = createEntityContainer({ type: 'player', width: 1, height: 1 }, textures, 'player');
+    playerContainer = createEntityContainer(
+      { type: 'player', width: 1, height: 1 },
+      textures,
+      'player',
+    );
     entityLayer.addChild(playerContainer);
     entityContainerMap.set('player', playerContainer);
   }
@@ -42,12 +46,13 @@ export const renderEntities = (
   const visibleIndices = world.spatialHash.query(
     player.visualPos.x * TILE_SIZE,
     player.visualPos.y * TILE_SIZE,
-    1200 
+    1200,
   );
 
-  const monsterStartIndex = 1; 
+  const monsterStartIndex = 1;
   while (entityLayer.children.length - monsterStartIndex < visibleIndices.length) {
-    const container = entityPool.pop() || createEntityContainer({ type: 'monster', width: 1, height: 1 }, textures);
+    const container =
+      entityPool.pop() || createEntityContainer({ type: 'monster', width: 1, height: 1 }, textures);
     container.alpha = 0;
     entityLayer.addChild(container);
   }
@@ -84,12 +89,21 @@ export const renderEntities = (
 /**
  * 엔티티 타입에 따라 전용 렌더러로 라우팅합니다.
  */
-function updateEntitySpriteFromSoA(idx: number, soa: any, player: any, container: PIXI.Container, now: number, textures: any) {
+function updateEntitySpriteFromSoA(
+  idx: number,
+  soa: any,
+  player: any,
+  container: PIXI.Container,
+  now: number,
+  textures: any,
+) {
   const type = soa.type[idx];
-  
-  if (type === 5) { // Projectile
+
+  if (type === 5) {
+    // Projectile
     updateProjectileRenderer(idx, soa, container, textures);
-  } else { // Monster, Boss
+  } else {
+    // Monster, Boss
     updateMobRenderer(idx, soa, player, container, now, textures);
   }
 }
@@ -97,7 +111,11 @@ function updateEntitySpriteFromSoA(idx: number, soa: any, player: any, container
 /**
  * 엔티티를 위한 Pixi 컨테이너와 스프라이트 초기 생성
  */
-function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Texture }, forceTextureKey?: string): PIXI.Container {
+function createEntityContainer(
+  entity: any,
+  textures: { [key: string]: PIXI.Texture },
+  forceTextureKey?: string,
+): PIXI.Container {
   const container = new PIXI.Container();
   const entW = (entity.width || 1) * TILE_SIZE;
   const entH = (entity.height || 1) * TILE_SIZE;
@@ -109,7 +127,7 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
   sprite.label = 'body';
   sprite.width = entW;
   sprite.height = entH;
-  
+
   if (!textureKey && !forceTextureKey) {
     sprite.tint = entity.type === 'monster' ? 0xef4444 : 0xeab308;
   }
@@ -123,8 +141,13 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
 
     if (entity.type === 'boss') {
       const nameTag = new PIXI.Text({
-        text: entity.name || 'Boss', 
-        style: { fontSize: 14, fill: 0xffffff, fontWeight: 'bold', stroke: { color: 0x000000, width: 2 } }
+        text: entity.name || 'Boss',
+        style: {
+          fontSize: 14,
+          fill: 0xffffff,
+          fontWeight: 'bold',
+          stroke: { color: 0x000000, width: 2 },
+        },
       });
       nameTag.label = 'nameTag';
       nameTag.anchor.set(0.5, 0.5);
@@ -133,8 +156,13 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
     }
 
     const indicator = new PIXI.Text({
-      text: '!', 
-      style: { fontSize: 28, fill: 0xff0000, fontWeight: '900', stroke: { color: 0xffffff, width: 3 } }
+      text: '!',
+      style: {
+        fontSize: 28,
+        fill: 0xff0000,
+        fontWeight: '900',
+        stroke: { color: 0xffffff, width: 3 },
+      },
     });
     indicator.label = 'attackIndicator';
     indicator.anchor.set(0.5, 0.5);

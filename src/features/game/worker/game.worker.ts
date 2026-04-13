@@ -14,7 +14,7 @@ PIXI.DOMAdapter.set(PIXI.WebWorkerAdapter);
 class GameEngineInstance {
   world: GameWorld;
   pixiApp: PIXI.Application | null = null;
-  
+
   // Pixi layer structure
   layers: {
     stage: PIXI.Container;
@@ -25,10 +25,10 @@ class GameEngineInstance {
     uiLayer: PIXI.Container;
     lightLayer: PIXI.Container;
   } | null = null;
-  
+
   textures: { [key: string]: PIXI.Texture } = {};
   lightingFilter: LightingFilter | null = null;
-  
+
   private readonly BUFFER_SIZE = (16 + 5000 * 8) * 4;
   bufferPool: ArrayBuffer[] = [];
 
@@ -54,7 +54,7 @@ class GameEngineInstance {
       height: newCanvas.height,
       backgroundAlpha: 0,
       antialias: true,
-      preference: 'webgl'
+      preference: 'webgl',
     });
 
     const stage = new PIXI.Container();
@@ -73,14 +73,20 @@ class GameEngineInstance {
     stage.addChild(uiLayer);
 
     this.pixiApp.stage.addChild(stage);
-    
+
     this.lightingFilter = new LightingFilter();
     stage.filters = [this.lightingFilter];
 
     this.layers = { stage, tileLayer, staticLayer, entityLayer, effectLayer, lightLayer, uiLayer };
 
     if (this.gameLoop) {
-      this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
+      this.gameLoop.updateDependencies(
+        this.world,
+        this.pixiApp,
+        this.layers,
+        this.textures,
+        this.lightingFilter,
+      );
     }
   }
 
@@ -104,7 +110,7 @@ class GameEngineInstance {
       this.world.player.stats = stats;
       this.world.player.pos = position;
       this.world.player.visualPos = { ...position };
-      
+
       if (tileMapData) {
         // Decode base64 to ArrayBuffer within worker thread
         const binary = atob(tileMapData);
@@ -130,33 +136,39 @@ class GameEngineInstance {
         this.layers,
         this.textures,
         this.lightingFilter,
-        this.bufferPool
+        this.bufferPool,
       );
       this.gameLoop.start();
       self.postMessage({ type: 'ENGINE_READY' });
     } else {
-      this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
+      this.gameLoop.updateDependencies(
+        this.world,
+        this.pixiApp,
+        this.layers,
+        this.textures,
+        this.lightingFilter,
+      );
     }
   }
 
   async updateAssetsFromAtlas(payload: any) {
     if (!this.world) return;
     const { atlasData, layout, entities } = payload;
-    
+
     this.world.baseLayout = layout;
     this.world.staticEntities = entities;
 
     for (const atlas of atlasData) {
       const { json, bitmap } = atlas;
       const baseTexture = PIXI.Texture.from(bitmap as any);
-      
+
       const spritesheet = new PIXI.Spritesheet(baseTexture, json);
       await spritesheet.parse();
 
       for (const [name, texture] of Object.entries(spritesheet.textures)) {
         // 원본 파일명 그대로 등록 (PascalCase 유지)
         this.textures[name] = texture;
-        
+
         // 확장자만 제거한 키로도 등록 (예: "CrimsonStoneTile.png" → "CrimsonStoneTile")
         const cleanName = name.replace(/\.(png|webp)$/i, '');
         this.textures[cleanName] = texture;
@@ -169,29 +181,35 @@ class GameEngineInstance {
           const TILE_SIZE_RAW = 128;
           const COLUMNS = 5;
           const rows = Math.floor(texture.height / TILE_SIZE_RAW);
-          
+
           for (let row = 0; row < rows; row++) {
             for (let col = 0; col < COLUMNS; col++) {
               const id = row * COLUMNS + col;
               this.textures[`tile_base_${id}`] = new PIXI.Texture({
                 source: texture.source,
                 frame: new PIXI.Rectangle(
-                  texture.frame.x + col * TILE_SIZE_RAW, 
-                  texture.frame.y + row * TILE_SIZE_RAW, 
-                  TILE_SIZE_RAW, 
-                  TILE_SIZE_RAW
-                )
+                  texture.frame.x + col * TILE_SIZE_RAW,
+                  texture.frame.y + row * TILE_SIZE_RAW,
+                  TILE_SIZE_RAW,
+                  TILE_SIZE_RAW,
+                ),
               });
             }
           }
         }
       }
     }
-    
+
     if (this.gameLoop) {
-      this.gameLoop.updateDependencies(this.world, this.pixiApp, this.layers, this.textures, this.lightingFilter);
+      this.gameLoop.updateDependencies(
+        this.world,
+        this.pixiApp,
+        this.layers,
+        this.textures,
+        this.lightingFilter,
+      );
     }
-    
+
     self.postMessage({ type: 'ENGINE_READY' });
   }
 
@@ -212,7 +230,7 @@ class GameEngineInstance {
 
   handleAction(payload: any) {
     const { action, data } = payload;
-    
+
     if (action === 'travelDimension') {
       const targetDepth = payload.targetDepth || 0;
       this.world.player.pos.x = 15;
@@ -220,11 +238,10 @@ class GameEngineInstance {
       this.world.player.visualPos.x = 15;
       this.world.player.visualPos.y = targetDepth;
       this.world.player.stats.depth = targetDepth;
-      
+
       (self as any).postMessage({ type: 'DIMENSION_TRAVEL_COMPLETE' });
       return;
     }
-    
 
     handlePlayerAction(this.world, payload);
   }
@@ -233,7 +250,7 @@ class GameEngineInstance {
   async safeReset(seed: number, dimension: number) {
     if (this.gameLoop) {
       await this.gameLoop.safeReset(seed, dimension);
-      
+
       // 세이브 상태 반영 (메인 스레드용)
       this.world.player.stats.mapSeed = seed;
       this.world.player.stats.dimension = dimension;
@@ -275,16 +292,19 @@ self.addEventListener('message', (e: MessageEvent) => {
     case 'SAVE_REQUEST':
       if (payload.type === 'export') {
         const tileMapBuffer = engine.world.tileMap.serializeToBuffer();
-        (self as any).postMessage({ 
-          type: 'EXPORT_DATA', 
-          payload: {
-            version: 1,
-            timestamp: Date.now(),
-            stats: engine.world.player.stats,
-            position: engine.world.player.pos,
-            tileMapBuffer: tileMapBuffer,
-          } 
-        }, [tileMapBuffer.buffer]);
+        (self as any).postMessage(
+          {
+            type: 'EXPORT_DATA',
+            payload: {
+              version: 1,
+              timestamp: Date.now(),
+              stats: engine.world.player.stats,
+              position: engine.world.player.pos,
+              tileMapBuffer: tileMapBuffer,
+            },
+          },
+          [tileMapBuffer.buffer],
+        );
       }
       break;
   }

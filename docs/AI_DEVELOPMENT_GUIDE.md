@@ -55,10 +55,10 @@ AI는 코드 작성 시 다음과 같은 주석 규칙을 따릅니다.
 AI는 작업의 투명성과 이력 관리를 위해 다음과 같은 GitHub 워크플로우를 권장합니다.
 
 - **이슈 생성**: 큰 작업이나 버그 수정 시작 전, `.github/ISSUE_TEMPLATE`에 정의된 양식에 맞춰 이슈를 생성합니다. (현재 `gh` CLI 미설치 시에는 텍스트로 제안)
-- **브랜치 전략 (Branch Naming)**: 
+- **브랜치 전략 (Branch Naming)**:
   - **규칙**: `{커밋타입}/{이슈번호}-{짧은설명}` 형식을 엄격히 따릅니다.
   - **예시**: `feat/12-new-laboratory-ui`, `fix/15-fix-worker-error`, `refactor/18-clean-up-systems`
-- **Pull Request 작성**: 
+- **Pull Request 작성**:
   - 작업 완료 후 `.github/PULL_REQUEST_TEMPLATE.md` 양식을 준수하여 PR을 작성합니다.
   - 관련 이슈 번호를 명시하여 (`Closes #1`) 자동 링크가 되도록 합니다.
   - 시각적 변경이 있는 경우 스크린샷이나 녹화본 경로를 포함합니다.

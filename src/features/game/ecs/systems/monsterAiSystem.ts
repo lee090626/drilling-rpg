@@ -16,7 +16,7 @@ export const monsterAiSystem = (world: GameWorld, now: number) => {
     // --- Logic LOD (Phase 4) ---
     const px = entities.soa.x[i] / TILE_SIZE;
     const py = entities.soa.y[i] / TILE_SIZE;
-    
+
     const dx = player.pos.x - px;
     const dy = player.pos.y - py;
     const distSq = dx * dx + dy * dy;

@@ -29,7 +29,7 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
         if (stats.unlockedResearchIds.includes(data.relicId)) break;
 
         const hasEnough = Object.entries(artifact.requirements).every(([res, amt]) => {
-          const owned = res === 'goldCoins' ? stats.goldCoins : (stats.inventory[res as any] || 0);
+          const owned = res === 'goldCoins' ? stats.goldCoins : stats.inventory[res as any] || 0;
           return owned >= (amt as number);
         });
 
@@ -39,7 +39,7 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
           if (res === 'goldCoins') stats.goldCoins -= amt as number;
           else (stats.inventory[res as any] as number) -= amt as number;
         });
-        
+
         stats.unlockedResearchIds.push(data.relicId);
       }
       break;

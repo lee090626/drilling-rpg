@@ -53,60 +53,60 @@ const fragmentShader = `
 `;
 
 export class LightingFilter extends PIXI.Filter {
-    constructor() {
-        super({
-            glProgram: PIXI.GlProgram.from({
-                vertex: PIXI.defaultFilterVert,
-                fragment: fragmentShader,
-            }),
-            resources: {
-                uLightingUniforms: {
-                    uDarkness: { value: 0.8, type: 'f32' },
-                    uZoom: { value: 1.0, type: 'f32' },
-                    uCameraPos: { value: new Float32Array([0, 0]), type: 'vec2<f32>' },
-                    uResolution: { value: new Float32Array([800, 600]), type: 'vec2<f32>' },
-                    uLights: { value: new Float32Array(16 * 4), type: 'vec4<f32>', size: 16 },
-                    uLightCount: { value: 0, type: 'i32' },
-                }
-            }
-        });
+  constructor() {
+    super({
+      glProgram: PIXI.GlProgram.from({
+        vertex: PIXI.defaultFilterVert,
+        fragment: fragmentShader,
+      }),
+      resources: {
+        uLightingUniforms: {
+          uDarkness: { value: 0.8, type: 'f32' },
+          uZoom: { value: 1.0, type: 'f32' },
+          uCameraPos: { value: new Float32Array([0, 0]), type: 'vec2<f32>' },
+          uResolution: { value: new Float32Array([800, 600]), type: 'vec2<f32>' },
+          uLights: { value: new Float32Array(16 * 4), type: 'vec4<f32>', size: 16 },
+          uLightCount: { value: 0, type: 'i32' },
+        },
+      },
+    });
+  }
+
+  /** 유니폼 업데이트 메서드 */
+  updateUniforms(
+    darkness: number,
+    zoom: number,
+    cameraX: number,
+    cameraY: number,
+    screenWidth: number,
+    screenHeight: number,
+    lights: number[],
+  ) {
+    // [PixiJS v8] UniformGroup의 실제 유니폼 데이터는 .uniforms 내부에 존재함
+    const u = (this.resources.uLightingUniforms as any).uniforms;
+    if (!u) return;
+
+    u.uDarkness = darkness;
+    u.uZoom = zoom;
+
+    // 데이터가 없는 초기 상태 방지
+    if (u.uCameraPos) {
+      u.uCameraPos[0] = cameraX;
+      u.uCameraPos[1] = cameraY;
     }
 
-    /** 유니폼 업데이트 메서드 */
-    updateUniforms(
-        darkness: number, 
-        zoom: number, 
-        cameraX: number, 
-        cameraY: number, 
-        screenWidth: number, 
-        screenHeight: number,
-        lights: number[]
-    ) {
-        // [PixiJS v8] UniformGroup의 실제 유니폼 데이터는 .uniforms 내부에 존재함
-        const u = (this.resources.uLightingUniforms as any).uniforms;
-        if (!u) return;
-
-        u.uDarkness = darkness;
-        u.uZoom = zoom;
-        
-        // 데이터가 없는 초기 상태 방지
-        if (u.uCameraPos) {
-            u.uCameraPos[0] = cameraX;
-            u.uCameraPos[1] = cameraY;
-        }
-        
-        if (u.uResolution) {
-            u.uResolution[0] = screenWidth;
-            u.uResolution[1] = screenHeight;
-        }
-        
-        u.uLightCount = Math.min(16, Math.floor(lights.length / 4));
-        
-        // 쉐이더 배열 데이터 복사
-        if (u.uLights) {
-            for (let i = 0; i < lights.length && i < u.uLights.length; i++) {
-                u.uLights[i] = lights[i];
-            }
-        }
+    if (u.uResolution) {
+      u.uResolution[0] = screenWidth;
+      u.uResolution[1] = screenHeight;
     }
+
+    u.uLightCount = Math.min(16, Math.floor(lights.length / 4));
+
+    // 쉐이더 배열 데이터 복사
+    if (u.uLights) {
+      for (let i = 0; i < lights.length && i < u.uLights.length; i++) {
+        u.uLights[i] = lights[i];
+      }
+    }
+  }
 }

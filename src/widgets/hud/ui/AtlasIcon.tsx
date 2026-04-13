@@ -15,14 +15,14 @@ export const AtlasIcon: React.FC<Props> = ({ name, alt = '', size = 32, classNam
   if (!meta) return <div style={{ width: size, height: size, backgroundColor: '#333' }} />;
 
   const { atlasIndex, x, y, width, height, atlasWidth, atlasHeight } = meta;
-  
+
   // 컨테이너 크기(size)에 맞게 아틀라스를 축소/확대하는 비율 계산
   const scale = size / Math.max(width, height);
-  
+
   // 배경 크기 계산 (스케일 반영)
   const bgSizeW = atlasWidth * scale;
   const bgSizeH = atlasHeight * scale;
-  
+
   // 부모 컨테이너: 외부 블리딩을 막기 위한 overflow: hidden
   const containerStyle: React.CSSProperties = {
     width: size,

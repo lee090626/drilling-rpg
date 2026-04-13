@@ -32,7 +32,7 @@ export interface UseGachaAnimationReturn {
  */
 export function useGachaAnimation(
   stats: PlayerStats,
-  onSummonRune: (tier: number, count?: number) => void
+  onSummonRune: (tier: number, count?: number) => void,
 ): UseGachaAnimationReturn {
   const [gachaState, setGachaState] = useState<GachaState>('idle');
   const [gachaResults, setGachaResults] = useState<GachaResult[]>([]);
@@ -41,53 +41,59 @@ export function useGachaAnimation(
   const [rouletteItems, setRouletteItems] = useState<RouletteItem[]>([]);
   const [startRouletteAnim, setStartRouletteAnim] = useState(false);
 
-  const checkResults = useCallback((expectedTotal: number) => {
-    // 최신 인벤토리에서 새로 추가된 룬들 추출
-    const newRunes = stats.inventoryRunes.slice(prevRuneCount);
-    setGachaResults(newRunes.map(r => ({ runeId: r.runeId, rarity: r.rarity })));
-    setGachaState('result');
-    setStartRouletteAnim(false);
-  }, [stats.inventoryRunes, prevRuneCount]);
-
-  const performExtraction = useCallback((tierIndex: number, count: number = 1) => {
-    const cost = (500 * Math.pow(2, tierIndex)) * count;
-    if (stats.goldCoins < cost) return;
-
-    const currentCount = stats.inventoryRunes.length;
-    setPrevRuneCount(currentCount);
-    setIsMultiDraw(count > 1);
-    onSummonRune(tierIndex, count);
-    
-    setGachaState('drawing');
-    
-    if (count === 1) {
-      // 단일 뽑기: 룰렛 연출
-      const availableRunes = Object.values(SKILL_RUNES);
-      const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Radiant', 'Legendary', 'Mythic'];
-      const items = Array.from({ length: 60 }, () => ({
-        runeId: availableRunes[Math.floor(Math.random() * availableRunes.length)].id,
-        rarity: rarities[Math.floor(Math.random() * 3)]
-      }));
-      setRouletteItems(items);
+  const checkResults = useCallback(
+    (expectedTotal: number) => {
+      // 최신 인벤토리에서 새로 추가된 룬들 추출
+      const newRunes = stats.inventoryRunes.slice(prevRuneCount);
+      setGachaResults(newRunes.map((r) => ({ runeId: r.runeId, rarity: r.rarity })));
+      setGachaState('result');
       setStartRouletteAnim(false);
-      
-      setTimeout(() => setStartRouletteAnim(true), 50);
-      setTimeout(() => {
-        const newRunes = stats.inventoryRunes.slice(currentCount);
-        setGachaResults(newRunes.map(r => ({ runeId: r.runeId, rarity: r.rarity })));
-        setGachaState('result');
+    },
+    [stats.inventoryRunes, prevRuneCount],
+  );
+
+  const performExtraction = useCallback(
+    (tierIndex: number, count: number = 1) => {
+      const cost = 500 * Math.pow(2, tierIndex) * count;
+      if (stats.goldCoins < cost) return;
+
+      const currentCount = stats.inventoryRunes.length;
+      setPrevRuneCount(currentCount);
+      setIsMultiDraw(count > 1);
+      onSummonRune(tierIndex, count);
+
+      setGachaState('drawing');
+
+      if (count === 1) {
+        // 단일 뽑기: 룰렛 연출
+        const availableRunes = Object.values(SKILL_RUNES);
+        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Radiant', 'Legendary', 'Mythic'];
+        const items = Array.from({ length: 60 }, () => ({
+          runeId: availableRunes[Math.floor(Math.random() * availableRunes.length)].id,
+          rarity: rarities[Math.floor(Math.random() * 3)],
+        }));
+        setRouletteItems(items);
         setStartRouletteAnim(false);
-      }, 5500);
-    } else {
-      // 다중 뽑기: 빠른 연출
-      setTimeout(() => {
-        const newRunes = stats.inventoryRunes.slice(currentCount);
-        setGachaResults(newRunes.map(r => ({ runeId: r.runeId, rarity: r.rarity })));
-        setGachaState('result');
-        setStartRouletteAnim(false);
-      }, 1500);
-    }
-  }, [stats.goldCoins, stats.inventoryRunes, onSummonRune]);
+
+        setTimeout(() => setStartRouletteAnim(true), 50);
+        setTimeout(() => {
+          const newRunes = stats.inventoryRunes.slice(currentCount);
+          setGachaResults(newRunes.map((r) => ({ runeId: r.runeId, rarity: r.rarity })));
+          setGachaState('result');
+          setStartRouletteAnim(false);
+        }, 5500);
+      } else {
+        // 다중 뽑기: 빠른 연출
+        setTimeout(() => {
+          const newRunes = stats.inventoryRunes.slice(currentCount);
+          setGachaResults(newRunes.map((r) => ({ runeId: r.runeId, rarity: r.rarity })));
+          setGachaState('result');
+          setStartRouletteAnim(false);
+        }, 1500);
+      }
+    },
+    [stats.goldCoins, stats.inventoryRunes, onSummonRune],
+  );
 
   const resetGacha = useCallback(() => {
     setGachaState('idle');
@@ -109,10 +115,13 @@ export function useGachaAnimation(
 }
 
 /** 광물별 판매 가격 매핑 (정적 상수) */
-export const RESOURCE_PRICES: Record<string, number> = MINERALS.reduce((acc, mineral) => {
-  acc[mineral.key] = mineral.basePrice;
-  return acc;
-}, {} as Record<string, number>);
+export const RESOURCE_PRICES: Record<string, number> = MINERALS.reduce(
+  (acc, mineral) => {
+    acc[mineral.key] = mineral.basePrice;
+    return acc;
+  },
+  {} as Record<string, number>,
+);
 
 /** 등급별 색상 테마 정의 (정적 상수) */
 export const RARITY_COLORS: Record<string, string> = {

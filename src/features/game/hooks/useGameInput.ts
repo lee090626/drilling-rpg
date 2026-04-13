@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react';
 import { GameWorld } from '@/entities/world/model';
 
 const SHORTCUTS: Record<string, keyof GameWorld['ui']> = {
-  'KeyI': 'isInventoryOpen',
-  'KeyC': 'isStatusOpen',
-  'KeyB': 'isEncyclopediaOpen',
-  'KeyV': 'isElevatorOpen',
-  'KeyR': 'isLaboratoryOpen',
-  'KeyH': 'isGuideOpen',
-  'KeyS': 'isSettingsOpen'
+  KeyI: 'isInventoryOpen',
+  KeyC: 'isStatusOpen',
+  KeyB: 'isEncyclopediaOpen',
+  KeyV: 'isElevatorOpen',
+  KeyR: 'isLaboratoryOpen',
+  KeyH: 'isGuideOpen',
+  KeyS: 'isSettingsOpen',
 };
 
 export function useGameInput(
@@ -17,7 +17,7 @@ export function useGameInput(
   closeAllModals: () => void,
   handleOpen: (modal: keyof GameWorld['ui']) => void,
   handleClose: (modal: keyof GameWorld['ui']) => void,
-  sendToWorker: (type: string, payload?: any) => void
+  sendToWorker: (type: string, payload?: any) => void,
 ) {
   const keyStateRef = useRef<Record<string, boolean>>({});
 
@@ -27,7 +27,7 @@ export function useGameInput(
       if (e.metaKey || e.ctrlKey || e.altKey) return;
 
       const code = e.code;
-      
+
       if (code === 'Escape') {
         if (isAnyModalOpen()) closeAllModals();
         else handleOpen('isSettingsOpen');
@@ -45,7 +45,7 @@ export function useGameInput(
       }
 
       if (isAnyModalOpen()) return;
-      
+
       if (!keyStateRef.current[code]) {
         keyStateRef.current[code] = true;
         sendToWorker('INPUT', { keys: { [code]: true } });

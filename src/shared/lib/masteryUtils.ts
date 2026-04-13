@@ -37,11 +37,11 @@ export const getMasteryBonuses = (stats: PlayerStats) => {
 
   if (!stats.unlockedMasteryPerks) return bonuses;
 
-  stats.unlockedMasteryPerks.forEach(perkId => {
-    const perk = MASTERY_PERKS.find(p => p.id === perkId);
+  stats.unlockedMasteryPerks.forEach((perkId) => {
+    const perk = MASTERY_PERKS.find((p) => p.id === perkId);
     if (!perk) return;
 
-    perk.effects.forEach(effect => {
+    perk.effects.forEach((effect) => {
       switch (effect.type) {
         case 'miningPower':
           if (effect.isMultiplier) bonuses.miningPowerMult += effect.value;
@@ -85,13 +85,13 @@ export const getMasteryBonuses = (stats: PlayerStats) => {
  */
 export const getUnlockedSlotCount = (level: number, maxSlots: number = 0): number => {
   if (maxSlots <= 0) return 0;
-  
+
   // 예시: 1레벨(1개), 5레벨(2개), 10레벨(3개) ...
   let unlocked = 0;
   if (level >= 1) unlocked = 1;
   if (level >= 5) unlocked = 2;
   if (level >= 10) unlocked = 3;
-  
+
   return Math.min(unlocked, maxSlots);
 };
 
