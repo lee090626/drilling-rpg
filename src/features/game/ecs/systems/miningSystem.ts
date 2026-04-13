@@ -172,20 +172,28 @@ function handleTileDestruction(world: GameWorld, x: number, y: number, type: any
   
   // 아이템 드롭 및 숙련도
   if (player.stats.inventory[type as any] !== undefined) {
-    // 로그 Base 5로 확정 드랍 개수 계산 (프레임당 1회 계산된 캐시된 luck 값 재사용)
-    const dropCount = 1 + Math.floor(Math.log(Math.max(1, frameCache.luck)) / Math.log(5));
+    // Stone 타일은 아이템 드랍을 생성하지 않음
+    if (type !== 'stone') {
+        // 사용자 정의 드랍 공식: Luck 200까지 1개 확정, 이후 4배당 1개씩 추가 (파밍 난이도 대폭 강화)
+        const currentLuck = Math.max(1, frameCache.luck);
+        let dropCount = 1;
+        if (currentLuck >= 200) {
+            dropCount = 2 + Math.floor(Math.log(currentLuck / 200) / Math.log(4));
+        }
 
-    for (let i = 0; i < dropCount; i++) {
-        const vx = (Math.random() - 0.5) * 8;
-        const vy = -Math.random() * 6 - 2;
-        world.droppedItemPool.spawn(
-          type as any,
-          x * TILE_SIZE + TILE_SIZE / 2,
-          y * TILE_SIZE - 5,
-          vx,
-          vy
-        );
-    }    
+        for (let i = 0; i < dropCount; i++) {
+            const vx = (Math.random() - 0.5) * 8;
+            const vy = -Math.random() * 6 - 2;
+            world.droppedItemPool.spawn(
+              type as any,
+              x * TILE_SIZE + TILE_SIZE / 2,
+              y * TILE_SIZE - 5,
+              vx,
+              vy
+            );
+        }    
+    }
+    
     if (!player.stats.discoveredMinerals.includes(type)) player.stats.discoveredMinerals.push(type);
 
     // 숙련도 처리 (가공된 아이템 제외)

@@ -389,17 +389,19 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
 
           {stats.discoveredMinerals.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {stats.discoveredMinerals.map((tileKey) => (
-                <TileMasteryCard 
-                   key={tileKey}
-                   tileKey={tileKey}
-                   mastery={(stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey)}
-                   unlockedPerks={stats.unlockedMasteryPerks}
-                   hoveredTooltipId={hoveredTooltip?.id}
-                   onHoverPerk={handleHoverPerk}
-                   onLeavePerk={() => setHoveredTooltip(null)}
-                />
-              ))}
+              {stats.discoveredMinerals
+                .filter((tileKey) => MINERALS.some((m) => m.key === tileKey))
+                .map((tileKey) => (
+                  <TileMasteryCard 
+                     key={tileKey}
+                     tileKey={tileKey}
+                     mastery={(stats.tileMastery && stats.tileMastery[tileKey]) || createInitialMasteryState(tileKey)}
+                     unlockedPerks={stats.unlockedMasteryPerks}
+                     hoveredTooltipId={hoveredTooltip?.id}
+                     onHoverPerk={handleHoverPerk}
+                     onLeavePerk={() => setHoveredTooltip(null)}
+                  />
+                ))}
             </div>
           ) : (
             <div className="py-20 flex flex-col items-center justify-center bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800 opacity-30">
