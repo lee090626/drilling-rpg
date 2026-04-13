@@ -53,6 +53,8 @@ export function useGameWorker(
         // Zustand Update
         if (payload.stats) useGameStore.getState().updateStats(payload.stats);
         if (payload.ui) useGameStore.getState().updateUI(payload.ui);
+        if (payload.boss) useGameStore.getState().updateBoss(payload.boss);
+        else if (payload.boss === null) useGameStore.getState().updateBoss(null);
       } else if (type === 'ENGINE_READY') {
         setIsEngineReady(true);
         console.log('[Main] Engine is ready to render!');

@@ -40,10 +40,11 @@ export const spawnSystem = (world: GameWorld) => {
         
         if (defIdx !== -1) {
             const bossDef = MONSTER_LIST[defIdx];
+            // 5x5 크기(640px)이므로 중앙(15타일 지점)을 기준으로 좌측으로 2.5타일 이동하여 스폰
             entities.create(
                 2, // type: boss
-                spawnX * TILE_SIZE - (2 * TILE_SIZE), 
-                spawnY * TILE_SIZE, 
+                spawnX * TILE_SIZE - (2.5 * TILE_SIZE), 
+                spawnY * TILE_SIZE - (2.5 * TILE_SIZE), 
                 bossId,
                 defIdx
             );
@@ -55,6 +56,7 @@ export const spawnSystem = (world: GameWorld) => {
             entities.soa.attackCooldown[idx] = bossDef.stats.attackCooldown ?? 2500;
             entities.soa.width[idx] = TILE_SIZE * 5;
             entities.soa.height[idx] = TILE_SIZE * 5;
+            entities.soa.lastAttackTime[idx] = Date.now(); // 초기화
             
             if (!player.stats.encounteredBossIds.includes(bossId)) {
                 player.stats.encounteredBossIds.push(bossId);

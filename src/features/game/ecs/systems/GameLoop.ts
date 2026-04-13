@@ -12,6 +12,8 @@ import { renderSystem } from '@/features/game/ecs/systems/renderSystem';
 import { statusSystem } from '@/features/game/ecs/systems/statusSystem';
 import { orosAiSystem } from '@/features/game/ecs/systems/orosAiSystem';
 import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
+import { bossBehaviorSystem } from '@/features/game/ecs/systems/bossBehaviorSystem';
+import { projectileSystem } from '@/features/game/ecs/systems/projectileSystem';
 import * as PIXI from 'pixi.js';
 import { TILE_SIZE } from '@/shared/config/constants';
 
@@ -151,6 +153,8 @@ export class GameLoop {
       spawnSystem(this.world);
       monsterAiSystem(this.world, now);
       orosAiSystem(this.world, now);
+      bossBehaviorSystem(this.world, deltaTime, now);
+      projectileSystem(this.world, deltaTime, now);
       combatSystem(this.world, deltaTime, now);
       effectSystem(this.world, deltaTime);
       tutorialSystem(this.world);
@@ -168,6 +172,7 @@ export class GameLoop {
           payload: {
             stats: this.world.player.stats,
             ui: this.world.ui,
+            boss: this.world.bossCombatStatus,
             // Optimization Monitoring
             metrics: {
               blockedDrops: this.world.droppedItemPool.blockedDropCount

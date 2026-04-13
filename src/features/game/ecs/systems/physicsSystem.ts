@@ -167,6 +167,16 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   player.visualPos.x += (player.pos.x - player.visualPos.x) * lerpFactor;
   player.visualPos.y += (player.pos.y - player.visualPos.y) * lerpFactor;
 
+  // [신규] 환경적인 힘 적용 (Storm Surge 등)
+  if (world.environmentalForce.vx !== 0 || world.environmentalForce.vy !== 0) {
+    player.pos.x += world.environmentalForce.vx;
+    player.pos.y += world.environmentalForce.vy;
+    
+    // 월드 경계 제한 (0 ~ 64, BASE_DEPTH ~ 3000)
+    player.pos.x = Math.max(0, Math.min(64 - 1, player.pos.x));
+    player.pos.y = Math.max(BASE_DEPTH, Math.min(3000 - 1, player.pos.y));
+  }
+
   // 3. 펫 드론 추적 (관성 이동 및 띄워놓기)
   if (player.stats.equippedDroneId) {
     if (!world.activeDrone || world.activeDrone.id !== player.stats.equippedDroneId) {

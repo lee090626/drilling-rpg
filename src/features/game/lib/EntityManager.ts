@@ -10,7 +10,7 @@ export interface EntitySoA {
   generation: Uint16Array;
   
   // 기본 정보
-  type: Uint8Array;        // 0: none, 1: monster, 2: boss, 3: npc, 4: object
+  type: Uint8Array;        // 0: none, 1: monster, 2: boss, 3: npc, 4: object, 5: projectile
   state: Uint8Array;       // 0: idle, 1: chase, 2: attack
   
   // 물리 데이터 (World 좌표)

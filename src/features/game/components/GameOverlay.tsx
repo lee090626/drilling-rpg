@@ -13,6 +13,7 @@ import Encyclopedia from '@/widgets/encyclopedia/Encyclopedia';
 import Laboratory from '@/widgets/laboratory/Laboratory';
 import GuideWindow from '@/widgets/guide/GuideWindow';
 import ToastContainer from '@/shared/ui/ToastContainer';
+import BossHealthBar from './BossHealthBar';
 import { useGameStore } from '@/shared/lib/store';
 
 interface GameOverlayProps {
@@ -51,6 +52,9 @@ export default function GameOverlay({
 
   return (
     <div className="absolute inset-0 z-20 pointer-events-none">
+      {/* 전역 보스 체력 바 */}
+      <BossHealthBar />
+
       <div className="pointer-events-auto w-full h-full">
         <Hud 
           stats={currentStats} 

@@ -419,7 +419,7 @@ export interface Entity {
   /** 엔티티 고유 ID */
   id: string;
   /** 엔티티 종류 */
-  type: 'npc' | 'object' | 'monster' | 'boss';
+  type: 'npc' | 'object' | 'monster' | 'boss' | 'projectile';
   /** 표시될 이름 */
   name: string;
   /** 가로 좌표 (타일 단위) */

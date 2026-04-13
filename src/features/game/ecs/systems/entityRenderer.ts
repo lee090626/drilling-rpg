@@ -103,17 +103,32 @@ function updateEntitySpriteFromSoA(idx: number, soa: any, player: any, container
     // 몬스터 종류에 따른 텍스처 교체 (SoA 인덱스 활용)
     const defIdx = soa.monsterDefIndex[idx];
     const mobDef = MONSTERS[defIdx];
-    
+
     if (mobDef) {
         const texture = textures[mobDef.imagePath] || PIXI.Texture.WHITE;
-        body.tint = 0xffffff; // 엔티티 정의가 있으면 항상 틴트 초기화 (빨간 상자 방지)
+        body.tint = 0xffffff;
         
         if (body.texture !== texture) {
             body.texture = texture;
-            // 텍스처가 바뀌면 스프라이트 크기를 엔티티 설정에 맞춰 재조정
             body.width = ew;
             body.height = eh;
         }
+    } else if (type === 5) { // Projectile
+        // 투사체 전용 시각 효과
+        body.texture = textures['Fireball.png'] || textures['Fireball'] || PIXI.Texture.WHITE;
+        if (body.texture === PIXI.Texture.WHITE) {
+          body.tint = 0xffaa00; // 텍스처 없을 시 주황색 틴트
+        } else {
+          body.tint = 0xffffff;
+        }
+        body.width = ew;
+        body.height = eh;
+        
+        // 투사체 회전 (진행 방향 루틴)
+        const angle = Math.atan2(soa.vy[idx], soa.vx[idx]);
+        body.rotation = angle + Math.PI / 2;
+        body.anchor.set(0.5, 0.5);
+        body.position.set(ew / 2, eh / 2);
     }
 
     // 피격 효과 (Hit Flash)
@@ -322,7 +337,12 @@ function createEntityContainer(entity: any, textures: { [key: string]: PIXI.Text
   if (!isPlayer) {
     const hpBar = new PIXI.Graphics();
     hpBar.label = 'hpBar';
-    hpBar.y = 0; // updateHPBarFromSoA에서 entH 기준으로 내부 위치 계산
+    
+    // 투사체는 체력바 제외
+    if (entity.type === 'projectile') {
+      hpBar.visible = false;
+    }
+    
     container.addChild(hpBar);
 
     if (entity.type === 'boss') {

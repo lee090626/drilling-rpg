@@ -160,6 +160,17 @@ export interface GameWorld {
   spatialHash: SpatialHash;
   /** 이미 몬스터 생성이 확인된 타일 좌표 세트 ("x,y") */
   spawnedCoords: Set<string>;
+  /** 환경적인 힘 (보스의 인척력 등) */
+  environmentalForce: { vx: number, vy: number };
+  /** 보스 전투 상태 (UI 동기화용) */
+  bossCombatStatus: {
+    active: boolean;
+    id: string | null;
+    name: string | null;
+    hp: number;
+    maxHp: number;
+    phase: number;
+  };
 }
 
 /**
@@ -280,6 +291,15 @@ export const createInitialWorld = (seed: number): GameWorld => {
     shake: 0,
     spatialHash: new SpatialHash(120),
     spawnedCoords: new Set(),
+    environmentalForce: { vx: 0, vy: 0 },
+    bossCombatStatus: {
+      active: false,
+      id: null,
+      name: null,
+      hp: 0,
+      maxHp: 0,
+      phase: 1,
+    },
   };
 
   result.particles = result.particlePool.getPool();
