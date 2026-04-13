@@ -217,35 +217,46 @@ export interface MasteryState {
 }
 
 /**
- * 드릴 또는 곡괭이 장비의 기본 명세를 정의합니다.
+ * 장비의 부위를 정의합니다.
  */
-export interface Drill {
+export type EquipmentPart = 'drill' | 'helmet' | 'armor' | 'boots';
+
+/**
+ * 장비가 제공하는 스탯 정보를 정의합니다.
+ */
+export interface EquipmentStats {
+  power?: number;
+  maxHp?: number;
+  moveSpeed?: number;
+  defense?: number;
+}
+
+/**
+ * 드릴, 투구, 갑옷, 신발 등 모든 장비의 기본 명세를 정의합니다.
+ */
+export interface Equipment {
   /** 장비 고유 ID */
   id: string;
   /** 장비 이름 */
   name: string;
   /** 장비 설명 */
   description: string;
-  /** UI에 표시될 아이콘 */
+  /** 부위 */
+  part: EquipmentPart;
+  /** 서클 레벨 (Circle 2-9) */
+  circle: number;
+  /** UI에 표시될 아이콘 (문자열 또는 이모지) */
   icon: string;
-  /** 장비 이미지 (StaticImageData 또는 HTMLImageElement) */
-  image?: any;
-  /** 장비 종류 */
-  equipmentType: 'drill' | 'pickaxe';
-  /** 기본 채굴 위력 */
-  basePower: number;
-  /** 기본 공격 간격 (밀리초 단위) */
-  cooldownMs: number;
-  /** 장착 시 부여되는 특수 효과 */
-  specialEffect?: 'lucky' | 'explosive' | 'efficient' | 'speed';
-  /** 이동 속도 배수 */
-  moveSpeedMult?: number;
-  /** 채굴 범위 (미래 확장을 위한 옵션) */
-  miningArea?: number;
-  /** 구매/제작 시 필요한 재료 및 비용 */
+  /** 장비 이미지 (스프라이트 키) */
+  image?: string;
+  /** 장비가 제공하는 능력치 */
+  stats: EquipmentStats;
+  /** 제작 시 필요한 재료 및 비용 */
   price?: { [key: string]: number };
-  /** 장비에 장착 가능한 최대 스킬룬 슬롯 수 */
+  /** 장비에 장착 가능한 최대 스킬룬 슬롯 수 (주로 드릴) */
   maxSkillSlots?: number;
+  /** 장착 시 부여되는 특수 효과 (옵션) */
+  specialEffect?: string;
 }
 
 /**
@@ -320,13 +331,15 @@ export interface SkillRuneItem {
  * 플레이어의 전체적인 통계 및 진행 상태를 저장합니다.
  */
 export interface PlayerStats {
-  /** 현재 도달한 깊이 (y 좌표 기반) */
-  depth: number;
-
-  /** 현재 장착 중인 드릴의 ID */
-  equippedDrillId: string;
-  /** 보유하고 있는 모든 드릴의 ID 목록 */
-  ownedDrillIds: string[];
+  /** 현재 장착 중인 장비 정보 */
+  equipment: {
+    drillId: string | null;
+    helmetId: string | null;
+    armorId: string | null;
+    bootsId: string | null;
+  };
+  /** 보유하고 있는 모든 장비의 ID 목록 */
+  ownedEquipmentIds: string[];
 
   /** 현재 장착 중인 드론의 ID (장착 해제 시 null) */
   equippedDroneId: string | null;
@@ -357,6 +370,10 @@ export interface PlayerStats {
   power: number;
   /** 캐릭터 기본 이동 속도 (기본 100) */
   moveSpeed: number;
+  /** 캐릭터 기본 방어력 */
+  defense: number;
+  /** 캐릭터 기본 행운 (기본 0) */
+  luck: number;
 
   /** 자원 및 아이템 */
   /** 광물 인벤토리 */
@@ -375,8 +392,8 @@ export interface PlayerStats {
   /** 현재 탐험 중인 차원 번호 */
   dimension: number;
 
-  /** 각 드릴별 숙련도 및 스킬 장착 상태 관리 */
-  equipmentStates: { [drillId: string]: MasteryState };
+  /** 각 장비별 숙련도 및 스토리지 관리 (ID 기반) */
+  equipmentStates: { [eqId: string]: MasteryState };
 
   /** 각 타일 종류별 숙련도 관리 */
   tileMastery: { [tileType: string]: MasteryState };
@@ -387,9 +404,6 @@ export interface PlayerStats {
   /** 해금된 마스터리 돌파 특성 ID 목록 */
   unlockedMasteryPerks: string[];
 
-  /** 시드 기반으로 생성된 몬스터 중 처치된 몹 ID 목록 (영구 사망, 오토스폰방지) */
-  killedMonsterIds?: string[];
-
   /** 지옥의 정수 등 수집 가능한 아이템의 누적 획득량 기록 */
   collectionHistory?: Record<string, number>;
 
@@ -397,6 +411,9 @@ export interface PlayerStats {
   activeEffects?: ActiveEffect[];
   /** [튜토리얼] 이미 트리거된 가이드 ID 목록 */
   tutorialFlags?: Record<string, boolean>;
+
+  /** [Type Safety Bridge] 동적 필드 참조 허용 */
+  [key: string]: any;
 }
 
 /**
