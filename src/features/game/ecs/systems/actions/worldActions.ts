@@ -51,7 +51,7 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
     }
 
     case 'equip':
-      if (data.type === 'drill') stats.equippedDrillId = data.id;
+      if (data.type === 'drill') stats.equipment.drillId = data.id;
       else if (data.type === 'artifact') stats.equippedArtifactId = data.id;
       break;
   }

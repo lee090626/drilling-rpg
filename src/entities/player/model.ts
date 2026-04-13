@@ -38,8 +38,14 @@ export interface Player {
 export const createInitialPlayer = (seed: number): Player => ({
   stats: {
     depth: 0,
-    equippedDrillId: 'rusty_drill',
-    ownedDrillIds: ['rusty_drill'],
+    // 장비 상태
+    equipment: {
+      drillId: null,
+      helmetId: null,
+      armorId: null,
+      bootsId: null,
+    },
+    ownedEquipmentIds: [],
     maxDepthReached: 0,
     artifacts: [],
     equippedArtifactId: null,
@@ -48,6 +54,8 @@ export const createInitialPlayer = (seed: number): Player => ({
     maxHp: 200,
     power: 10,
     moveSpeed: 100,
+    defense: 0,
+    luck: 0,
     inventory: {
       crimsonstone: 0,
       galestone: 0,

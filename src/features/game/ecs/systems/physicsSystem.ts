@@ -1,6 +1,6 @@
 import { GameWorld } from '@/entities/world/model';
 import { TILE_SIZE, BASE_DEPTH, MOVEMENT_DELAY_MS } from '@/shared/config/constants';
-import { DRILLS } from '@/shared/config/drillData';
+import { EQUIPMENTS } from '@/shared/config/equipmentData';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { createFloatingText } from '@/shared/lib/effectUtils';
 import { calculateArtifactBonuses } from '@/shared/lib/artifactUtils';
@@ -19,50 +19,24 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   }
 
   // 1. 부드러운 그리드 기반 이동 및 채굴 전환 로직
-  const drill = DRILLS[player.stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const artifactBonuses = calculateArtifactBonuses(player.stats);
-
-  // 룬 시스템에 의한 이동 속도 보너스 합산 (백분율 값으로 치환)
-  const runeSpeedMult = getTotalRuneStat(player.stats, 'moveSpeed') * 0.01;
-
-  // 최종 이동 딜레이 계산 (기본 속도 스탯 * 장비 배율 * 내실 보너스 + 룬 보너스)
-  const baseSpeedStat = player.stats.moveSpeed || 100;
-  // 내실 보너스는 절대 수치 합산 후 비율 적용
-  const artifactSpeedBonus = artifactBonuses.moveSpeed;
-  const baseSpeedMult = (baseSpeedStat + artifactSpeedBonus) / 100;
-  const drillSpeedMult = drill.moveSpeedMult || 1;
-
+  // 1. 부드러운 그리드 기반 이동 및 채굴 전환 로직
+  // 최종 이동 딜레이 계산 (합산된 stats.moveSpeed 기준)
+  const baseSpeedMult = (player.stats.moveSpeed || 100) / 100;
+  
   // 상태 이상에 따른 속도 변조 (SLOW: 0.5배, BUFF_SPEED: 1.5배)
   let statusSpeedMult = 1.0;
   if (player.stats.activeEffects) {
-    // SLOW 효과 확인
-    const hasSlow = player.stats.activeEffects.some((e) => e.type === 'SLOW');
-    if (hasSlow) statusSpeedMult *= 0.5;
-
-    // BUFF_SPEED 효과 확인
-    const hasSpeedBuff = player.stats.activeEffects.some((e) => e.type === 'BUFF_SPEED');
-    if (hasSpeedBuff) statusSpeedMult *= 1.5;
-
-    // FREEZE (빙결): 순수하게 속도 대폭 감소 (statusSystem에서 행동불능 해제 필요)
-    const hasFreeze = player.stats.activeEffects.some((e) => e.type === 'FREEZE');
-    if (hasFreeze) statusSpeedMult *= 0.2;
+    if (player.stats.activeEffects.some((e) => e.type === 'SLOW')) statusSpeedMult *= 0.5;
+    if (player.stats.activeEffects.some((e) => e.type === 'BUFF_SPEED')) statusSpeedMult *= 1.5;
+    if (player.stats.activeEffects.some((e) => e.type === 'FREEZE')) statusSpeedMult *= 0.2;
   }
 
-  // 마스터리 돌파: 일시적 속도 버프 처리
-  let masterySpeedMult = 1.0;
+  // 마스터리 돌파: 일시적 속도 버프/디버프 처리
   if (now < player.buffs.speedBoostUntil) {
-    masterySpeedMult = player.buffs.speedBoostMultiplier;
+    statusSpeedMult *= player.buffs.speedBoostMultiplier;
   }
 
-  // 마스터리 돌파: 영구 속도 보너스 (Dirt Lv.200)
-  let permanentSpeedMult = 1.0;
-  if (player.stats.unlockedMasteryPerks?.includes('perk_dirt_200')) {
-    permanentSpeedMult = 1.1; // 10% 증가
-  }
-
-  const divisor =
-    baseSpeedMult * drillSpeedMult * statusSpeedMult * masterySpeedMult * permanentSpeedMult +
-      runeSpeedMult || 1;
+  const divisor = baseSpeedMult * statusSpeedMult || 1;
   const MOVEMENT_DELAY = MOVEMENT_DELAY_MS / divisor;
 
   // 시각적 보간 속도 설정

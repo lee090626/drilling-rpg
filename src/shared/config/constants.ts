@@ -1,5 +1,5 @@
 export const TILE_SIZE = 64;
-export const CAMERA_SCALE = 2.0;
+export const CAMERA_SCALE = 1.5;
 export const BASE_DEPTH = 10;
 export const GAME_LOOP_MS = 16; // 60 FPS target
 export const MOVEMENT_DELAY_MS = 120;

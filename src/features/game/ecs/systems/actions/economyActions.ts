@@ -40,8 +40,8 @@ export const handleEconomyAction = (world: GameWorld, action: string, data: any)
             (stats.inventory as any)[res] -= amt as number;
         });
       }
-      if (data.res.drillId && !stats.ownedDrillIds.includes(data.res.drillId)) {
-        stats.ownedDrillIds.push(data.res.drillId);
+      if (data.res.drillId && !stats.ownedEquipmentIds.includes(data.res.drillId)) {
+        stats.ownedEquipmentIds.push(data.res.drillId);
         if (!stats.equipmentStates[data.res.drillId]) {
           stats.equipmentStates[data.res.drillId] = createInitialEquipmentState(data.res.drillId);
         }

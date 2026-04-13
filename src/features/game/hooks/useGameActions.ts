@@ -3,7 +3,6 @@ import { GameWorld } from '@/entities/world/model';
 import { saveManager, SaveData } from '@/shared/lib/saveManager';
 import { CraftRequirements, CraftResult, Rarity } from '@/shared/types/game';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
-import { DRILLS } from '@/shared/config/drillData';
 
 import { createInitialMasteryState } from '@/shared/lib/masteryUtils';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
@@ -55,12 +54,12 @@ export const useGameActions = (
     [sendToWorker, updateUi],
   );
 
-  /** 드릴 장착 변경 */
-  const handleEquipDrill = useCallback(
-    (id: string) => {
+  /** 장비(드릴, 투구, 갑옷, 신발) 장착 변경 */
+  const handleEquipEquipment = useCallback(
+    (id: string, part: string) => {
       sendToWorker('ACTION', {
         action: 'equip',
-        data: { type: 'drill', id },
+        data: { id, part },
       });
       updateUi();
     },
@@ -167,7 +166,7 @@ export const useGameActions = (
     handleSell,
     handleSummonRune,
     handleSynthesizeRunes,
-    handleEquipDrill,
+    handleEquipEquipment,
     handleEquipRune,
     handleUnequipRune,
     handleSelectCheckpoint,

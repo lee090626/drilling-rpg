@@ -46,8 +46,10 @@ export const handleRuneAction = (world: GameWorld, action: string, data: any) =>
 
     case 'equipRune': {
       const { runeInstanceId, slotIndex } = data;
-      const drillId = stats.equippedDrillId;
-      const state = stats.equipmentStates[drillId];
+      const drillId = stats.equipment.drillId;
+      if (!drillId) return;
+
+      const state = stats.equipmentStates[drillId as string];
       if (state) {
         if (!state.slottedRunes) state.slottedRunes = [];
         const prevIdx = state.slottedRunes.indexOf(runeInstanceId);

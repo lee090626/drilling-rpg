@@ -206,8 +206,13 @@ export const createInitialWorld = (seed: number): GameWorld => {
     player: {
       stats: {
         depth: 0,
-        equippedDrillId: 'rusty_drill',
-        ownedDrillIds: ['rusty_drill'],
+        equipment: {
+          drillId: null,
+          helmetId: null,
+          armorId: null,
+          bootsId: null,
+        },
+        ownedEquipmentIds: [],
         equippedDroneId: null,
         ownedDroneIds: [],
         activeSmeltingJobs: [],
@@ -218,7 +223,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         artifactCooldowns: {},
         hp: 200,
         maxHp: 200,
-        power: 10,
+        power: 20,
         moveSpeed: 100,
         inventory: {
           crimsonstone: 0,
@@ -258,6 +263,8 @@ export const createInitialWorld = (seed: number): GameWorld => {
         tileMastery: {},
         unlockedMasteryPerks: [],
         collectionHistory: {},
+        defense: 0,
+        luck: 0,
       },
       pos: { x: 15, y: 8 },
       velocity: { x: 0, y: 0 },
