@@ -192,6 +192,78 @@
         "y": 0.5
       }
     },
+    "WindTornSoul.png": {
+      "frame": {
+        "x": 1691,
+        "y": 1073,
+        "w": 210,
+        "h": 172
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 23,
+        "y": 42,
+        "w": 210,
+        "h": 172
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "GaleBat.png": {
+      "frame": {
+        "x": 1691,
+        "y": 1251,
+        "w": 178,
+        "h": 154
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 39,
+        "y": 51,
+        "w": 178,
+        "h": 154
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "LustfulWhisperer.png": {
+      "frame": {
+        "x": 1691,
+        "y": 1411,
+        "w": 176,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 43,
+        "w": 176,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
     "CrimsonStoneTile.png": {
       "frame": {
         "x": 849,
@@ -314,8 +386,8 @@
     },
     "boss_core.png": {
       "frame": {
-        "x": 1691,
-        "y": 1073,
+        "x": 1204,
+        "y": 1587,
         "w": 128,
         "h": 128
       },
@@ -338,8 +410,8 @@
     },
     "boss_skin.png": {
       "frame": {
-        "x": 1691,
-        "y": 1073,
+        "x": 1204,
+        "y": 1587,
         "w": 128,
         "h": 128
       },
