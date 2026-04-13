@@ -251,10 +251,10 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                             {info?.nameKo || info?.name || artifactId}
                           </span>
                           <span className="text-[9px] text-emerald-400 font-bold leading-tight">
-                            ACTIVE PASSIVE
+                            Active Passive
                           </span>
                         </div>
-                        <div className="text-[10px] text-zinc-500 italic">
+                        <div className="text-[10px] text-zinc-500">
                            Constant
                         </div>
                       </div>
@@ -262,7 +262,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                   );
                 })
               ) : (
-                <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest uppercase">
+                <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest">
                   No Unique Artifacts Found
                 </div>
               )}
@@ -362,7 +362,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                     );
                   })}
                   {!(equippedDrill.maxSkillSlots) && (
-                    <span className="text-[9px] md:text-[10px] text-zinc-600 italic">No Slots Available</span>
+                    <span className="text-[9px] md:text-[10px] text-zinc-600">No Slots Available</span>
                   )}
                 </div>
               </div>
@@ -378,7 +378,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
               <span className="text-xl">⛏️</span>
-              <h3 className="text-lg md:text-[22px] font-black text-white tracking-tighter uppercase italic">
+              <h3 className="text-lg md:text-[22px] font-black text-white tracking-tighter">
                 Tile Mastery <span className="text-emerald-500 ml-2">Progress</span>
               </h3>
             </div>
@@ -391,6 +391,11 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {stats.discoveredMinerals
                 .filter((tileKey) => MINERALS.some((m) => m.key === tileKey))
+                .sort((a, b) => {
+                  const idxA = MINERALS.findIndex(m => m.key === a);
+                  const idxB = MINERALS.findIndex(m => m.key === b);
+                  return idxA - idxB;
+                })
                 .map((tileKey) => (
                   <TileMasteryCard 
                      key={tileKey}
@@ -406,7 +411,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
           ) : (
             <div className="py-20 flex flex-col items-center justify-center bg-zinc-950/50 rounded-3xl border border-dashed border-zinc-800 opacity-30">
               <span className="text-4xl mb-4">🔦</span>
-              <span className="text-xs font-black tracking-widest uppercase">Start mining to unlock Tile Mastery!</span>
+              <span className="text-xs font-black tracking-widest">Start mining to unlock Tile Mastery!</span>
             </div>
           )}
         </div>
