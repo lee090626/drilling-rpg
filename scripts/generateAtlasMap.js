@@ -22,20 +22,9 @@ const SPECIAL_OVERRIDES = {
   'BookIcon.webp': 'BookIcon',
   'SettingsIcon.webp': 'SettingsIcon',
 
-  // --- Minerals/Tiles (하위 호환 및 명확성을 위한 명명) ---
-  'dirt.png': 'DirtTile',
-  'stone.png': 'StoneTile',
-  'coal.png': 'CoalTile',
-  'iron.png': 'IronTile',
-  'gold.png': 'GoldTile',
-  'diamond.png': 'DiamondTile',
-  'emerald.png': 'EmeraldTile',
-  'ruby.png': 'RubyTile',
-  'sapphire.png': 'SapphireTile',
-  'uranium.png': 'UraniumTile',
-  'obsidian.png': 'ObsidianTile',
-  'wall.png': 'WallTile',
-  'dungeon_bricks.png': 'DungeonBricksTile',
+  // --- Tiles (Snake to Pascal) ---
+  'boss_core.png': 'BossCoreTile',
+  'boss_skin.png': 'BossSkinTile',
 
   // --- Typo Correction ---
   'EmeralDrill.png': 'EmeraldDrill',

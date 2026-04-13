@@ -28,6 +28,7 @@ interface HudProps {
   onOpenElevator?: () => void;
   onOpenSettings?: () => void;
   onOpenGuide?: () => void;
+  onOpenAltar?: () => void;
 }
 
 /**
@@ -41,7 +42,8 @@ const Hud: React.FC<HudProps> = React.memo(({
   onOpenEncyclopedia, 
   onOpenElevator,
   onOpenSettings,
-  onOpenGuide
+  onOpenGuide,
+  onOpenAltar
 }) => {
   const hpPercent = Math.max(0, (stats.hp / stats.maxHp) * 100);
   const config = getCircleConfig(stats.depth);
@@ -51,6 +53,7 @@ const Hud: React.FC<HudProps> = React.memo(({
     { label: 'Status', key: 'C', iconKey: 'StatusIcon', onClick: onOpenStatus, color: '#eab308' },
     { label: 'Inventory', key: 'I', iconKey: 'InventoryIcon', onClick: onOpenInventory, color: '#f59e0b' },
     { label: 'Book', key: 'B', iconKey: 'BookIcon', onClick: onOpenEncyclopedia, color: '#a855f7' },
+    { label: 'Altar', key: 'A', icon: '🔥', onClick: onOpenAltar, color: '#f97316' },
     { label: 'Setting', key: 'S', iconKey: 'SettingsIcon', onClick: onOpenSettings, color: '#94a3b8' },
     { label: 'Guide', key: 'H', icon: '❓', onClick: onOpenGuide, color: '#22d3ee' },
   ], [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide]);
@@ -117,44 +120,7 @@ const Hud: React.FC<HudProps> = React.memo(({
               </div>
           </div>
 
-          {/* 하단 좌측: 현재 장착 유물 (Artifact) */}
-          {stats.equippedArtifactId && (
-            <div className="hidden md:flex bg-zinc-900/60 backdrop-blur-md border border-purple-500/30 p-3 md:p-4 rounded-xl md:rounded-2xl items-center gap-3 md:gap-4 shadow-xl z-10 opacity-90 pointer-events-auto">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-zinc-800 rounded-lg md:rounded-xl flex items-center justify-center border border-purple-500/20 relative overflow-hidden group">
-                {(() => {
-                  const config = ARTIFACT_DATA[stats.equippedArtifactId!];
-                  if (!config) return null;
-                  const lastUsed = stats.artifactCooldowns[stats.equippedArtifactId!] || 0;
-                  const elapsed = Date.now() - lastUsed;
-                  const progress = Math.min(100, (elapsed / config.cooldownMs) * 100);
-                  const isReady = progress >= 100;
-
-                  return (
-                    <>
-                      <span className={`text-2xl md:text-3xl transition-transform ${isReady ? 'group-hover:scale-125' : 'grayscale'}`}>
-                        {config.icon}
-                      </span>
-                      {!isReady && (
-                        <div 
-                          className="absolute bottom-0 left-0 w-full bg-purple-600/40 transition-all duration-300"
-                          style={{ height: `${100 - progress}%` }}
-                        >
-                          <div className="absolute top-0 left-0 w-full h-px bg-purple-400 animate-pulse" />
-                        </div>
-                      )}
-                      <div className="absolute top-0 right-0 bg-purple-600 text-white text-[8px] font-black px-1 rounded-bl shadow-sm">Q</div>
-                    </>
-                  );
-                })()}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-purple-400 font-bold text-[10px] md:text-xs tracking-tighter uppercase leading-tight">Artifact Active</span>
-                <span className="text-white font-black text-xs md:text-base leading-tight">
-                  {ARTIFACT_DATA[stats.equippedArtifactId!]?.name}
-                </span>
-              </div>
-            </div>
-          )}
+          {/* Active Artifact Slot (Removed as all artifacts are now passive growth boosters) */}
         </div>
 
         {/* 하단 중앙: 퀵 액세스 네비게이션 메뉴 (정중앙 절대 위치) */}

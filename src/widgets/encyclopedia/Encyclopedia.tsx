@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
+
 import { PlayerStats } from '@/shared/types/game';
 import { MINERALS } from '@/shared/config/mineralData';
-import { BOSSES } from '@/shared/config/bossData';
-import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
+import { MONSTER_LIST } from '@/shared/config/monsterData';
+import { CIRCLES } from '@/shared/config/circleData';
+import { ARTIFACT_DATA, ARTIFACT_LIST } from '@/shared/config/artifactData';
+
+import AtlasIcon from '../hud/ui/AtlasIcon';
 
 interface EncyclopediaProps {
   stats: PlayerStats;
   onClose: () => void;
 }
 
+const BOSSES = MONSTER_LIST.filter(m => m.type === 'boss').map(m => {
+  const circle = CIRCLES.find(c => c.boss?.id === m.id);
+  return {
+    id: m.id,
+    name: m.nameKo || m.name,
+    icon: m.imagePath,
+    depth: circle ? circle.depthEnd : 0, 
+    description: m.description,
+    imagePath: m.imagePath,
+    stats: m.stats
+  };
+});
+
 function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
-  const [activeTab, setActiveTab] = useState<'minerals' | 'bosses'>('minerals');
+  const [activeTab, setActiveTab] = useState<'minerals' | 'bosses' | 'artifact'>('minerals');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const discoveredCount = stats.discoveredMinerals.length;
@@ -46,6 +62,12 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
               className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'bosses' ? 'bg-zinc-800 text-purple-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               Bosses
+            </button>
+            <button
+              onClick={() => { setActiveTab('artifact'); setSelectedId(null); }}
+              className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'artifact' ? 'bg-zinc-800 text-orange-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+              Artifact
             </button>
           </div>
         </div>
@@ -103,7 +125,7 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                   </button>
                 );
               })
-            ) : (
+            ) : activeTab === 'bosses' ? (
               BOSSES.map((b) => {
                 const isEncountered = stats.encounteredBossIds.includes(b.id);
                 const isSelected = selectedId === b.id;
@@ -120,8 +142,8 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                           : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
                     }`}
                   >
-                    <div className={`w-20 h-20 flex items-center justify-center text-6xl mb-4 transition-all ${!isEncountered ? 'filter blur-md grayscale opacity-50' : ''}`}>
-                      {isEncountered ? b.icon : '💀'}
+                    <div className={`w-20 h-20 flex items-center justify-center mb-4 transition-all ${!isEncountered ? 'filter blur-md grayscale opacity-50' : ''}`}>
+                      {isEncountered ? <AtlasIcon name={b.imagePath as any} size={64} /> : <span className="text-6xl">💀</span>}
                     </div>
                     <div className="text-[10px] text-zinc-500 font-bold tracking-widest">
                       {isEncountered ? b.name : 'Classified'}
@@ -129,6 +151,47 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                   </button>
                 );
               })
+            ) : (
+                // Artifact (Unified)
+                ARTIFACT_LIST.map((item) => {
+                    const isStackable = item.type === 'stackable';
+                    const isUnlocked = isStackable 
+                        ? (stats.collectionHistory?.[item.id] || 0) > 0 
+                        : (stats.unlockedResearchIds?.includes(item.id));
+                    const count = isStackable ? (stats.collectionHistory?.[item.id] || 0) : 0;
+                    const isSelected = selectedId === item.id;
+                    
+                    return (
+                        <button
+                          key={item.id}
+                          onClick={() => setSelectedId(item.id)}
+                          className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
+                            isSelected
+                              ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
+                              : !isUnlocked
+                                ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
+                                : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
+                          }`}
+                        >
+                          <div className={`w-20 h-20 flex items-center justify-center text-4xl mb-4 transition-all ${!isUnlocked ? 'filter grayscale opacity-50' : ''}`}>
+                             <span className="text-3xl">💎</span>
+                          </div>
+                          <div className="text-[10px] text-zinc-500 font-bold tracking-widest text-center">
+                            {item.nameKo}
+                          </div>
+                          {isStackable && count > 0 && (
+                             <div className="absolute top-2 right-2 bg-orange-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                                x{count}
+                             </div>
+                          )}
+                          {!isStackable && isUnlocked && (
+                             <div className="absolute top-2 right-2 bg-emerald-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                                UNIQUE
+                             </div>
+                          )}
+                        </button>
+                    );
+                })
             )}
           </div>
         </div>
@@ -173,7 +236,76 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
   );
 }
 
-function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'bosses', stats: PlayerStats }) {
+function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'bosses' | 'artifact', stats: PlayerStats }) {
+  if (tab === 'artifact') {
+    const item = ARTIFACT_DATA[id];
+    if (!item) return null;
+
+    const isStackable = item.type === 'stackable';
+    const isUnlocked = isStackable 
+        ? (stats.collectionHistory?.[item.id] || 0) > 0 
+        : (stats.unlockedResearchIds?.includes(item.id));
+    const count = isStackable ? (stats.collectionHistory?.[item.id] || 0) : 1;
+
+    // 보너스 수치 계산 (스택형일 경우만 합산)
+    const bonusValue = isStackable ? count * (item.bonus?.value || 0) : (item.bonus?.value || 0);
+
+    return (
+      <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="flex justify-between items-start mb-8">
+          <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase ${isStackable ? 'bg-orange-900/20 border-orange-500/50 text-orange-400' : 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400'}`}>
+            {isStackable ? 'Stackable Artifact' : 'Unique Artifact'}
+          </span>
+          <span className="text-[9px] font-black text-zinc-600 tracking-widest">
+            {isStackable ? `COLLECTED: ${count}` : (isUnlocked ? 'STATE: UNLOCKED' : 'STATE: LOCKED')}
+          </span>
+        </div>
+
+        <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
+          <div className={!isUnlocked ? 'filter grayscale opacity-20' : ''}>
+             <span className="text-6xl">💎</span>
+          </div>
+          {!isUnlocked && <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">LOCKED</div>}
+          {isUnlocked && (
+             <div className={`absolute inset-0 rounded-3xl opacity-20 ${isStackable ? 'shadow-[inset_0_0_50px_#f97316]' : 'shadow-[inset_0_0_50px_#10b981]'}`} />
+          )}
+        </div>
+
+        <h3 className="text-3xl font-black text-white text-center mb-2 tracking-tighter">
+          {item.nameKo}
+        </h3>
+        <p className="text-[10px] text-zinc-500 text-center font-bold tracking-widest uppercase mb-8">
+            {item.name}
+        </p>
+
+        {/* 패시브 보너스 표시 */}
+        {item.bonus && (
+          <div className="bg-zinc-950 p-6 rounded-2xl border border-orange-950/30 mb-4 flex flex-col items-center">
+              <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">Stat Bonus</div>
+              <div className="text-2xl font-black text-orange-400 flex items-center gap-2">
+                  <span>+ {bonusValue.toLocaleString()}</span>
+                  <span className="text-xs text-zinc-600 tracking-tight">{item.bonus.stat.toUpperCase()}</span>
+              </div>
+          </div>
+        )}
+
+        {/* 고유 효과 표시 (Unique Artifact 전용) */}
+        {!isStackable && item.effectId && (
+          <div className="bg-zinc-950 p-6 rounded-2xl border border-emerald-950/30 mb-4 flex flex-col items-center">
+              <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">Unique Passive</div>
+              <div className="text-sm font-black text-emerald-400 text-center leading-tight">
+                  {item.effectDescriptionKo}
+              </div>
+          </div>
+        )}
+
+        <div className="bg-zinc-950/50 p-6 rounded-2xl border border-zinc-800 leading-relaxed text-xs text-zinc-400 text-center italic mt-2">
+          {item.descriptionKo}
+        </div>
+      </div>
+    );
+  }
+
   if (tab === 'minerals') {
     const mineral = MINERALS.find(m => m.key === id);
     const isDiscovered = stats.discoveredMinerals.includes(id);
@@ -240,9 +372,9 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
           </span>
         </div>
 
-        <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
+        <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-10 relative">
           <div className={!isEncountered ? 'filter blur-xl opacity-20' : ''}>
-            {isEncountered ? boss.icon : '💀'}
+            {isEncountered ? <AtlasIcon name={boss.imagePath as any} size={128} /> : <span className="text-8xl">💀</span>}
           </div>
           {!isEncountered && <div className="absolute inset-0 flex items-center justify-center text-rose-900 font-black text-5xl opacity-40">MISSING</div>}
         </div>
@@ -252,8 +384,8 @@ function DetailContent({ id, tab, stats }: { id: string, tab: 'minerals' | 'boss
         </h3>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <StatBox label="HP" value={isEncountered ? boss.stats.hp.toLocaleString() : '???'} color="#ef4444" />
-          <StatBox label="ATK" value={isEncountered ? boss.stats.attack.toLocaleString() : '???'} color="#f59e0b" />
+          <StatBox label="HP" value={isEncountered && boss.stats ? boss.stats.maxHp.toLocaleString() : '???'} color="#ef4444" />
+          <StatBox label="ATK" value={isEncountered && boss.stats ? boss.stats.power.toLocaleString() : '???'} color="#f59e0b" />
         </div>
 
         <div className="bg-zinc-950/50 p-6 rounded-2xl border border-zinc-800 leading-relaxed text-xs text-zinc-400 text-center">

@@ -145,12 +145,23 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
 
       if (dist < pickupRadius) {
         // Collect
+        const amount = dp.amount[i];
+        
+        // 인벤토리 추가
         if (world.player.stats.inventory[type] !== undefined) {
-          world.player.stats.inventory[type]++;
+          world.player.stats.inventory[type] += amount;
+        }
+
+        // === [내실] 정수 획득 시 누적 기록 업데이트 ===
+        if (type.startsWith('essence_')) {
+          if (!world.player.stats.collectionHistory) {
+            world.player.stats.collectionHistory = {};
+          }
+          world.player.stats.collectionHistory[type] = (world.player.stats.collectionHistory[type] || 0) + amount;
         }
         
         // Record for aggregation (UI Snapshot happens implicitly by name)
-        pickupBuffer[type] = (pickupBuffer[type] || 0) + 1;
+        pickupBuffer[type] = (pickupBuffer[type] || 0) + amount;
         lastPickupEventTime = now;
         
         // Visual feedback

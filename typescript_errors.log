@@ -1,0 +1,8 @@
+src/shared/lib/reliquaryUtils.ts(44,9): error TS7053: Element implicitly has an 'any' type because expression of type '"power" | "miningSpeed" | "moveSpeed" | "luck" | "maxHp" | "defense" | "critRate" | "critDamage"' can't be used to index type 'ReliquaryBonuses'.
+  Property 'maxHp' does not exist on type 'ReliquaryBonuses'.
+src/shared/lib/reliquaryUtils.ts(55,9): error TS7053: Element implicitly has an 'any' type because expression of type '"power" | "miningSpeed" | "moveSpeed" | "luck" | "maxHp" | "defense" | "critRate" | "critDamage"' can't be used to index type 'ReliquaryBonuses'.
+  Property 'maxHp' does not exist on type 'ReliquaryBonuses'.
+src/widgets/encyclopedia/Encyclopedia.tsx(158,35): error TS18048: 'stats.collectionHistory' is possibly 'undefined'.
+src/widgets/encyclopedia/Encyclopedia.tsx(235,19): error TS18048: 'stats.collectionHistory' is possibly 'undefined'.
+src/widgets/encyclopedia/Encyclopedia.tsx(364,65): error TS2339: Property 'hp' does not exist on type '{ maxHp: number; power: number; defense: number; speed: number; attackCooldown: number; }'.
+src/widgets/encyclopedia/Encyclopedia.tsx(365,66): error TS2339: Property 'attack' does not exist on type '{ maxHp: number; power: number; defense: number; speed: number; attackCooldown: number; }'.

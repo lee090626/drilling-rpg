@@ -18,6 +18,7 @@ export class DroppedItemManager {
   public y: Float32Array;
   public vx: Float32Array;
   public vy: Float32Array;
+  public amount: Uint32Array;
   public life: Float32Array;
   
   public blockedDropCount: number = 0;
@@ -32,11 +33,12 @@ export class DroppedItemManager {
     this.y = new Float32Array(capacity);
     this.vx = new Float32Array(capacity);
     this.vy = new Float32Array(capacity);
+    this.amount = new Uint32Array(capacity);
     this.life = new Float32Array(capacity);
   }
 
   /** 새로운 아이템을 풀에서 활성화 (generation-based ID 반환) */
-  public spawn(type: TileType, x: number, y: number, vx: number, vy: number): number {
+  public spawn(type: TileType, x: number, y: number, vx: number, vy: number, amount: number = 1): number {
     const start = this.nextIdx;
     do {
       const idx = this.nextIdx;
@@ -49,6 +51,7 @@ export class DroppedItemManager {
         this.y[idx] = y;
         this.vx[idx] = vx;
         this.vy[idx] = vy;
+        this.amount[idx] = amount;
         this.life[idx] = 0;
         
         // 0xFFFF 오버플로우는 & 연산으로 안전하게 처리
@@ -220,6 +223,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         unlockedResearchIds: ['root'],
         tileMastery: {},
         unlockedMasteryPerks: [],
+        collectionHistory: {},
       },
       pos: { x: 15, y: 8 },
       velocity: { x: 0, y: 0 },

@@ -5,6 +5,8 @@ export const ATLAS_FILE_MAPPING = {
   AttackRune: 'AttackRune.png',
   BaseTileset: 'BaseTileset.png',
   BookIcon: 'BookIcon.webp',
+  BossCoreTile: 'boss_core.png',
+  BossSkinTile: 'boss_skin.png',
   CrimsonStoneIcon: 'CrimsonStoneIcon.png',
   CrimsonStoneTile: 'CrimsonStoneTile.png',
   CritDmgRune: 'CritDmgRune.png',
@@ -14,6 +16,7 @@ export const ATLAS_FILE_MAPPING = {
   EmeraldDrill: 'EmeralDrill.png',
   FervorStoneIcon: 'FervorStoneIcon.png',
   FervorStoneTile: 'FervorStoneTile.png',
+  GaleBat: 'GaleBat.png',
   GaleStoneIcon: 'GaleStoneIcon.png',
   GaleStoneTile: 'GaleStoneTile.png',
   GoldDrill: 'GoldDrill.png',
@@ -21,6 +24,7 @@ export const ATLAS_FILE_MAPPING = {
   InventoryIcon: 'InventoryIcon.webp',
   IronDrill: 'IronDrill.png',
   LuckRune: 'LuckRune.png',
+  LustfulWhisperer: 'LustfulWhisperer.png',
   Mechanic: 'Mechanic.png',
   Merchant: 'Merchant.png',
   MiningSpeedRune: 'MiningSpeedRune.png',
@@ -32,8 +36,7 @@ export const ATLAS_FILE_MAPPING = {
   StatusIcon: 'StatusIcon.webp',
   StoneDrill: 'StoneDrill.png',
   StoneTile: 'StoneTile.png',
-  boss_core: 'boss_core.png',
-  boss_skin: 'boss_skin.png',
+  WindTornSoul: 'WindTornSoul.png',
 } as const;
 
 export type AtlasIconName = keyof typeof ATLAS_FILE_MAPPING;

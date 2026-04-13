@@ -1,10 +1,11 @@
 import { GameWorld } from '@/entities/world/model';
 import { createInitialEquipmentState } from '@/shared/lib/masteryUtils';
-import { RESEARCH_NODES } from '@/shared/config/researchData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { TileMap } from '@/entities/tile/TileMap';
 import { Rarity } from '@/shared/types/game';
 import { TILE_SIZE } from '@/shared/config/constants';
+import { ARTIFACT_DATA } from '@/shared/config/artifactData';
+import { hasArtifactEffect } from '@/shared/lib/artifactUtils';
 
 /**
  * 게임 내 플레이어의 명시적인 액션(아이템 구매, 강화, 제련, 차원 이동 등)을 처리하는 시스템입니다.
@@ -34,7 +35,9 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
     case 'sell':
       if (stats.inventory[data.resource] >= data.amount) {
         stats.inventory[data.resource] -= data.amount;
-        stats.goldCoins += data.price;
+        // [유물] 마몬의 황금 주화 (GOLD_SELL_BOOST): 판매가 2배
+        const priceMultiplier = hasArtifactEffect(stats, 'GOLD_SELL_BOOST') ? 2.0 : 1.0;
+        stats.goldCoins += Math.floor(data.price * priceMultiplier);
       }
       break;
 
@@ -127,19 +130,35 @@ export function handlePlayerAction(world: GameWorld, payload: any) {
     }
 
     // [삭제됨] startSmelting / collectSmelting — 용광로 시스템 제거됨
-    case 'unlockResearch': {
-      const node = RESEARCH_NODES.find(n => n.id === data.researchId);
-      if (node) {
-        Object.entries(node.cost).forEach(([res, amt]) => {
+    case 'synthesizeRelic': {
+      const artifact = ARTIFACT_DATA[data.relicId];
+      if (artifact && artifact.requirements) {
+        // 1. 이미 보유 중인지 체크 (중복 연성 방지)
+        if (stats.unlockedResearchIds.includes(data.relicId)) {
+          console.warn(`[Worker] Artifact ${data.relicId} already synthesized.`);
+          break;
+        }
+
+        // 2. 비용 충족 여부 최종 검증
+        const hasEnough = Object.entries(artifact.requirements).every(([res, amt]) => {
+          const owned = res === 'goldCoins' ? stats.goldCoins : (stats.inventory[res as any] || 0);
+          return owned >= (amt as number);
+        });
+
+        if (!hasEnough) {
+          console.error(`[Worker] Not enough resources for synthesis: ${data.relicId}`);
+          break;
+        }
+
+        // 3. 비용 차감
+        Object.entries(artifact.requirements).forEach(([res, amt]) => {
           if (res === 'goldCoins') stats.goldCoins -= amt as number;
           else (stats.inventory[res as any] as number) -= amt as number;
         });
-        stats.unlockedResearchIds.push(data.researchId);
-        if (node.effect.type === 'power') stats.power += node.effect.value;
-        if (node.effect.type === 'maxHp') {
-          stats.hp += node.effect.value;
-          stats.maxHp += node.effect.value;
-        }
+        
+        // 4. 잠금 해제
+        stats.unlockedResearchIds.push(data.relicId);
+        console.log(`[Worker] Successfully Synthesized Artifact: ${artifact.nameKo}`);
       }
       break;
     }

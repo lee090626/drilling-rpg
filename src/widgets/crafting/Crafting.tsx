@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { PlayerStats } from '@/shared/types/game';
 import { DRILLS } from '@/shared/config/drillData';
 
-import { MINERALS } from '@/shared/config/mineralData';
-import { formatNumber } from '@/shared/lib/numberUtils';
+
 import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 import RecipeDetail from './RecipeDetail';
 

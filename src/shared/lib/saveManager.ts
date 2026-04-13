@@ -122,6 +122,7 @@ export const saveManager = {
         if (!s.inventoryRunes) s.inventoryRunes = [];
         if (!s.tileMastery) s.tileMastery = {};
         if (!s.unlockedMasteryPerks) s.unlockedMasteryPerks = [];
+        if (!s.collectionHistory) s.collectionHistory = {};
         
         // 인벤토리 누락 아이템 보정 및 레거시 데이터 마이그레이션
         if (s.inventory) {

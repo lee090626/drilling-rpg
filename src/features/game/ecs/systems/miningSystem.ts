@@ -3,10 +3,10 @@ import { TILE_SIZE } from '@/shared/config/constants';
 import { getTileColor } from '@/shared/lib/tileUtils';
 import { getNextLevelExp, createInitialMasteryState, getMasteryBonuses } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
-import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText, createParticles } from '@/shared/lib/effectUtils';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { handleBossDefeat } from './bossSystem';
+import { calculateArtifactBonuses, hasArtifactEffect } from '@/shared/lib/artifactUtils';
 
 import { showToast } from './toastSystem';
 import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
@@ -15,9 +15,9 @@ import { MASTERY_PERKS } from '@/shared/config/masteryPerks';
  * 플레이어의 영구 스탯(체력, 이속 등)을 마스터리 및 연구 보너스에 맞춰 동기화합니다.
  * (O(1) 단순 사칙연산 형태이므로 매 프레임 호출하더라도 문제없음)
  */
-function syncPermanentStats(player: any, researchBonuses: any, masteryBonuses: any) {
-  // 1. 최대 체력 동기화: (기본 100 + 마스터리고정) * (1 + 마스터리배율)
-  const baseHp = 100 + masteryBonuses.maxHp;
+function syncPermanentStats(player: any, masteryBonuses: any, artifactBonuses: any) {
+  // 1. 최대 체력 동기화: (기본 100 + 마스터리고정 + 유물고정) * (1 + 마스터리배율)
+  const baseHp = 100 + masteryBonuses.maxHp + (artifactBonuses?.maxHp || 0);
   const finalMaxHp = Math.floor(baseHp * (1 + masteryBonuses.maxHpMult));
   
   // 현재 체력 비율 유지하며 최대 체력 갱신
@@ -25,10 +25,13 @@ function syncPermanentStats(player: any, researchBonuses: any, masteryBonuses: a
   player.stats.maxHp = finalMaxHp;
   player.stats.hp = Math.floor(finalMaxHp * hpRatio);
 
-  // 2. 이동 속도 동기화: 기본 이속 * (연구 배율 + 마스터리 배율) (연구의 기본값 1.0을 안전하게 상쇄 없이 그대로 합산)
-  const baseMoveSpeed = 100 + masteryBonuses.moveSpeed;
-  const totalMoveSpeedMult = researchBonuses.moveSpeed + masteryBonuses.moveSpeedMult;
+  // 2. 이동 속도 동기화: (기본 이속 + 유물 이속) * (기본 배율 1.0 + 마스터리 배율)
+  const baseMoveSpeed = 100 + (artifactBonuses?.moveSpeed || 0) + masteryBonuses.moveSpeed;
+  const totalMoveSpeedMult = 1.0 + masteryBonuses.moveSpeedMult;
   player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
+  
+  // 3. 공격력(Power) 동기화: 기본 공격력 + 유물 공격력
+  player.stats.power = 10 + (artifactBonuses?.power || 0);
 }
 
 /**
@@ -49,16 +52,21 @@ export const miningSystem = (world: GameWorld, now: number) => {
 
   // --- 성능 최적화 (Memory & CPU) ---
   // 한 프레임에 여러 개의 타일이 동시 파괴될 때마다 매번 O(N) 탐색을 하는 것을 방지
-  const researchBonuses = getResearchBonuses(player.stats);
   const masteryBonuses = getMasteryBonuses(player.stats);
-  
-  // 1. 매 프레임 영구 스탯 즉시 동기화 (연구/마스터리 갱신 시 별도의 _statsSynced 플래그 없이 O(1)로 즉시 반영)
-  syncPermanentStats(player, researchBonuses, masteryBonuses);
+  // 1. 매 프레임 영구 스탯 즉시 동기화
+  const artifactBonuses = calculateArtifactBonuses(player.stats);
+  syncPermanentStats(player, masteryBonuses, artifactBonuses);
+
+  // [유물] 벨페고르의 눈 (MASTERY_BOOST): 숙련도 획득 속도 +300% (4배)
+  let masteryExpMultiplier = 1.0 + masteryBonuses.masteryExpMult;
+  if (hasArtifactEffect(player.stats, 'MASTERY_BOOST')) {
+    masteryExpMultiplier += 3.0; // 300% 추가
+  }
 
   const frameCache: FrameCache = {
-    // 행운 적용: (룬 확률값스케일100배 + 연구럭 + 마스터리럭) * (1 + 마스터리행운배율)
-    luck: Math.max(0, ((getTotalRuneStat(player.stats, 'luck') * 100) + researchBonuses.luck + masteryBonuses.luck) * (1 + masteryBonuses.luckMult)),
-    masteryExpGain: Math.floor(10 * researchBonuses.masteryExp * (1 + masteryBonuses.masteryExpMult)),
+    // 행운 적용: (룬 확률값스케일100배 + 마스터리럭 + 유물럭) * (1 + 마스터리행운배율)
+    luck: Math.max(0, ((getTotalRuneStat(player.stats, 'luck') * 100) + masteryBonuses.luck + (artifactBonuses.luck * 100)) * (1 + masteryBonuses.luckMult)),
+    masteryExpGain: Math.floor(10 * masteryExpMultiplier),
     hasMonsterTarget: false
   };
 

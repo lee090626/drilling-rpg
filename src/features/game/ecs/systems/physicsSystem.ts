@@ -6,8 +6,8 @@ import {
 } from '@/shared/config/constants';
 import { DRILLS } from '@/shared/config/drillData';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
-import { getResearchBonuses } from '@/shared/lib/researchUtils';
 import { createFloatingText } from '@/shared/lib/effectUtils';
+import { calculateArtifactBonuses } from '@/shared/lib/artifactUtils';
 
 /**
  * 플레이어의 이동, 충돌 체크, 그리드 기반 위치 보간을 담당하는 시스템입니다.
@@ -24,14 +24,16 @@ export const physicsSystem = (world: GameWorld, now: number) => {
 
   // 1. 부드러운 그리드 기반 이동 및 채굴 전환 로직
   const drill = DRILLS[player.stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const researchBonuses = getResearchBonuses(player.stats);
+  const artifactBonuses = calculateArtifactBonuses(player.stats);
   
   // 룬 시스템에 의한 이동 속도 보너스 합산 (백분율 값으로 치환)
   const runeSpeedMult = getTotalRuneStat(player.stats, 'moveSpeed') * 0.01;
 
-  // 최종 이동 딜레이 계산 (기본 속도 스탯 * 장비 배율 * 연구 보너스 + 룬 보너스)
+  // 최종 이동 딜레이 계산 (기본 속도 스탯 * 장비 배율 * 내실 보너스 + 룬 보너스)
   const baseSpeedStat = player.stats.moveSpeed || 100;
-  const baseSpeedMult = (baseSpeedStat / 100) * researchBonuses.moveSpeed;
+  // 내실 보너스는 절대 수치 합산 후 비율 적용
+  const artifactSpeedBonus = artifactBonuses.moveSpeed; 
+  const baseSpeedMult = (baseSpeedStat + artifactSpeedBonus) / 100;
   const drillSpeedMult = drill.moveSpeedMult || 1;
   
   // 상태 이상에 따른 속도 변조 (SLOW: 0.5배, BUFF_SPEED: 1.5배)

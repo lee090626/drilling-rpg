@@ -235,50 +235,35 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
               <span className="text-purple-500">{stats.artifacts.length}</span>
             </h4>
             <div className="space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1">
-              {stats.artifacts.length > 0 ? (
-                stats.artifacts.map((artifactId, idx) => {
+              {stats.unlockedResearchIds.filter(id => id.startsWith('relic_')).length > 0 ? (
+                stats.unlockedResearchIds.filter(id => id.startsWith('relic_')).map((artifactId, idx) => {
                   const info = ARTIFACT_DATA[artifactId];
-                  const isEquipped = stats.equippedArtifactId === artifactId;
                   
                   return (
                     <div
                       key={idx}
-                      className={`p-3 rounded-xl border transition-all ${
-                        isEquipped 
-                        ? 'bg-purple-900/20 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.1)]' 
-                        : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'
-                      }`}
+                      className="p-3 rounded-xl border bg-emerald-900/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]"
                     >
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">{info?.icon || '❓'}</span>
+                      <div className="flex items-center gap-3">
+                         <span className="text-2xl">💎</span>
                         <div className="flex flex-col flex-1">
                           <span className="text-xs font-black text-white tracking-tight">
-                            {info?.name || artifactId}
+                            {info?.nameKo || info?.name || artifactId}
                           </span>
-                          <span className="text-[9px] text-zinc-500 font-medium leading-tight">
-                            {info?.description}
+                          <span className="text-[9px] text-emerald-400 font-bold leading-tight">
+                            ACTIVE PASSIVE
                           </span>
                         </div>
-                        {isEquipped ? (
-                          <span className="text-[9px] bg-purple-600 text-white font-black px-2 py-1 rounded">EQUIPPED</span>
-                        ) : (
-                          <button 
-                            onClick={() => onEquipArtifact?.(artifactId)}
-                            className="text-[9px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold px-3 py-1 rounded border border-zinc-700 transition-colors"
-                          >
-                            EQUIP
-                          </button>
-                        )}
-                      </div>
-                      <div className="text-[8px] text-zinc-600 font-bold tracking-widest">
-                        Cooldown: {info ? info.cooldownMs / 1000 : 0}s
+                        <div className="text-[10px] text-zinc-500 italic">
+                           Constant
+                        </div>
                       </div>
                     </div>
                   );
                 })
               ) : (
-                <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest">
-                  Not Discovered
+                <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest uppercase">
+                  No Unique Artifacts Found
                 </div>
               )}
             </div>

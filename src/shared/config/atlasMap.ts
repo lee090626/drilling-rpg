@@ -241,6 +241,33 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
+  "WindTornSoul": {
+    "atlasIndex": 3,
+    "x": 1691,
+    "y": 1073,
+    "width": 210,
+    "height": 172,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "GaleBat": {
+    "atlasIndex": 3,
+    "x": 1691,
+    "y": 1251,
+    "width": 178,
+    "height": 154,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
+  "LustfulWhisperer": {
+    "atlasIndex": 3,
+    "x": 1691,
+    "y": 1411,
+    "width": 176,
+    "height": 170,
+    "atlasWidth": 1974,
+    "atlasHeight": 1788
+  },
   "CrimsonStoneTile": {
     "atlasIndex": 3,
     "x": 849,
@@ -286,19 +313,19 @@ export const atlasMap: Record<AtlasIconName, AtlasMetadata> = {
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
-  "boss_core": {
+  "BossCoreTile": {
     "atlasIndex": 3,
-    "x": 1691,
-    "y": 1073,
+    "x": 1204,
+    "y": 1587,
     "width": 128,
     "height": 128,
     "atlasWidth": 1974,
     "atlasHeight": 1788
   },
-  "boss_skin": {
+  "BossSkinTile": {
     "atlasIndex": 3,
-    "x": 1691,
-    "y": 1073,
+    "x": 1204,
+    "y": 1587,
     "width": 128,
     "height": 128,
     "atlasWidth": 1974,

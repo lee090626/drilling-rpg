@@ -3,7 +3,7 @@ import { DRILLS } from '@/shared/config/drillData';
 import { MINERALS } from '@/shared/config/mineralData';
 import { getMasteryMultiplier, createInitialMasteryState, getMasteryBonuses } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
-import { getResearchBonuses } from '@/shared/lib/researchUtils';
+import { calculateArtifactBonuses, hasArtifactEffect } from '@/shared/lib/artifactUtils';
 
 /**
  * 채굴 대미지 계산 결과 인터페이스
@@ -20,12 +20,24 @@ export interface DamageResult {
  */
 export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string): DamageResult => {
   const currentDrill = DRILLS[stats.equippedDrillId] || DRILLS['rusty_drill'];
-  const researchBonuses = getResearchBonuses(stats);
+  const artifactBonuses = calculateArtifactBonuses(stats);
   const masteryBonuses = getMasteryBonuses(stats);
   
-  // 1. 공격 속도 계산 (연구 속도 보너스 + 룬 속도 보너스 + 마스터리 속도 보너스)
+  // A. [유물] 사탄의 타오르는 열정 (MINING_SPEED_BOOST): 기본 채굴 속도 25% 증가
+  let speedBoostFactor = 0;
+  if (hasArtifactEffect(stats, 'MINING_SPEED_BOOST')) {
+    speedBoostFactor += 0.25;
+  }
+
+  // B. [유물] 레비아탄의 뒤틀린 투영 (TWISTED_PROJECTION): 잃은 체력 1%당 속도 1% 증가
+  const missingHpPercent = Math.max(0, (stats.maxHp - stats.hp) / stats.maxHp);
+  if (hasArtifactEffect(stats, 'TWISTED_PROJECTION')) {
+    speedBoostFactor += missingHpPercent;
+  }
+
+  // 1. 공격 속도 계산 (유물 보너스 + 룬 파생 보너스 + 마스터리 속도 보너스 + 유물 고유 효과)
   const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
-  const totalSpeedBonusMult = Math.min(0.95, researchBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult);
+  const totalSpeedBonusMult = Math.min(0.95, artifactBonuses.miningSpeed + runeSpeedBonus + masteryBonuses.miningSpeedMult + speedBoostFactor);
   let attackInterval = currentDrill.cooldownMs * (1 - totalSpeedBonusMult);
 
   // FATIGUE (피로): 채굴 속도 50% 감소 (쿨타임 2배)
@@ -50,8 +62,8 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   // 기초값 = 플레이어 기본 + 드릴 + 숙련도 레벨 보너스 + 마스터리 고정 특성 + 룬 고정 특성
   const basePower = stats.power + drillPower + levelMasteryBonus + masteryBonuses.miningPower + Math.floor(runeAttackBonus);
   
-  // 배율 보완 (연구 배율 + 마스터리 배율)
-  const totalPowerMult = 1 + researchBonuses.power + masteryBonuses.miningPowerMult;
+  // 배율 보완 (기본1 + 마스터리 배율. 내실 위력 배율은 당장 없으나 예약 가능)
+  const totalPowerMult = 1 + masteryBonuses.miningPowerMult;
   
   let totalPower = Math.floor(basePower * totalPowerMult);
   
@@ -59,6 +71,11 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   if (stats.activeEffects) {
     if (stats.activeEffects.some(e => e.type === 'BUFF_POWER')) totalPower = Math.floor(totalPower * 1.5);
     if (stats.activeEffects.some(e => e.type === 'WEAKEN')) totalPower = Math.floor(totalPower * 0.7);
+  }
+
+  // C. [유물] 레비아탄의 뒤틀린 투영 (TWISTED_PROJECTION): 잃은 체력 1%당 최종 대미지 1% 증가
+  if (hasArtifactEffect(stats, 'TWISTED_PROJECTION')) {
+    totalPower = Math.floor(totalPower * (1 + missingHpPercent));
   }
   
   let isCrit = false;

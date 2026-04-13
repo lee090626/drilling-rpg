@@ -99,9 +99,9 @@ export const useGameActions = (
   }, [sendToWorker, updateUi]);
 
 
-  /** 연구소에서 새로운 연구(스킬) 해금 */
-  const handleUnlockResearch = useCallback((researchId: string) => {
-    sendToWorker('ACTION', { action: 'unlockResearch', data: { researchId } });
+  /** 연성 제단(Synthesis Altar)에서 새로운 성물(Relic) 연성 */
+  const handleSynthesizeRelic = useCallback((relicId: string) => {
+    sendToWorker('ACTION', { action: 'synthesizeRelic', data: { relicId } });
     updateUi();
   }, [sendToWorker, updateUi]);
 
@@ -148,7 +148,7 @@ export const useGameActions = (
     handleResetGame,
     handleExportSave,
     handleImportSave,
-    handleUnlockResearch,
+    handleSynthesizeRelic,
     handleUseArtifact,
     handleEquipArtifact,
     handleTravelDimension: useCallback((targetDepth: number) => {

@@ -4,6 +4,7 @@ import { MONSTERS } from '@/shared/config/monsterData';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { createFloatingText } from '@/shared/lib/effectUtils';
 import { handleBossDefeat } from './bossSystem';
+import { calculateArtifactBonuses, hasArtifactEffect } from '@/shared/lib/artifactUtils';
 
 /**
  * 플레이어와 몬스터 간의 전투(대미지 처리, 사망 등)를 담당하는 시스템입니다.
@@ -142,8 +143,55 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
                 handleBossDefeat(world, entities.soa.x[i], entities.soa.y[i]);
             }
 
+            // [유물] 아스모데우스의 반지 (EXP_BOOST): 경험치 30% 증가
+            let expAmount = monsterDef.rewards.exp;
+            if (hasArtifactEffect(player.stats, 'EXP_BOOST')) {
+                expAmount = Math.floor(expAmount * 1.3);
+            }
+            // TODO: 플레이어 경험치 시스템이 아직 명시적이지 않다면 로그 또는 추후 구현을 위해 변수화
+
+            // [유물] 벨제붑의 독니 (LIFE_STEAL_PERCENT): 처치 시 최대 체력의 5% 회복
+            if (hasArtifactEffect(player.stats, 'LIFE_STEAL_PERCENT')) {
+                const healAmount = Math.floor(player.stats.maxHp * 0.05);
+                player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + healAmount);
+                createFloatingText(world, player.pos.x * TILE_SIZE, player.pos.y * TILE_SIZE - 40, `+${healAmount} HP`, '#4ade80');
+            }
+
+            // === [업데이트] 다중 드롭 시스템 (유물 & 전리품) ===
+            const artifactBonuses = calculateArtifactBonuses(player.stats);
+            const luckBonus = artifactBonuses.luck; // 0.01 = 1% 증가 개념
+
+            // [유물] 아바돈의 부러진 칼날 (LOOT_QUANTITY_BOOST): 전리품 획득량 25% 증가
+            const lootMultiplier = hasArtifactEffect(player.stats, 'LOOT_QUANTITY_BOOST') ? 1.25 : 1.0;
+
+            if (monsterDef.rewards.drops) {
+                monsterDef.rewards.drops.forEach(drop => {
+                    const rand = Math.random();
+                    if (rand < drop.chance) {
+                        // 기본 수량 결정
+                        const baseAmount = Math.floor(Math.random() * (drop.maxAmount - drop.minAmount + 1)) + drop.minAmount;
+                        // 행운 보너스 및 유물 전리품 보너스 적용
+                        const finalAmount = Math.max(1, Math.floor(baseAmount * (1 + luckBonus) * lootMultiplier));
+
+                        // 시각적 연출을 위해 가벼운 분산 스폰
+                        const vx = (Math.random() - 0.5) * 10;
+                        const vy = -Math.random() * 8 - 4;
+                        
+                        world.droppedItemPool.spawn(
+                            drop.itemId as any,
+                            entities.soa.x[i] + (entities.soa.width[i] || TILE_SIZE) / 2,
+                            entities.soa.y[i] + (entities.soa.height[i] || TILE_SIZE) / 2,
+                            vx,
+                            vy,
+                            finalAmount
+                        );
+                    }
+                });
+            }
+
             // 처치 기록 (ID가 있을 경우 활성화)
-            // (참고: SoA에는 ID를 저장하지 않으므로, 필요 시 별도 매핑 테이블 사용)
+            if (!player.stats.killedMonsterIds) player.stats.killedMonsterIds = [];
+            player.stats.killedMonsterIds.push(monsterDef.id);
         }
         
         entities.destroy(i);

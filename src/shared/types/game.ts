@@ -358,6 +358,9 @@ export interface PlayerStats {
   /** 시드 기반으로 생성된 몬스터 중 처치된 몹 ID 목록 (영구 사망, 오토스폰방지) */
   killedMonsterIds?: string[];
 
+  /** 지옥의 정수 등 수집 가능한 아이템의 누적 획득량 기록 */
+  collectionHistory?: Record<string, number>;
+
   /** [상태 이상] 현재 적용 중인 상태 효과 목록 */
   activeEffects?: ActiveEffect[];
   /** [튜토리얼] 이미 트리거된 가이드 ID 목록 */

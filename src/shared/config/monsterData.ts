@@ -43,10 +43,13 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Lustful Whisperer',
     nameKo: '유혹하는 속삭임',
     type: 'monster',
-    imagePath: 'pebble_golem',
+    imagePath: 'LustfulWhisperer',
     description: 'Lust 서클의 하급 영혼입니다.',
     stats: { maxHp: 500, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50, gold: 10, drops: [] },
+    rewards: { exp: 50, gold: 10, drops: [
+      { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_whisperer_fragment', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -54,10 +57,13 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Wind-torn Soul',
     nameKo: '바람에 찢긴 영혼',
     type: 'monster',
-    imagePath: 'pebble_golem',
+    imagePath: 'WindTornSoul',
     description: 'Lust 서클의 하급 영혼입니다.',
     stats: { maxHp: 600, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 60, gold: 12, drops: [] },
+    rewards: { exp: 60, gold: 12, drops: [
+      { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_spectral_breath', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -65,10 +71,13 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Gale Bat',
     nameKo: '돌풍 박쥐',
     type: 'monster',
-    imagePath: 'pebble_golem',
+    imagePath: 'GaleBat',
     description: 'Lust 서클의 하급 영혼입니다.',
     stats: { maxHp: 450, power: 35, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 45, gold: 9, drops: [] },
+    rewards: { exp: 45, gold: 9, drops: [
+      { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_bat_wing', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -79,7 +88,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '3개의 머리 (황소, 인간, 숫양), 불꽃 날개, 뱀 꼬리. 몸 전체에서 붉은 열기가 뿜어져 나옴',
     stats: { maxHp: 15000, power: 120, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 7500, gold: 1500, drops: [] },
+    rewards: { exp: 7500, gold: 1500, drops: [
+      { itemId: 'essence_lust', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -90,7 +102,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Gluttony 서클의 하급 영혼입니다.',
     stats: { maxHp: 1500, power: 60, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 150, gold: 30, drops: [] },
+    rewards: { exp: 150, gold: 30, drops: [
+      { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_devourer_skin', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -101,7 +116,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Gluttony 서클의 하급 영혼입니다.',
     stats: { maxHp: 1200, power: 70, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 120, gold: 24, drops: [] },
+    rewards: { exp: 120, gold: 24, drops: [
+      { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_worm_mucus', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -112,7 +130,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Gluttony 서클의 하급 영혼입니다.',
     stats: { maxHp: 1800, power: 50, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 180, gold: 36, drops: [] },
+    rewards: { exp: 180, gold: 36, drops: [
+      { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_muddy_soul', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -123,7 +144,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '거대한 파리 형태, 썩은 날개, 복부가 비정상적으로 부풀어있음. 주변에 파리 떼가 항상 들끓음',
     stats: { maxHp: 45000, power: 250, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 22500, gold: 4500, drops: [] },
+    rewards: { exp: 22500, gold: 4500, drops: [
+      { itemId: 'essence_gluttony', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -134,7 +158,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Greed 서클의 하급 영혼입니다.',
     stats: { maxHp: 4000, power: 120, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 400, gold: 80, drops: [] },
+    rewards: { exp: 400, gold: 80, drops: [
+      { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_hoarder_coin', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -145,7 +172,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Greed 서클의 하급 영혼입니다.',
     stats: { maxHp: 5500, power: 150, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 550, gold: 110, drops: [] },
+    rewards: { exp: 550, gold: 110, drops: [
+      { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_sinner_gold', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -156,7 +186,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Greed 서클의 하급 영혼입니다.',
     stats: { maxHp: 3500, power: 200, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 350, gold: 70, drops: [] },
+    rewards: { exp: 350, gold: 70, drops: [
+      { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_mimic_tooth', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -167,7 +200,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '황금 갑옷으로 뒤덮인 거대 인간형, 눈이 황금 동전. 몸에서 금화가 흘러내림',
     stats: { maxHp: 120000, power: 500, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 60000, gold: 12000, drops: [] },
+    rewards: { exp: 60000, gold: 12000, drops: [
+      { itemId: 'essence_greed', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -178,7 +214,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Wrath 서클의 하급 영혼입니다.',
     stats: { maxHp: 12000, power: 300, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 1200, gold: 240, drops: [] },
+    rewards: { exp: 1200, gold: 240, drops: [
+      { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_dweller_eye', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -189,7 +228,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Wrath 서클의 하급 영혼입니다.',
     stats: { maxHp: 10000, power: 450, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 1000, gold: 200, drops: [] },
+    rewards: { exp: 1000, gold: 200, drops: [
+      { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_fury_flame', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -200,7 +242,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Wrath 서클의 하급 영혼입니다.',
     stats: { maxHp: 25000, power: 250, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 2500, gold: 500, drops: [] },
+    rewards: { exp: 2500, gold: 500, drops: [
+      { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_golem_core', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -211,7 +256,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '타락한 천사, 검게 그을린 날개, 온몸에 쇠사슬이 감겨있음. 눈에서 붉은 불꽃',
     stats: { maxHp: 350000, power: 1200, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 175000, gold: 35000, drops: [] },
+    rewards: { exp: 175000, gold: 35000, drops: [
+      { itemId: 'essence_wrath', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -222,7 +270,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Heresy 서클의 하급 영혼입니다.',
     stats: { maxHp: 35000, power: 800, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 3500, gold: 700, drops: [] },
+    rewards: { exp: 3500, gold: 700, drops: [
+      { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_priest_seal', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -233,7 +284,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Heresy 서클의 하급 영혼입니다.',
     stats: { maxHp: 30000, power: 1200, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 3000, gold: 600, drops: [] },
+    rewards: { exp: 3000, gold: 600, drops: [
+      { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_flame_soul', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -244,7 +298,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Heresy 서클의 하급 영혼입니다.',
     stats: { maxHp: 50000, power: 900, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 5000, gold: 1000, drops: [] },
+    rewards: { exp: 5000, gold: 1000, drops: [
+      { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_fallen_feather', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -255,7 +312,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '검게 물든 천사 날개, 온몸에 독이 흘러내림. 피부는 창백하고 균열이 가득하며 틈에서 보라빛 독액이 흘러나옴. 부러진 후광, 독이 묻은 검',
     stats: { maxHp: 900000, power: 3500, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 450000, gold: 90000, drops: [] },
+    rewards: { exp: 450000, gold: 90000, drops: [
+      { itemId: 'essence_heresy', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -266,7 +326,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Violence 서클의 하급 영혼입니다.',
     stats: { maxHp: 120000, power: 2500, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 12000, gold: 2400, drops: [] },
+    rewards: { exp: 12000, gold: 2400, drops: [
+      { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_centaur_hoof', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -277,7 +340,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Violence 서클의 하급 영혼입니다.',
     stats: { maxHp: 180000, power: 3000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 18000, gold: 3600, drops: [] },
+    rewards: { exp: 18000, gold: 3600, drops: [
+      { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_guard_blood', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -288,7 +354,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Violence 서클의 하급 영혼입니다.',
     stats: { maxHp: 250000, power: 4500, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 25000, gold: 5000, drops: [] },
+    rewards: { exp: 25000, gold: 5000, drops: [
+      { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_spawn_horn', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -299,7 +368,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '불꽃 전차를 탄 타락천사, 두 개의 검은 날개, 온몸이 불꽃으로 이루어진 형태',
     stats: { maxHp: 3000000, power: 15000, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 1500000, gold: 300000, drops: [] },
+    rewards: { exp: 1500000, gold: 300000, drops: [
+      { itemId: 'essence_violence', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -310,7 +382,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Fraud 서클의 하급 영혼입니다.',
     stats: { maxHp: 600000, power: 10000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 60000, gold: 12000, drops: [] },
+    rewards: { exp: 60000, gold: 12000, drops: [
+      { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_malebranche_claw', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -321,7 +396,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Fraud 서클의 하급 영혼입니다.',
     stats: { maxHp: 500000, power: 15000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 50000, gold: 10000, drops: [] },
+    rewards: { exp: 50000, gold: 10000, drops: [
+      { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_prophet_tongue', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -332,7 +410,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Fraud 서클의 하급 영혼입니다.',
     stats: { maxHp: 450000, power: 12000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 45000, gold: 9000, drops: [] },
+    rewards: { exp: 45000, gold: 9000, drops: [
+      { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_illusion_shard', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -343,7 +424,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '거대한 메뚜기 형태, 전갈 꼬리, 철 갑옷을 두른 날개. 주변에 메뚜기 군단이 들끓음',
     stats: { maxHp: 12000000, power: 45000, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 6000000, gold: 1200000, drops: [] },
+    rewards: { exp: 6000000, gold: 1200000, drops: [
+      { itemId: 'essence_fraud', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   },
   {
@@ -354,7 +438,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Treachery 서클의 하급 영혼입니다.',
     stats: { maxHp: 2500000, power: 40000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 250000, gold: 50000, drops: [] },
+    rewards: { exp: 250000, gold: 50000, drops: [
+      { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_sinner_ice', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -365,7 +452,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Treachery 서클의 하급 영혼입니다.',
     stats: { maxHp: 2000000, power: 55000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 200000, gold: 40000, drops: [] },
+    rewards: { exp: 200000, gold: 40000, drops: [
+      { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_specter_tear', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -376,7 +466,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'pebble_golem',
     description: 'Treachery 서클의 하급 영혼입니다.',
     stats: { maxHp: 3000000, power: 35000, defense: 5, speed: 2, attackCooldown: 1000 },
-    rewards: { exp: 300000, gold: 60000, drops: [] },
+    rewards: { exp: 300000, gold: 60000, drops: [
+      { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+      { itemId: 'loot_shadow_essence', chance: 0.25, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 }
   },
   {
@@ -387,7 +480,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'oros_face',
     description: '3개의 얼굴, 거대한 얼음에 하반신이 갇혀있음. 6개의 날개는 부러지고 검게 타있음. 눈물이 얼어붙어 있음',
     stats: { maxHp: 100000000, power: 250000, defense: 20, speed: 1.5, attackCooldown: 2000 },
-    rewards: { exp: 50000000, gold: 10000000, drops: [] },
+    rewards: { exp: 50000000, gold: 10000000, drops: [
+      { itemId: 'essence_treachery', chance: 1.0, minAmount: 5, maxAmount: 10 },
+      { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 }
+    ] },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 }
   }
 ];

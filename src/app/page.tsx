@@ -90,7 +90,7 @@ export default function LandingPage() {
               <h3 className="text-2xl font-bold mb-4 text-zinc-100">Progression &amp; Crafting System</h3>
               <p className="text-zinc-400 leading-relaxed">
                 Smelt various minerals like iron, gold, and diamonds gathered underground in the Refinery to create higher-tier materials.
-                Use these valuable metals in the Laboratory system to permanently upgrade all your stats, from basic attack power and HP
+                Use these valuable metals in the Synthesis Altar system to permanently forge sacred relics and upgrade all your stats, from basic attack power and HP
                 to your drill's mining speed. Transform a rusty drill into a powerful special weapon using resources.
               </p>
             </div>
