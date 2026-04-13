@@ -62,8 +62,8 @@ export const projectileSystem = (world: GameWorld, deltaTime: number, now: numbe
       continue;
     }
 
-    // 4. 수명(Life) 체크 (옵션: 너무 오래 날아가면 소멸)
-    // 여기서는 간단하게 lastAttackTime 필드를 '생성 시간'으로 활용
+    // 4. 수명(Life) 체크 (5초 후 소멸)
+    // lastAttackTime 필드를 '생성 시간(performance.now)'으로 활용함
     if (now - soa.lastAttackTime[i] > 5000) {
       entities.destroy(i);
       continue;

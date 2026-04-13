@@ -130,8 +130,8 @@ export const MONSTER_LIST: MonsterDefinition[] = [
   },
   {
     id: 'c3_worm',
-    name: 'Carrion Worm',
-    nameKo: '부패 벌레',
+    name: 'Voracious Hound',
+    nameKo: '탐욕스러운 짐승',
     type: 'monster',
     imagePath: 'LustfulWhisperer',
     description: 'Gluttony 서클의 하급 영혼입니다.',

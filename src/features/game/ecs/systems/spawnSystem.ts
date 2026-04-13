@@ -72,7 +72,7 @@ export const spawnSystem = (world: GameWorld) => {
           entities.soa.attackCooldown[idx] = bossDef.stats.attackCooldown ?? 2500;
           entities.soa.width[idx] = TILE_SIZE * 5;
           entities.soa.height[idx] = TILE_SIZE * 5;
-          entities.soa.lastAttackTime[idx] = Date.now(); // 초기화
+          entities.soa.lastAttackTime[idx] = performance.now(); // [Fix] use performance.now to match loop now
 
           if (!player.stats.encounteredBossIds.includes(bossId)) {
             player.stats.encounteredBossIds.push(bossId);

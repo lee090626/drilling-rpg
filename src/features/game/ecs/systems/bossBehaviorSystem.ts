@@ -54,41 +54,52 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   const py = player.pos.y * TILE_SIZE + TILE_SIZE / 2;
 
   // --- 패턴 1: Flame Shot (모든 페이즈) ---
-  if (now - soa.lastAttackTime[bossIdx] > patternInterval) {
-    const shotCount = phase === 3 ? 5 : phase === 2 ? 3 : 1;
-    const speed = phase === 3 ? 12 : phase === 2 ? 8 : 5;
+  const warningLeadTime = 600; // 공격 600ms 전부터 전조 표시
+  const timeSinceLastAttack = now - soa.lastAttackTime[bossIdx];
 
-    // 플레이어 방향 벡터 계산
-    const dx = px - bx;
-    const dy = py - by;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+  if (timeSinceLastAttack > patternInterval - warningLeadTime) {
+    // 공격 징조 표시 (UI 컴포넌트 연동)
+    soa.state[bossIdx] = 1; // 1: 공격 준비 상태 (렌더러에서 느낌표 표시)
+    
+    if (timeSinceLastAttack > patternInterval) {
+      const shotCount = phase === 3 ? 5 : phase === 2 ? 3 : 1;
+      const speed = phase === 3 ? 12 : phase === 2 ? 8 : 5;
 
-    if (dist > 0) {
-      const vx = (dx / dist) * speed;
-      const vy = (dy / dist) * speed;
+      // 플레이어 방향 벡터 계산
+      const dx = px - bx;
+      const dy = py - by;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // 투사체 생성 (5: projectile)
-      for (let j = 0; j < shotCount; j++) {
-        // 약간의 각도 분산 (스프레드)
-        const offset = (j - (shotCount - 1) / 2) * 0.2;
-        const cos = Math.cos(offset);
-        const sin = Math.sin(offset);
-        const finalVx = vx * cos - vy * sin;
-        const finalVy = vx * sin + vy * cos;
+      if (dist > 0) {
+        const vx = (dx / dist) * speed;
+        const vy = (dy / dist) * speed;
 
-        const pIdx = entities.create(5, bx, by);
-        if (pIdx !== -1) {
-          const idx = entities.getIndex(pIdx);
-          soa.vx[idx] = finalVx;
-          soa.vy[idx] = finalVy;
-          soa.attack[idx] = 15 + phase * 5; // 페이즈별 대미지 증가
-          soa.lastAttackTime[idx] = now; // 생성 시간 저장
-          soa.width[idx] = 24;
-          soa.height[idx] = 24;
+        // 투사체 생성 (5: projectile)
+        for (let j = 0; j < shotCount; j++) {
+          const offset = (j - (shotCount - 1) / 2) * 0.2;
+          const cos = Math.cos(offset);
+          const sin = Math.sin(offset);
+          const finalVx = vx * cos - vy * sin;
+          const finalVy = vx * sin + vy * cos;
+
+          const pIdx = entities.create(5, bx, by);
+          if (pIdx !== -1) {
+            const idx = entities.getIndex(pIdx);
+            soa.vx[idx] = finalVx;
+            soa.vy[idx] = finalVy;
+            soa.attack[idx] = 15 + phase * 5;
+            soa.lastAttackTime[idx] = now; // 생성 시간 (performance.now)
+            soa.width[idx] = 24;
+            soa.height[idx] = 24;
+          }
         }
       }
+      soa.lastAttackTime[bossIdx] = now;
+      soa.state[bossIdx] = 0; // 평상시 상태로 복구
     }
-    soa.lastAttackTime[bossIdx] = now;
+  } else {
+    // 아직 공격 주기가 아니면 상태 초기화
+    if (soa.state[bossIdx] === 1) soa.state[bossIdx] = 0;
   }
 
   // --- 패턴 2: Storm Surge (Phase 2, 3) ---
