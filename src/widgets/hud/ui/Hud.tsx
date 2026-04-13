@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { getCircleConfig, getLayerFromDepth } from '@/shared/config/circleData';
 import { PlayerStats } from '@/shared/types/game';
-import { getDrillData } from '@/shared/config/drillData';
+import { EQUIPMENTS } from '@/shared/config/equipmentData';
 
 import { HpBar } from './components/HpBar';
 import { GoldDisplay } from './components/GoldDisplay';
@@ -39,6 +39,17 @@ const Hud: React.FC<HudProps> = React.memo(
   }) => {
     const config = getCircleConfig(stats.depth);
     const layerIdx = getLayerFromDepth(stats.depth, config);
+
+    // 장착된 장비 객체들 도출 (안전한 접근)
+    const equipped = useMemo(() => {
+      const eq = (stats as any).equipment;
+      return {
+        drill: eq?.drillId ? (EQUIPMENTS as any)[eq.drillId] : null,
+        helmet: eq?.helmetId ? (EQUIPMENTS as any)[eq.helmetId] : null,
+        armor: eq?.armorId ? (EQUIPMENTS as any)[eq.armorId] : null,
+        boots: eq?.bootsId ? (EQUIPMENTS as any)[eq.bootsId] : null,
+      };
+    }, [stats]);
 
     const layerName = useMemo(() => {
       switch (layerIdx) {
@@ -91,8 +102,6 @@ const Hud: React.FC<HudProps> = React.memo(
       [onOpenStatus, onOpenInventory, onOpenEncyclopedia, onOpenSettings, onOpenGuide, onOpenAltar],
     );
 
-    const equippedDrill = getDrillData(stats.equippedDrillId);
-
     return (
       <div className="absolute top-0 left-0 w-full h-full p-4 md:p-8 pointer-events-none select-none flex flex-col justify-between overflow-hidden">
         {/* 상단 섹션: 생존 상태 및 자산 */}
@@ -105,15 +114,16 @@ const Hud: React.FC<HudProps> = React.memo(
         <div className="flex justify-between items-end w-full relative">
           <div className="flex gap-4 items-end">
             <EquipmentInfo
-              drillName={equippedDrill?.name || 'Standard Drill'}
-              drillImage={equippedDrill?.image}
+              drill={equipped.drill}
+              helmet={equipped.helmet}
+              armor={equipped.armor}
+              boots={equipped.boots}
               pos={pos}
             />
           </div>
 
           <QuickNav items={navItems} />
-
-          <WorldInfo layerName={layerName} circleName={config.name} />
+          <WorldInfo depth={stats.depth as any} layerName={layerName} onOpenElevator={onOpenElevator} />
         </div>
       </div>
     );

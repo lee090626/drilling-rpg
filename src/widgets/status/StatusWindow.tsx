@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import Image from 'next/image';
 import { PlayerStats } from '@/shared/types/game';
-import { DRILLS } from '@/shared/config/drillData';
+import { EQUIPMENTS } from '@/shared/config/equipmentData';
 import { SKILL_RUNES } from '@/shared/config/skillRuneData';
 import { ARTIFACT_DATA } from '@/shared/config/artifactData';
 import { MINERALS } from '@/shared/config/mineralData';
@@ -40,21 +40,16 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
   } | null>(null);
 
   const {
-    equippedDrill,
-    equipmentState,
-    levelMasteryBonus,
+    equipped,
     finalPower,
+    finalDefense,
+    finalMaxHp,
     finalCritRate,
     finalCritDmg,
     finalMiningInterval,
     finalMoveSpeedMult,
     finalLuck,
     runePowerBonus,
-    runeSpeedBonus,
-    runeCritRate,
-    runeCritDmg,
-    runeLuck,
-    runeMoveSpeed,
     statBreakdowns,
   } = useStatusStats(stats);
 
@@ -137,30 +132,32 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                   id: 'power',
                   label: 'Total Power',
                   value: finalPower,
-                  bonus: runePowerBonus,
-                  color: 'text-emerald-400',
+                  color: 'text-rose-400',
                 },
-                { id: 'hp', label: 'Max HP', value: stats.maxHp, color: 'text-rose-400' },
+                {
+                  id: 'defense',
+                  label: 'Defense',
+                  value: finalDefense,
+                  color: 'text-blue-400',
+                },
+                { id: 'hp', label: 'Max HP', value: finalMaxHp, color: 'text-emerald-400' },
                 {
                   id: 'critRate',
                   label: 'Crit Rate',
                   value: `${(finalCritRate * 100).toFixed(1)}%`,
-                  bonus: runeCritRate > 0 ? `(${(runeCritRate * 100).toFixed(1)}%)` : null,
-                  color: 'text-emerald-400',
+                  color: 'text-amber-400',
                 },
                 {
                   id: 'critDmg',
                   label: 'Crit Damage',
                   value: `${(finalCritDmg * 100).toFixed(0)}%`,
-                  bonus: runeCritDmg > 0 ? `(+${(runeCritDmg * 100).toFixed(0)}%)` : null,
-                  color: 'text-emerald-400',
+                  color: 'text-amber-500',
                 },
                 {
                   id: 'miningSpeed',
                   label: 'Mining Speed',
                   value: `${finalMiningInterval}ms`,
-                  bonus: runeSpeedBonus > 0 ? `(-${(runeSpeedBonus * 100).toFixed(0)}%)` : null,
-                  color: 'text-emerald-400',
+                  color: 'text-cyan-400',
                 },
               ].map((stat, i) => (
                 <div
@@ -176,18 +173,13 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                     className={`text-sm font-black ${stat.color} tabular-nums flex items-center gap-1.5`}
                   >
                     {stat.value}
-                    {stat.bonus && stat.bonus !== 0 && (
-                      <span className="text-[10px] text-blue-400 font-bold">
-                        {typeof stat.bonus === 'number' ? `(+${stat.bonus})` : stat.bonus}
-                      </span>
-                    )}
                   </div>
                 </div>
               ))}
             </div>
 
             <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mt-6 mb-4 border-b border-zinc-800 pb-2">
-              Exploration & Utility
+              Exploration
             </h3>
 
             <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col gap-3">
@@ -196,13 +188,11 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                   id: 'moveSpeed',
                   label: 'Move Speed',
                   value: `${(finalMoveSpeedMult * 100).toFixed(0)}%`,
-                  bonus: runeMoveSpeed > 0 ? `(+${runeMoveSpeed}%)` : null,
                 },
                 {
                   id: 'luck',
                   label: 'Luck (Drop Bonus)',
                   value: `+${finalLuck}`,
-                  bonus: runeLuck > 0 ? `(+${(runeLuck * 100).toFixed(0)})` : null,
                 },
               ].map((stat, i) => (
                 <div
@@ -216,34 +206,31 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                   </div>
                   <div className="text-sm font-black text-[#eab308] tabular-nums flex items-center gap-1.5">
                     {stat.value}
-                    {stat.bonus && (
-                      <span className="text-[10px] text-blue-400 font-bold">{stat.bonus}</span>
-                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* COLUMN 2: PLAYER DETAILS & RECORDS */}
+          {/* COLUMN 2: HP & RECORDS */}
           <div className="space-y-6 flex flex-col">
             <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-              Player Status
+              Player Vitality
             </h3>
 
             <div className="bg-[#252526] p-4 md:p-5 rounded-xl md:rounded-2xl border border-zinc-800 space-y-4">
               {/* HP BAR */}
               <div className="space-y-2">
                 <div className="flex justify-between items-end">
-                  <span className="text-[10px] font-bold text-zinc-400">Health</span>
+                  <span className="text-[10px] font-bold text-zinc-400">Survival Gauge</span>
                   <span className="text-sm font-black text-white tabular-nums">
-                    {Math.floor(stats.hp)} <span className="text-zinc-500">/ {stats.maxHp}</span>
+                    {Math.floor(stats.hp)} <span className="text-zinc-500">/ {finalMaxHp}</span>
                   </span>
                 </div>
-                <div className="h-4 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-[2px]">
+                <div className="h-4 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800 p-[2px] shadow-inner">
                   <div
-                    className="h-full bg-rose-600 rounded-full transition-all duration-500"
-                    style={{ width: `${(stats.hp / stats.maxHp) * 100}%` }}
+                    className="h-full bg-emerald-500 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                    style={{ width: `${(stats.hp / finalMaxHp) * 100}%` }}
                   />
                 </div>
               </div>
@@ -257,25 +244,19 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-zinc-400">Current Depth</span>
+                  <span className="text-[10px] font-bold text-zinc-400">Current Orbit</span>
                   <span className="text-xs font-black text-purple-400">
-                    {Math.floor(stats.depth)}m
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-zinc-400">Discovered Minerals</span>
-                  <span className="text-xs font-black text-emerald-400">
-                    {stats.discoveredMinerals?.length || 0}
+                    Circle {stats.dimension || 0}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* ARTIFACTS SECTION - Taking more space now */}
+            {/* ARTIFACTS SECTION */}
             <div className="bg-[#252526] p-4 md:p-6 rounded-xl md:rounded-2xl border border-zinc-800 flex flex-col min-h-[300px] flex-1">
               <h4 className="text-[10px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2 flex justify-between items-center">
-                <span>Unlocked Artifacts</span>
-                <span className="text-purple-500">{stats.artifacts.length}</span>
+                <span>Unique Artifacts</span>
+                <span className="text-purple-500 font-black">{stats.unlockedResearchIds.filter(id => id.startsWith('relic_')).length}</span>
               </h4>
               <div className="space-y-3 overflow-y-auto custom-scrollbar pr-2 flex-1">
                 {stats.unlockedResearchIds.filter((id) => id.startsWith('relic_')).length > 0 ? (
@@ -283,142 +264,90 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                     .filter((id) => id.startsWith('relic_'))
                     .map((artifactId, idx) => {
                       const info = ARTIFACT_DATA[artifactId];
-
                       return (
                         <div
                           key={idx}
                           className="p-3 rounded-xl border bg-emerald-900/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.05)]"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">💎</span>
+                            <span className="text-2xl">💍</span>
                             <div className="flex flex-col flex-1">
                               <span className="text-xs font-black text-white tracking-tight">
-                                {info?.nameKo || info?.name || artifactId}
+                                {info?.name || artifactId}
                               </span>
                               <span className="text-[9px] text-emerald-400 font-bold leading-tight">
-                                Active Passive
+                                Ancient Passive
                               </span>
                             </div>
-                            <div className="text-[10px] text-zinc-500">Constant</div>
                           </div>
                         </div>
                       );
                     })
                 ) : (
                   <div className="text-center py-10 opacity-20 text-[10px] font-bold tracking-widest">
-                    No Unique Artifacts Found
+                    Search deeper for artifacts
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* COLUMN 3: EQUIPPED HARDWARE */}
+          {/* COLUMN 3: EQUIPPED HARDWARE (4-SLOT GRID) */}
           <div className="space-y-6">
             <h3 className="text-lg md:text-[20px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
-              Equipment
+              Gear Loadout
             </h3>
 
-            <div className="bg-[#252526] p-4 md:p-8 rounded-2xl md:rounded-4xl border border-zinc-800 shadow-2xl flex flex-col items-center text-center relative group overflow-hidden">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-900 rounded-2xl md:rounded-3xl flex items-center justify-center border border-zinc-800 shadow-inner transition-transform duration-500 overflow-hidden">
-                {equippedDrill.image ? (
-                  <AtlasIcon name={equippedDrill.image as AtlasIconName} size={96} />
-                ) : (
-                  <span className="text-4xl md:text-6xl">{equippedDrill.icon}</span>
-                )}
-              </div>
+            <div className="grid grid-cols-2 gap-3">
+              {(['drill', 'helmet', 'armor', 'boots'] as const).map((part) => {
+                const item = equipped[part];
+                return (
+                  <div key={part} className="bg-[#252526] p-4 rounded-2xl border border-zinc-800 flex flex-col items-center text-center shadow-xl group">
+                    <div className="w-14 h-14 bg-zinc-950 rounded-xl flex items-center justify-center border border-zinc-800 mb-2 shadow-inner group-hover:border-emerald-500/30 transition-colors">
+                      <span className="text-3xl">{item?.icon || '🚫'}</span>
+                    </div>
+                    <div className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{part}</div>
+                    <div className="text-[10px] font-black text-white truncate w-full">{item?.name || 'Barehanded'}</div>
+                  </div>
+                );
+              })}
+            </div>
 
-              <h4 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-2 md:mb-4">
-                {equippedDrill.name}
+            {/* DRILL RUNE SLOTS (Focused on Primary Weapon) */}
+            <div className="bg-[#252526] p-6 rounded-2xl border border-zinc-800 shadow-2xl">
+              <h4 className="text-[10px] font-black text-zinc-500 tracking-widest mb-4 border-b border-zinc-800 pb-2">
+                Weapon Rune Slots
               </h4>
-
-              <div className="grid grid-cols-2 gap-4 w-full mt-4 border-t border-zinc-800 pt-6">
-                <div className="text-center">
-                  <div className="text-[9px] text-zinc-500 font-bold mb-1">Power</div>
-                  <div className="text-xl font-black text-white flex items-center gap-2 justify-center">
-                    {equippedDrill.basePower}
-                    {levelMasteryBonus > 0 && (
-                      <span className="text-[10px] text-emerald-500">+{levelMasteryBonus}</span>
-                    )}
-                    {runePowerBonus > 0 && (
-                      <span className="text-[10px] text-blue-400">+{runePowerBonus}</span>
-                    )}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-[9px] text-zinc-500 font-bold mb-1">Speed</div>
-                  <div className="text-xl font-black text-white">{equippedDrill.cooldownMs}ms</div>
-                </div>
-              </div>
-
-              {/* REMOVED MASTERY & EXP SECTION FROM DRILL */}
-              <div className="w-full mt-4 md:mt-6 space-y-4 border-t border-zinc-800/50 pt-4 md:pt-6">
-                <div className="text-left">
-                  <div className="text-[9px] text-zinc-500 font-bold mb-2 tracking-widest flex justify-between items-center">
-                    <span>Skill Rune Slots</span>
-                    <span className="text-zinc-600 font-black">
-                      {equippedDrill.maxSkillSlots || 0} / {equippedDrill.maxSkillSlots || 0}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {Array.from({ length: equippedDrill.maxSkillSlots || 0 }).map((_, i) => {
-                      const isUnlocked = true; // ALL SLOTS UNLOCKED BY DEFAULT OR DRILL PROPERTY
-                      const slottedRuneId = (equipmentState.slottedRunes || [])[i];
-
-                      return (
-                        <button
-                          key={i}
-                          disabled={!isUnlocked || !slottedRuneId}
-                          onClick={() =>
-                            isUnlocked && slottedRuneId && onUnequipRune?.(stats.equippedDrillId, i)
-                          }
-                          className={`w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl border flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 ${
-                            isUnlocked
-                              ? slottedRuneId
-                                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:bg-emerald-500/20 active:scale-90 group/rune'
-                                : 'bg-zinc-900 border-zinc-700 text-zinc-600 shadow-inner'
-                              : 'bg-zinc-950 border-zinc-900 text-zinc-800 grayscale opacity-40 cursor-not-allowed'
-                          }`}
-                          title={slottedRuneId ? 'Click to unequip' : ''}
-                        >
-                          {isUnlocked ? (
-                            slottedRuneId ? (
-                              (() => {
-                                const runeItem = stats.inventoryRunes.find(
-                                  (r) => r.id === slottedRuneId,
-                                );
-                                const runeConfig = runeItem ? SKILL_RUNES[runeItem.runeId] : null;
-                                return (
-                                  <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-lg md:rounded-xl">
-                                    {runeItem && (
-                                      <SkillRuneIcon
-                                        runeId={runeItem.runeId}
-                                        rarity={runeItem.rarity as any}
-                                        size={32}
-                                      />
-                                    )}
-                                    <span className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover/rune:opacity-100 transition-opacity z-20">
-                                      <span className="text-[10px] text-white font-black">✕</span>
-                                    </span>
-                                  </div>
-                                );
-                              })()
-                            ) : (
-                              <span className="text-[8px] md:text-[10px] opacity-20">EMPTY</span>
-                            )
-                          ) : (
-                            <span className="text-xs md:text-[14px]">🔒</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                    {!equippedDrill.maxSkillSlots && (
-                      <span className="text-[9px] md:text-[10px] text-zinc-600">
-                        No Slots Available
-                      </span>
-                    )}
-                  </div>
-                </div>
+              <div className="flex flex-wrap gap-2">
+               {equipped.drill ? (
+                 (() => {
+                   const drillState = stats.equipmentStates[equipped.drill.id] || createInitialMasteryState(equipped.drill.id, equipped.drill.maxSkillSlots);
+                   return Array.from({ length: equipped.drill.maxSkillSlots || 0 }).map((_, i) => {
+                     const slottedRuneId = (drillState.slottedRunes || [])[i];
+                     return (
+                       <button
+                         key={i}
+                         disabled={!slottedRuneId}
+                         onClick={() => slottedRuneId && onUnequipRune?.(equipped.drill!.id, i)}
+                         className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all focus:outline-none ${
+                           slottedRuneId 
+                             ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-500 hover:bg-rose-500/20 hover:border-rose-500/40 group/rune' 
+                             : 'bg-zinc-950 border-zinc-800 text-zinc-700'
+                         }`}
+                       >
+                         {slottedRuneId ? (
+                           <div className="relative">
+                             <span className="group-hover/rune:opacity-0 transition-opacity">⚙️</span>
+                             <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/rune:opacity-100 text-rose-500 font-bold text-[10px]">✕</span>
+                           </div>
+                         ) : '🔒'}
+                       </button>
+                     );
+                   });
+                 })()
+               ) : (
+                 <div className="text-[10px] font-bold text-zinc-600 italic">Equip a drill to use runes</div>
+               )}
               </div>
             </div>
           </div>
