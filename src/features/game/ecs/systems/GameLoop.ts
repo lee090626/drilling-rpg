@@ -47,7 +47,7 @@ export class GameLoop {
     layers: any | null,
     textures: { [key: string]: PIXI.Texture },
     lightingFilter: any | null,
-    bufferPool: ArrayBuffer[],
+    bufferPool: ArrayBuffer[]
   ) {
     this.world = world;
     this.pixiApp = pixiApp;
@@ -62,7 +62,7 @@ export class GameLoop {
     pixiApp: PIXI.Application | null,
     layers: any | null,
     textures: { [key: string]: PIXI.Texture },
-    lightingFilter: any | null,
+    lightingFilter: any | null
   ) {
     this.world = world;
     this.pixiApp = pixiApp;
@@ -140,14 +140,14 @@ export class GameLoop {
           this.world.entities.soa.x[i],
           this.world.entities.soa.y[i],
           this.world.entities.soa.width[i],
-          this.world.entities.soa.height[i],
+          this.world.entities.soa.height[i]
         );
       }
 
       // 1. 게임 시뮬레이션
       inputSystem(this.world);
       statusSystem(this.world, now);
-      statsSyncSystem(this.world.player); // 분리된 스탯 동기화 시스템 호출
+      statsSyncSystem(this.world.player);
       physicsSystem(this.world, now);
       miningSystem(this.world, now);
       interactionSystem(this.world);
@@ -162,14 +162,7 @@ export class GameLoop {
 
       // 2. 렌더링 호출
       if (this.pixiApp && this.layers) {
-        renderSystem(
-          this.world,
-          this.pixiApp,
-          this.layers,
-          now,
-          this.textures,
-          this.lightingFilter,
-        );
+        renderSystem(this.world, this.pixiApp, this.layers, now, this.textures, this.lightingFilter);
       }
 
       // 3. UI 동기화 방출
@@ -199,7 +192,7 @@ export class GameLoop {
         const visibleIndices = this.world.spatialHash.query(
           this.world.player.visualPos.x * TILE_SIZE,
           this.world.player.visualPos.y * TILE_SIZE,
-          1200,
+          1200
         );
 
         // Header
@@ -223,7 +216,6 @@ export class GameLoop {
 
           // Note: Viewport에 들어오는 것만으로도 Dirty로 간주하여 싱크를 맞출 수도 있지만,
           // 여기서는 성능을 위해 Simulation 레이어에서 마킹한 dirtyFlags만 사용합니다.
-          // (만약 클라이언트가 해당 엔티티를 처음 본다면 강제 동기화가 필요할 수 있음)
           if (soa.dirtyFlags[idx] === 0 && offset > HEADER_SIZE) {
             // Skip if not dirty (but keep player and first entry for stability)
             // continue;
@@ -264,7 +256,7 @@ export class GameLoop {
               tileMapBuffer: tileMapBuffer,
             },
           },
-          [tileMapBuffer.buffer],
+          [tileMapBuffer.buffer]
         );
       }
     } catch (err) {
