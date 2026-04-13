@@ -57,9 +57,9 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'fervorstone', threshold: 0.15, minLayer: 3 },
     ],
     monsters: [
-      { monsterId: 'c2_whisperer', chance: 0.25, weight: 1, minLayer: 1, maxLayer: 3 },
-      { monsterId: 'c2_wind_soul', chance: 0.15, weight: 1, minLayer: 2, maxLayer: 3 },
-      { monsterId: 'c2_gale_bat', chance: 0.1, weight: 1, minLayer: 3, maxLayer: 3 },
+      { monsterId: 'c2_whisperer', chance: 0.08, weight: 1, minLayer: 1, maxLayer: 3 },
+      { monsterId: 'c2_wind_soul', chance: 0.05, weight: 1, minLayer: 2, maxLayer: 3 },
+      { monsterId: 'c2_gale_bat', chance: 0.03, weight: 1, minLayer: 3, maxLayer: 3 },
     ],
     boss: { id: 'c2_asmodeus', spawnLayer: 4 },
   },
@@ -77,9 +77,9 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'gorestone', threshold: 0.2, minLayer: 3, scale: 6 },
     ],
     monsters: [
-      { monsterId: 'c3_devourer', chance: 0.22, weight: 1, minLayer: 1 },
-      { monsterId: 'c3_worm', chance: 0.15, weight: 1, minLayer: 2 },
-      { monsterId: 'c3_mud_shade', chance: 0.1, weight: 1, minLayer: 3 },
+      { monsterId: 'c3_devourer', chance: 0.07, weight: 1, minLayer: 1 },
+      { monsterId: 'c3_worm', chance: 0.04, weight: 1, minLayer: 2 },
+      { monsterId: 'c3_mud_shade', chance: 0.03, weight: 1, minLayer: 3 },
     ],
     boss: { id: 'c3_beelzebub', spawnLayer: 4 },
   },
@@ -96,7 +96,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'luststone', threshold: 0.4, minLayer: 2, scale: 7 },
       { type: 'midasite', threshold: 0.25, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c4_hoarder', chance: 0.25, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c4_hoarder', chance: 0.08, weight: 1, minLayer: 1 }],
     boss: { id: 'c4_mammon', spawnLayer: 4 },
   },
   {
@@ -112,7 +112,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'cinderstone', threshold: 0.35, minLayer: 2, scale: 7 },
       { type: 'furystone', threshold: 0.2, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c5_dweller', chance: 0.2, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c5_dweller', chance: 0.07, weight: 1, minLayer: 1 }],
     boss: { id: 'c5_azazel', spawnLayer: 4 },
   },
   {
@@ -128,7 +128,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'blightstone', threshold: 0.3, minLayer: 2, scale: 7 },
       { type: 'vexite', threshold: 0.15, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c6_priest', chance: 0.2, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c6_priest', chance: 0.07, weight: 1, minLayer: 1 }],
     boss: { id: 'c6_samael', spawnLayer: 4 },
   },
   {
@@ -144,7 +144,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'bloodstone', threshold: 0.25, minLayer: 2, scale: 7 },
       { type: 'cruelite', threshold: 0.12, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c7_centaur', chance: 0.18, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c7_centaur', chance: 0.06, weight: 1, minLayer: 1 }],
     boss: { id: 'c7_belial', spawnLayer: 4 },
   },
   {
@@ -160,7 +160,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'lurerstone', threshold: 0.2, minLayer: 2, scale: 7 },
       { type: 'phantomite', threshold: 0.1, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c8_malebranche', chance: 0.15, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c8_malebranche', chance: 0.05, weight: 1, minLayer: 1 }],
     boss: { id: 'c8_abaddon', spawnLayer: 4 },
   },
   {
@@ -176,7 +176,7 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'glacialite', threshold: 0.18, minLayer: 2, scale: 7 },
       { type: 'abyssstone', threshold: 0.08, minLayer: 3, scale: 6 },
     ],
-    monsters: [{ monsterId: 'c9_sinner', chance: 0.15, weight: 1, minLayer: 1 }],
+    monsters: [{ monsterId: 'c9_sinner', chance: 0.05, weight: 1, minLayer: 1 }],
     boss: { id: 'c9_lucifer', spawnLayer: 4 },
   },
 ];
