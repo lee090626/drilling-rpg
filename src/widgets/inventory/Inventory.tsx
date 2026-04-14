@@ -33,7 +33,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
     'ingredients',
   );
   const [isEquippingRune, setIsEquippingRune] = useState(false);
-  const [selectedPart, setSelectedPart] = useState<EquipmentPart>('drill');
+  const [selectedPart, setSelectedPart] = useState<EquipmentPart>('Drill');
 
   /** 현재 선택된 광물 정보 계산 */
   const selectedMineral = useMemo(
@@ -78,10 +78,10 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
   const isCurrentlyEquipped = (id: string, part: EquipmentPart) => {
     const { equipment } = stats;
     switch (part) {
-      case 'drill': return equipment.drillId === id;
-      case 'helmet': return equipment.helmetId === id;
-      case 'armor': return equipment.armorId === id;
-      case 'boots': return equipment.bootsId === id;
+      case 'Drill': return equipment.drillId === id;
+      case 'Helmet': return equipment.helmetId === id;
+      case 'Armor': return equipment.armorId === id;
+      case 'Boots': return equipment.bootsId === id;
       default: return false;
     }
   };
@@ -210,7 +210,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="flex justify-start mb-8">
                     <span
-                      className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest uppercase"
+                      className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest"
                       style={{
                         backgroundColor: `${selectedMineral.color}20`,
                         borderColor: selectedMineral.color,
@@ -238,7 +238,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
 
                   <div className="mt-auto space-y-4">
                     <div className="bg-zinc-950 p-8 rounded-3xl border border-zinc-900">
-                      <div className="text-xs text-zinc-500 font-black mb-4 tracking-widest text-center uppercase">
+                      <div className="text-xs text-zinc-500 font-black mb-4 tracking-widest text-center">
                         Stock Quantity
                       </div>
                       <div className="flex items-center justify-center gap-4">
@@ -261,7 +261,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* 부위별 필터 탭 */}
             <div className="flex gap-2 mb-6 px-1 flex-wrap">
-              {(['drill', 'helmet', 'armor', 'boots'] as EquipmentPart[]).map((part) => (
+              {(['Drill', 'Helmet', 'Armor', 'Boots'] as EquipmentPart[]).map((part) => (
                 <button
                   key={part}
                   onClick={() => setSelectedPart(part)}
@@ -271,7 +271,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                       : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
                   }`}
                 >
-                  {part.toUpperCase()}
+                  {part}
                 </button>
               ))}
             </div>
