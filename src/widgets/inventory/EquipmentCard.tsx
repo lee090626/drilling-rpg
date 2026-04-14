@@ -1,6 +1,8 @@
 import React from 'react';
 import { EQUIPMENTS } from '@/shared/config/equipmentData';
 import { EquipmentPart } from '@/shared/types/game';
+import { AtlasIconName } from '@/shared/config/atlasMap';
+import AtlasIcon from '@/widgets/hud/ui/AtlasIcon';
 
 interface EquipmentCardProps {
   equipmentId: string;
@@ -32,7 +34,11 @@ function EquipmentCard({ equipmentId, isEquipped, onEquip }: EquipmentCardProps)
     >
       <div className="flex items-center gap-4 md:gap-6 mb-6 text-left">
         <div className="w-20 h-20 md:w-28 md:h-28 bg-zinc-950 rounded-2xl flex items-center justify-center border border-zinc-900 shadow-inner overflow-hidden">
-          <span className="text-4xl md:text-6xl drop-shadow-lg">{equipment.icon}</span>
+          {equipment.image ? (
+            <AtlasIcon name={equipment.image as AtlasIconName} size={80} />
+          ) : (
+            <span className="text-4xl md:text-6xl drop-shadow-lg">{equipment.icon}</span>
+          )}
         </div>
         <div>
           <div
