@@ -52,19 +52,16 @@ const Hud: React.FC<HudProps> = React.memo(
     }, [stats]);
 
     const layerName = useMemo(() => {
+      let prefix = '';
       switch (layerIdx) {
-        case 1:
-          return 'Upper';
-        case 2:
-          return 'Middle';
-        case 3:
-          return 'Lower';
-        case 4:
-          return 'Deepest';
-        default:
-          return '';
+        case 1: prefix = 'Upper'; break;
+        case 2: prefix = 'Middle'; break;
+        case 3: prefix = 'Bottom'; break;
+        case 4: prefix = 'Deepest'; break;
+        default: prefix = 'Unknown';
       }
-    }, [layerIdx]);
+      return `${prefix} ${config.name}`;
+    }, [layerIdx, config.name]);
 
     const navItems = useMemo(
       () => [
@@ -113,13 +110,7 @@ const Hud: React.FC<HudProps> = React.memo(
         {/* 하단 섹션: 장비, 네비게이션, 월드 정보 */}
         <div className="flex justify-between items-end w-full relative">
           <div className="flex gap-4 items-end">
-            <EquipmentInfo
-              drill={equipped.drill}
-              helmet={equipped.helmet}
-              armor={equipped.armor}
-              boots={equipped.boots}
-              pos={pos}
-            />
+            <EquipmentInfo pos={pos} />
           </div>
 
           <QuickNav items={navItems} />
