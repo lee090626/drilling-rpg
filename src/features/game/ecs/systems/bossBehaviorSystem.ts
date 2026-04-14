@@ -5,6 +5,8 @@ import { TILE_SIZE } from '@/shared/config/constants';
  * [ECS] 보스 AI 및 패턴 제어 시스템
  * - 보스의 HP에 따른 페이즈 전환 및 공격 패턴 발동을 관리합니다.
  */
+const bossPatternTimers = new Map<number, number>();
+
 export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: number) => {
   const { entities, player } = world;
   const { soa } = entities;
@@ -60,19 +62,19 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     phase: phase,
   };
 
-  // 2. 공격 패턴 타이머 관리 (soa.lastAttackTime[bossIdx] 활용)
-  // [v4 Balance] 패턴 주기를 소폭 늘려 플레이어의 회피 여유를 제공함
-  const patternInterval = phase === 3 ? 2500 : phase === 2 ? 3500 : 4500;
+  const patternInterval = phase === 3 ? 3200 : phase === 2 ? 4300 : 5500;
 
   // --- 패턴 1: Flame Shot (모든 페이즈) ---
-  const warningLeadTime = 600; // 공격 600ms 전부터 전조 표시
-  const timeSinceLastAttack = now - soa.lastAttackTime[bossIdx];
+  const warningLeadTime = 1000; // 공격 1000ms 전부터 전조 표시
+  const lastPatternTime = bossPatternTimers.get(bossIdx) || (now - patternInterval);
+  const timeSinceLastPattern = now - lastPatternTime;
 
-  if (timeSinceLastAttack > patternInterval - warningLeadTime) {
+  if (timeSinceLastPattern > patternInterval - warningLeadTime) {
     // 공격 징조 표시 (UI 컴포넌트 연동)
     soa.state[bossIdx] = 1; // 1: 공격 준비 상태 (렌더러에서 느낌표 표시)
     
-    if (timeSinceLastAttack > patternInterval) {
+    if (timeSinceLastPattern > patternInterval) {
+      bossPatternTimers.set(bossIdx, now);
       const shotCount = phase === 3 ? 5 : phase === 2 ? 3 : 1;
       const speed = phase === 3 ? 12 : phase === 2 ? 8 : 5;
 
@@ -105,7 +107,6 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
           }
         }
       }
-      soa.lastAttackTime[bossIdx] = now;
       soa.state[bossIdx] = 0; // 평상시 상태로 복구
     }
   } else {
