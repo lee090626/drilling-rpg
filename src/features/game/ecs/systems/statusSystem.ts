@@ -29,7 +29,13 @@ export const statusSystem = (world: GameWorld, now: number) => {
   // 2. 플레이어 상태 이상 업데이트 및 만료 처리
   player.stats.activeEffects = player.stats.activeEffects.filter((effect) => {
     const isExpired = now >= effect.endTime;
-    if (isExpired) return false;
+    if (isExpired) {
+      // 스턴이 만료될 때 면역 시작 시간 기록
+      if (effect.type === 'STUN') {
+        (player.stats as any).lastStunEndTime = now;
+      }
+      return false;
+    }
 
     const startTime = effect.startTime || now;
     const elapsed = now - startTime;
@@ -141,11 +147,24 @@ export const applyStatusEffect = (
   const { player } = world;
   const now = Date.now();
 
+  const STUN_IMMUNITY_DURATION = 1000; // 스턴 종료 후 1초간 면역 (사용자 요청 반영)
+
   if (!player.stats.activeEffects) {
     player.stats.activeEffects = [];
   }
 
-  const existing = player.stats.activeEffects.find((e) => e.type === effect.type);
+  // 1. 스턴(STUN) 특수 처리: 면역 체크 및 중복 방지
+  if (effect.type === 'STUN') {
+    const lastStunEndTime = (player.stats as any).lastStunEndTime || 0;
+    const isImmune = now - lastStunEndTime < STUN_IMMUNITY_DURATION;
+    const isAlreadyStunned = player.stats.activeEffects.some((e: any) => e.type === 'STUN');
+
+    if (isImmune || isAlreadyStunned) {
+      return; // 면역 상태거나 이미 스턴 중이면 무시
+    }
+  }
+
+  const existing = player.stats.activeEffects.find((e: any) => e.type === effect.type);
   if (existing) {
     existing.endTime = now + durationMs;
     if (effect.value !== undefined) existing.value = effect.value;

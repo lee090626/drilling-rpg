@@ -12,7 +12,13 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
       stats.hp = stats.maxHp;
       world.player.pos = { x: 15, y: 8 };
       world.player.visualPos = { x: 15, y: 8 };
-      console.log('[Worker] Player respawned at Base Camp.');
+
+      // 보스 전투 상태 및 환경 물리력 강제 초기화
+      world.bossCombatStatus.active = false;
+      world.environmentalForce = { vx: 0, vy: 0 };
+      world.shake = 0;
+      
+      console.log('[Worker] Player respawned at Base Camp. Combat status reset.');
       break;
     }
 

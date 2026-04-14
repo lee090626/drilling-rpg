@@ -71,12 +71,12 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   // stats.power는 이미 statsSyncSystem에서 (기본20 + 장비파워)가 합산된 결과입니다.
   // 숙련도는 '기초 드릴 파워'에 비례하여 추가 보너스를 줍니다.
   const drillPower = currentDrill?.stats.power || 0;
-  const levelMasteryBonus = Math.round(drillPower * (masteryMult - 1));
+  const tileMasteryBonus = Math.round(drillPower * (masteryMult - 1));
 
   // --- 최종 위력 계산 ---
   const basePower =
     stats.power +
-    levelMasteryBonus +
+    tileMasteryBonus +
     masteryBonuses.miningPower +
     Math.floor(runeAttackBonus);
 
