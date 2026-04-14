@@ -24,6 +24,12 @@ export const statusSystem = (world: GameWorld, now: number) => {
   if (now - lastHazardCheck > 1000) {
     (world.timestamp as any).lastHazardCheck = now;
     applyEnvironmentHazards(world, now);
+
+    // 자연 회복 (Passive Regen): 매 초당 최대 체력의 1% 회복 (단, 완전 사망 상태가 아닐 때만)
+    if (player.stats.hp > 0 && player.stats.hp < player.stats.maxHp) {
+      const regenAmount = Math.max(1, Math.floor(player.stats.maxHp * 0.01));
+      player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + regenAmount);
+    }
   }
 
   // 2. 플레이어 상태 이상 업데이트 및 만료 처리

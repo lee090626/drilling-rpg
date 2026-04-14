@@ -71,7 +71,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'LustfulWhisperer',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 500, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 300, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 50,
       gold: 10,
@@ -89,7 +89,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'WindTornSoul',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 600, power: 30, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 400, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 60,
       gold: 12,
@@ -107,7 +107,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'GaleBat',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 450, power: 35, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 250, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 45,
       gold: 9,
@@ -126,7 +126,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'Asmodeus',
     description:
       '3개의 머리 (황소, 인간, 숫양), 불꽃 날개, 뱀 꼬리. 몸 전체에서 붉은 열기가 뿜어져 나옴',
-    stats: { maxHp: 15000, power: 120, defense: 20, speed: 1.5, attackCooldown: 2000 },
+    stats: { maxHp: 2500, power: 35, defense: 10, speed: 1.5, attackCooldown: 2000 },
     rewards: {
       exp: 7500,
       gold: 1500,

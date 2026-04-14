@@ -42,7 +42,8 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
     if (isInRange) {
       const cooldown = entities.soa.attackCooldown[idx]; // 몬스터 별 개별 공격 쿨타임
       if (now - entities.soa.lastAttackTime[idx] > cooldown) {
-        const damage = entities.soa.attack[idx];
+        const attack = entities.soa.attack[idx];
+        const damage = Math.max(1, attack - (player.stats.defense || 0));
         player.stats.hp -= damage;
         player.lastHitTime = now;
 
@@ -78,15 +79,17 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
       const isHit = tx < ex + ew && tx + TILE_SIZE > ex && ty < ey + eh && ty + TILE_SIZE > ey;
 
       if (isHit) {
+        const defIdx = entities.soa.monsterDefIndex[idx];
+        const monsterDef = MONSTERS[defIdx];
+        const monsterDefense = monsterDef?.stats?.defense || 0;
+
         const { finalDamage, attackInterval, isCrit } = calculateMiningDamage(
           player.stats,
           type === 2 ? 'boss' : 'monster',
+          monsterDefense
         );
 
         if (now - player.lastAttackTime > attackInterval) {
-          const defIdx = entities.soa.monsterDefIndex[idx];
-          const monsterDef = MONSTERS[defIdx];
-
           let actualDamage = finalDamage;
           let text = isCrit ? `Crit! -${finalDamage}` : `-${finalDamage}`;
           let color = isCrit ? '#f87171' : '#ffffff';

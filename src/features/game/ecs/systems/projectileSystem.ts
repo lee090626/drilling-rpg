@@ -34,7 +34,8 @@ export const projectileSystem = (world: GameWorld, deltaTime: number, now: numbe
 
     if (isHitPlayer) {
       // 대미지 적용
-      const damage = soa.attack[i] || 10;
+      const attack = soa.attack[i] || 10;
+      const damage = Math.max(1, attack - (player.stats.defense || 0));
       player.stats.hp -= damage;
       player.lastHitTime = now;
 

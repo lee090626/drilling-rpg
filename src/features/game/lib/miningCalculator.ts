@@ -22,7 +22,11 @@ export interface DamageResult {
 /**
  * 플레이어의 현재 스탯과 장비를 기반으로 채굴 대미지를 계산합니다.
  */
-export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string): DamageResult => {
+export const calculateMiningDamage = (
+  stats: PlayerStats,
+  targetTileType: string,
+  customDefense?: number,
+): DamageResult => {
   const currentDrill = stats.equipment.drillId ? EQUIPMENTS[stats.equipment.drillId] : null;
   const artifactBonuses = calculateArtifactBonuses(stats);
   const masteryBonuses = getMasteryBonuses(stats);
@@ -104,8 +108,11 @@ export const calculateMiningDamage = (stats: PlayerStats, targetTileType: string
   }
 
   // 4. 방어력 적용 및 최종 대미지 (지수 공식)
-  const mineralDef = MINERALS.find((m) => m.key === targetTileType);
-  const defense = mineralDef ? mineralDef.defense : 0;
+  let defense = customDefense !== undefined ? customDefense : 0;
+  if (customDefense === undefined) {
+    const mineralDef = MINERALS.find((m) => m.key === targetTileType);
+    defense = mineralDef ? mineralDef.defense : 0;
+  }
 
   const netPower = Math.max(0, totalPower - defense);
   const exponent = 1.15;
