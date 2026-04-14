@@ -10,7 +10,6 @@ import { combatSystem } from '@/features/game/ecs/systems/combatSystem';
 import { effectSystem } from '@/features/game/ecs/systems/effectSystem';
 import { renderSystem } from '@/features/game/ecs/systems/renderSystem';
 import { statusSystem } from '@/features/game/ecs/systems/statusSystem';
-import { orosAiSystem } from '@/features/game/ecs/systems/orosAiSystem';
 import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
 import { bossBehaviorSystem } from '@/features/game/ecs/systems/bossBehaviorSystem';
 import { projectileSystem } from '@/features/game/ecs/systems/projectileSystem';
@@ -153,7 +152,6 @@ export class GameLoop {
       interactionSystem(this.world);
       spawnSystem(this.world);
       monsterAiSystem(this.world, now);
-      orosAiSystem(this.world, now);
       bossBehaviorSystem(this.world, deltaTime, now);
       projectileSystem(this.world, deltaTime, now);
       combatSystem(this.world, deltaTime, now);

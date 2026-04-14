@@ -27,6 +27,24 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     return;
   }
 
+  // 보스 위치 (중앙 기준)
+  const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
+  const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
+
+  // 플레이어 위치
+  const px = player.pos.x * TILE_SIZE + TILE_SIZE / 2;
+  const py = player.pos.y * TILE_SIZE + TILE_SIZE / 2;
+
+  // 거리 체크: 플레이어가 보스로부터 너무 멀어지면 전투 해제 (약 20타일)
+  const distToPlayer = Math.sqrt(Math.pow(bx - px, 2) + Math.pow(by - py, 2));
+  if (distToPlayer > TILE_SIZE * 20) {
+    if (world.bossCombatStatus.active) {
+      world.bossCombatStatus.active = false;
+      world.environmentalForce = { vx: 0, vy: 0 };
+    }
+    return;
+  }
+
   // 1. 보스 상태 업데이트 (UI 동기화용)
   const hpPercent = (soa.hp[bossIdx] / soa.maxHp[bossIdx]) * 100;
   let phase = 1;
@@ -43,15 +61,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   };
 
   // 2. 공격 패턴 타이머 관리 (soa.lastAttackTime[bossIdx] 활용)
-  const patternInterval = phase === 3 ? 1500 : phase === 2 ? 2500 : 3500;
-
-  // 보스 위치 (중앙 기준)
-  const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
-  const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
-
-  // 플레이어 위치
-  const px = player.pos.x * TILE_SIZE + TILE_SIZE / 2;
-  const py = player.pos.y * TILE_SIZE + TILE_SIZE / 2;
+  // [v4 Balance] 패턴 주기를 소폭 늘려 플레이어의 회피 여유를 제공함
+  const patternInterval = phase === 3 ? 2500 : phase === 2 ? 3500 : 4500;
 
   // --- 패턴 1: Flame Shot (모든 페이즈) ---
   const warningLeadTime = 600; // 공격 600ms 전부터 전조 표시

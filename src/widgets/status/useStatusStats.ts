@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 import { PlayerStats, Equipment } from '@/shared/types/game';
 import { EQUIPMENTS } from '@/shared/config/equipmentData';
 import {
-  getMasteryMultiplier,
-  createInitialEquipmentState,
   getMasteryBonuses,
 } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
@@ -59,17 +57,10 @@ export function useStatusStats(stats: PlayerStats): StatusStatsResult {
       boots: stats.equipment.bootsId ? EQUIPMENTS[stats.equipment.bootsId] : null,
     };
 
-    // 2. 드릴 숙련도 보너스 (훈련된 위력)
-    const drillMastery = equipped.drill 
-      ? (stats.equipmentStates[equipped.drill.id] || createInitialEquipmentState(equipped.drill.id))
-      : null;
-    const masteryMult = drillMastery ? getMasteryMultiplier(drillMastery.level) : 1;
-    const drillBasePower = equipped.drill?.stats.power || 0;
-    const levelMasteryBonus = Math.round(drillBasePower * (masteryMult - 1));
-
-    // 3. 통합 보너스 수합
+    // 2. 통합 보너스 수합
     const artifactBonuses = calculateArtifactBonuses(stats);
     const masteryBonuses = getMasteryBonuses(stats);
+    const drillBasePower = equipped.drill?.stats.power || 0;
     const runePowerBonus = Math.floor(getTotalRuneStat(stats, 'power'));
     const runeSpeedBonus = getTotalRuneStat(stats, 'miningSpeed');
     const runeCritRate = getTotalRuneStat(stats, 'critRate');
@@ -78,7 +69,7 @@ export function useStatusStats(stats: PlayerStats): StatusStatsResult {
     const runeMoveSpeed = getTotalRuneStat(stats, 'moveSpeed');
 
     // 4. 최종 스탯 도출 (엔진 동기화 수치와 일치 시킴)
-    const finalPower = stats.power + levelMasteryBonus + (artifactBonuses?.power || 0) + runePowerBonus;
+    const finalPower = stats.power + (artifactBonuses?.power || 0) + runePowerBonus;
     const finalDefense = (stats.defense || 0);
     const finalMaxHp = stats.maxHp;
     const finalLuck = (stats.luck || 0) + Math.floor(runeLuck * 100);
@@ -101,7 +92,6 @@ export function useStatusStats(stats: PlayerStats): StatusStatsResult {
       power: [
         { label: 'Base Hero Power', value: 20 },
         { label: `Drill (${equipped.drill?.name || 'Hand'})`, value: drillBasePower },
-        { label: 'Drill Mastery', value: `+${levelMasteryBonus}`, color: 'text-emerald-400' },
         { label: 'Mastery Perks', value: `+${masteryBonuses.miningPower}`, color: 'text-emerald-500' },
         { label: 'Skill Rune', value: `+${runePowerBonus}`, color: 'text-purple-400' },
         { label: 'Artifact', value: `+${artifactBonuses?.power || 0}`, color: 'text-orange-400' },
