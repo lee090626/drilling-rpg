@@ -52,10 +52,10 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
 
     case 'equip': {
       const { id, part } = data;
-      if (part === 'drill') stats.equipment.drillId = id;
-      else if (part === 'helmet') stats.equipment.helmetId = id;
-      else if (part === 'armor') stats.equipment.armorId = id;
-      else if (part === 'boots') stats.equipment.bootsId = id;
+      if (part === 'Drill') stats.equipment.drillId = id;
+      else if (part === 'Helmet') stats.equipment.helmetId = id;
+      else if (part === 'Armor') stats.equipment.armorId = id;
+      else if (part === 'Boots') stats.equipment.bootsId = id;
       else if (part === 'artifact') stats.equippedArtifactId = id;
       break;
     }
