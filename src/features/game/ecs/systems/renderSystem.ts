@@ -247,8 +247,15 @@ function updateMiningTarget(world: GameWorld, layers: any) {
       tile.type !== 'wall' &&
       tile.type !== 'portal';
 
+    const entIdx = world.spatialHash.query(tx + TILE_SIZE / 2, ty + TILE_SIZE / 2, TILE_SIZE * 0.5)[0];
+    const isBoss = entIdx !== undefined && world.entities.soa.type[entIdx] === 2;
+    const highlightW = isBoss ? TILE_SIZE * 5 : TILE_SIZE;
+    const highlightH = isBoss ? TILE_SIZE * 5 : TILE_SIZE;
+    const drawX = isBoss ? world.entities.soa.x[entIdx] : tx;
+    const drawY = isBoss ? world.entities.soa.y[entIdx] : ty;
+
     targetRect
-      .rect(tx + 1, ty + 1, TILE_SIZE - 2, TILE_SIZE - 2)
+      .rect(drawX + 1, drawY + 1, highlightW - 2, highlightH - 2)
       .fill({ color: 0xef4444, alpha: 0.15 })
       .stroke({ color: 0xef4444, width: 2, alignment: 0 });
 

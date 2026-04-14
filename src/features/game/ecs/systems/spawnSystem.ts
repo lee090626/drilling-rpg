@@ -59,8 +59,8 @@ export const spawnSystem = (world: GameWorld) => {
           // 3. 보스 엔티티 생성
           entities.create(
             2, // type: boss
-            spawnX * TILE_SIZE - 2.5 * TILE_SIZE,
-            spawnY * TILE_SIZE - 2.5 * TILE_SIZE,
+            spawnX * TILE_SIZE - 2 * TILE_SIZE,
+            spawnY * TILE_SIZE - 2 * TILE_SIZE,
             bossId,
             defIdx,
           );

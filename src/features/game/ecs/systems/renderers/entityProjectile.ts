@@ -20,7 +20,7 @@ export function updateProjectileRenderer(
   let procG = container.getChildByLabel('procG') as PIXI.Graphics;
 
   if (body) {
-    const texture = textures['Fireball.png'] || textures['Fireball'];
+    const texture = textures['FireBall.png'] || textures['FireBall'];
     if (texture) {
       body.texture = texture;
       body.visible = true;

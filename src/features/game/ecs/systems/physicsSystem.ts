@@ -141,10 +141,23 @@ export const physicsSystem = (world: GameWorld, now: number) => {
   player.visualPos.x += (player.pos.x - player.visualPos.x) * lerpFactor;
   player.visualPos.y += (player.pos.y - player.visualPos.y) * lerpFactor;
 
-  // [신규] 환경적인 힘 적용 (Storm Surge 등)
+  // [신규] 환경적인 힘 적용 (Storm Surge 등) - 충돌 검사 포함
   if (world.environmentalForce.vx !== 0 || world.environmentalForce.vy !== 0) {
-    player.pos.x += world.environmentalForce.vx;
-    player.pos.y += world.environmentalForce.vy;
+    const nextX = player.pos.x + world.environmentalForce.vx;
+    const nextY = player.pos.y + world.environmentalForce.vy;
+    
+    // 벽 충돌 검사 (간소화된 4방향 체크)
+    const tileX = Math.floor(nextX + 0.5);
+    const tileY = Math.floor(nextY + 0.5);
+    const targetTile = tileMap.getTile(tileX, tileY);
+    
+    // 타일이 존재하고 파괴 가능한 타일이거나 벽인 경우 이동 제한
+    const isSolid = targetTile && (targetTile.maxHealth > 0 || targetTile.type === 'wall');
+    
+    if (!isSolid) {
+      player.pos.x = nextX;
+      player.pos.y = nextY;
+    }
 
     // 월드 경계 제한 (0 ~ 64, BASE_DEPTH ~ 3000)
     player.pos.x = Math.max(0, Math.min(64 - 1, player.pos.x));
