@@ -33,23 +33,32 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
     const px = player.pos.x * TILE_SIZE;
     const py = player.pos.y * TILE_SIZE;
 
+    const rangePadding = TILE_SIZE * 0.8; 
     const isInRange =
-      px >= ex - TILE_SIZE * 0.5 &&
-      px < ex + ew + TILE_SIZE * 0.5 &&
-      py >= ey - TILE_SIZE * 0.5 &&
-      py < ey + eh + TILE_SIZE * 0.5;
+      px >= ex - rangePadding &&
+      px < ex + ew + rangePadding &&
+      py >= ey - rangePadding &&
+      py < ey + eh + rangePadding;
 
     if (isInRange) {
-      const cooldown = entities.soa.attackCooldown[idx]; // 몬스터 별 개별 공격 쿨타임
-      if (now - entities.soa.lastAttackTime[idx] > cooldown) {
-        const attack = entities.soa.attack[idx];
-        const damage = Math.max(1, attack - (player.stats.defense || 0));
-        player.stats.hp -= damage;
-        player.lastHitTime = now;
+      // [추가] 잡몹(Type 1)은 대각선 공격 불가능
+      const dx = Math.abs(px - (ex + ew / 2));
+      const dy = Math.abs(py - (ey + eh / 2));
+      const isDiagonal = dx > TILE_SIZE * 0.8 && dy > TILE_SIZE * 0.8;
+      const canDamage = type === 2 || !isDiagonal;
 
-        createFloatingText(world, px, py - 20, `-${damage}`, '#ef4444');
-        entities.soa.lastAttackTime[idx] = now;
-        world.shake = Math.max(world.shake, 5);
+      if (canDamage) {
+        const cooldown = entities.soa.attackCooldown[idx]; // 몬스터 별 개별 공격 쿨타임
+        if (now - entities.soa.lastAttackTime[idx] > cooldown) {
+          const attack = entities.soa.attack[idx];
+          const damage = Math.max(1, attack - (player.stats.defense || 0));
+          player.stats.hp -= damage;
+          player.lastHitTime = now;
+
+          createFloatingText(world, px, py - 20, `-${damage}`, '#ef4444');
+          entities.soa.lastAttackTime[idx] = now;
+          world.shake = Math.max(world.shake, 5);
+        }
       }
     }
   });
