@@ -42,7 +42,7 @@ function EquipmentCard({ equipmentId, isEquipped, onEquip }: EquipmentCardProps)
         </div>
         <div>
           <div
-            className={`text-[10px] font-bold mb-1 tracking-widest uppercase ${isEquipped ? 'text-cyan-400' : 'text-zinc-500'}`}
+            className={`text-[10px] font-bold mb-1 tracking-widest ${isEquipped ? 'text-cyan-400' : 'text-zinc-500'}`}
           >
             {isEquipped ? 'Currently Equipped' : 'Inventory'} • {partLabels[equipment.part]}
           </div>
@@ -54,17 +54,17 @@ function EquipmentCard({ equipmentId, isEquipped, onEquip }: EquipmentCardProps)
 
       <div className="grid grid-cols-2 gap-2 mb-6">
         {equipment.part === 'drill' && (
-          <StatBox label="POWER" value={equipment.stats.power || 0} color="text-rose-400" />
+          <StatBox label="Power" value={equipment.stats.power || 0} color="text-rose-400" />
         )}
         {equipment.part === 'helmet' && (
-          <StatBox label="DEFENSE" value={equipment.stats.defense || 0} color="text-blue-400" />
+          <StatBox label="Defense" value={equipment.stats.defense || 0} color="text-blue-400" />
         )}
         {equipment.part === 'armor' && (
-          <StatBox label="MAX HP" value={equipment.stats.maxHp || 0} color="text-emerald-400" />
+          <StatBox label="Max Hp" value={equipment.stats.maxHp || 0} color="text-emerald-400" />
         )}
         {equipment.part === 'boots' && (
           <>
-            <StatBox label="SPEED" value={equipment.stats.moveSpeed || 0} color="text-amber-400" />
+            <StatBox label="Speed" value={equipment.stats.moveSpeed || 0} color="text-amber-400" />
             <div className="grid grid-cols-2 gap-1 col-span-1">
               <StatBox label="DEF" value={equipment.stats.defense || 0} color="text-blue-400" isSmall />
               <StatBox label="HP" value={equipment.stats.maxHp || 0} color="text-emerald-400" isSmall />
