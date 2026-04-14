@@ -219,7 +219,7 @@ export interface MasteryState {
 /**
  * 장비의 부위를 정의합니다.
  */
-export type EquipmentPart = 'drill' | 'helmet' | 'armor' | 'boots';
+export type EquipmentPart = 'Drill' | 'Helmet' | 'Armor' | 'Boots';
 
 /**
  * 장비가 제공하는 스탯 정보를 정의합니다.
