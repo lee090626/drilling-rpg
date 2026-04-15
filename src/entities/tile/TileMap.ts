@@ -233,16 +233,48 @@ export class TileMap {
     const config = getCircleConfig(y - BASE_DEPTH);
     const layer = getLayerFromDepth(y - BASE_DEPTH, config);
 
+    // 1. 해당 층 소환 가능 몬스터 필터링
     const available = config.monsters.filter(
       (m) => layer >= m.minLayer && (!m.maxLayer || layer <= m.maxLayer),
     );
     if (available.length === 0) return null;
 
-    const mobHash = this.hash(x + 100, y + 100);
-    for (const rule of available) {
-      if (mobHash < rule.chance) {
-        const mob = MONSTER_LIST.find((m) => m.id === rule.monsterId);
+    // 2. 섹터 정보 계산 (8x8 그리드)
+    const MONSTER_SECTOR_SIZE = 8;
+    const sectorX = Math.floor(x / MONSTER_SECTOR_SIZE);
+    const sectorY = Math.floor(y / MONSTER_SECTOR_SIZE);
+
+    // 3. 섹터당 소환 개수 결정 (1~2마리)
+    const countHash = this.hash(sectorX * 41, sectorY * 43);
+    const targetCount = Math.floor(countHash * 3) + 1; // 1, 2, or 3
+
+    for (let i = 0; i < targetCount; i++) {
+      // 4. 각 몬스터의 고유 위치 계산
+      const rx = Math.floor(this.hash(sectorX + 111 + i, sectorY + 222 + i) * MONSTER_SECTOR_SIZE);
+      const ry = Math.floor(this.hash(sectorX + 333 + i, sectorY + 444 + i) * MONSTER_SECTOR_SIZE);
+      const spotX = sectorX * MONSTER_SECTOR_SIZE + rx;
+      const spotY = sectorY * MONSTER_SECTOR_SIZE + ry;
+
+      if (spotX === x && spotY === y) {
+        // 5. 누적 가중치(Cumulative Weight) 기반 선택 - 확률 잠식 버그 해결
+        let totalWeight = 0;
+        for (const rule of available) totalWeight += rule.weight;
+        
+        const roll = this.hash(x + 555, y + 666) * totalWeight;
+        let cumulative = 0;
+        let selectedRule = available[0];
+
+        for (const rule of available) {
+          cumulative += rule.weight;
+          if (roll <= cumulative) {
+            selectedRule = rule;
+            break;
+          }
+        }
+
+        const mob = MONSTER_LIST.find((m) => m.id === selectedRule.monsterId);
         if (!mob) continue;
+
         return {
           id: `mob_${x}_${y}_${mob.id}`,
           type: 'monster',

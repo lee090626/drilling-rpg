@@ -89,9 +89,9 @@ export const CIRCLES: CircleConfig[] = [
       { type: 'fervorstone', threshold: 0.15, minLayer: 3 },
     ],
     monsters: [
-      { monsterId: 'c2_whisperer', chance: 0.08, weight: 1, minLayer: 1, maxLayer: 3 },
-      { monsterId: 'c2_wind_soul', chance: 0.05, weight: 1, minLayer: 2, maxLayer: 3 },
-      { monsterId: 'c2_gale_bat', chance: 0.03, weight: 1, minLayer: 3, maxLayer: 3 },
+      { monsterId: 'c2_whisperer', chance: 0.1, weight: 10, minLayer: 1, maxLayer: 3 },
+      { monsterId: 'c2_wind_soul', chance: 0.08, weight: 7, minLayer: 2, maxLayer: 3 },
+      { monsterId: 'c2_gale_bat', chance: 0.05, weight: 5, minLayer: 3, maxLayer: 3 },
     ],
     boss: { id: 'c2_asmodeus', spawnLayer: 4 },
   },
