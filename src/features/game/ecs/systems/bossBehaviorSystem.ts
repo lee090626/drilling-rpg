@@ -6,6 +6,7 @@ import { TILE_SIZE } from '@/shared/config/constants';
  * - 보스의 HP에 따른 페이즈 전환 및 공격 패턴 발동을 관리합니다.
  */
 const bossPatternTimers = new Map<number, number>();
+const crossFireTimers = new Map<number, number>();
 
 export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: number) => {
   const { entities, player } = world;
@@ -114,23 +115,40 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     if (soa.state[bossIdx] === 1) soa.state[bossIdx] = 0;
   }
 
-  // --- 패턴 2: Storm Surge (Phase 2, 3) ---
+  // --- 패턴 2: Cross Fire (Phase 2, 3) ---
   if (phase >= 2) {
-    const pullStrength = phase === 3 ? 0.08 : 0.04;
-    const dx = bx - px;
-    const dy = by - py;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const crossFireInterval = phase === 3 ? 3000 : 4000;
+    const crossWarningTime = 1000;
 
-    if (dist < TILE_SIZE * 10) {
-      // 일정 거리 안에서만 작동
-      world.environmentalForce.vx = (dx / dist) * pullStrength;
-      world.environmentalForce.vy = (dy / dist) * pullStrength;
-    } else {
-      world.environmentalForce.vx = 0;
-      world.environmentalForce.vy = 0;
+    const lastCrossFireTime = crossFireTimers.get(bossIdx) || (now - crossFireInterval);
+    const timeSinceCross = now - lastCrossFireTime;
+
+    if (timeSinceCross > crossFireInterval - crossWarningTime) {
+      if (timeSinceCross > crossFireInterval) {
+        crossFireTimers.set(bossIdx, now);
+
+        const crossSpeed = phase === 3 ? 10 : 7;
+        const crossDirections = [
+          { vx: 0, vy: -crossSpeed },  // 상 (North)
+          { vx: 0, vy: crossSpeed },   // 하 (South)
+          { vx: -crossSpeed, vy: 0 },  // 좌 (West)
+          { vx: crossSpeed, vy: 0 },   // 우 (East)
+        ];
+
+        for (const dir of crossDirections) {
+          const pIdx = entities.create(5, bx, by);
+          if (pIdx !== -1) {
+            const idx = entities.getIndex(pIdx);
+            soa.vx[idx] = dir.vx;
+            soa.vy[idx] = dir.vy;
+            soa.attack[idx] = 15 + phase * 8; // 평타보다 강한 데미지
+            soa.lastAttackTime[idx] = now;
+            soa.width[idx] = 28;
+            soa.height[idx] = 28;
+          }
+        }
+      }
     }
-  } else {
-    world.environmentalForce = { vx: 0, vy: 0 };
   }
 
   // --- 패턴 3: Lure (Phase 3) ---
@@ -149,4 +167,5 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
       }
     }
   }
+  world.environmentalForce = { vx: 0, vy: 0 };
 };
