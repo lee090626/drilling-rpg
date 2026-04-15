@@ -33,7 +33,7 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
     const px = player.pos.x * TILE_SIZE;
     const py = player.pos.y * TILE_SIZE;
 
-    const rangePadding = TILE_SIZE * 0.8; 
+    const rangePadding = TILE_SIZE * 1.2; 
     const isInRange =
       px >= ex - rangePadding &&
       px < ex + ew + rangePadding &&

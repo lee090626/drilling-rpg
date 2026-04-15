@@ -260,7 +260,9 @@ export class TileMap {
         let totalWeight = 0;
         for (const rule of available) totalWeight += rule.weight;
         
-        const roll = this.hash(x + 555, y + 666) * totalWeight;
+        // 타일의 절대 좌표(x, y) 대신 해당 구역(sector)과 소환 인덱스(i)를 사용하여 해시를 굴림. 
+        // x, y를 사용하면 스팟 결정 로직과 파동 간섭(sine wave interference)이 발생하여 편향된 결과가 나옴.
+        const roll = this.hash(sectorX * 997 + i * 73, sectorY * 877 + i * 61) * totalWeight;
         let cumulative = 0;
         let selectedRule = available[0];
 

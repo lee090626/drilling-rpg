@@ -71,7 +71,7 @@ export function updateCastBarFromSoA(
 
   const entW = soa.width[idx] || TILE_SIZE;
   const isBoss = soa.type[idx] === 2;
-  const barY = isBoss ? -40 : -14;
+  const barY = isBoss ? -40 : 4;
 
   const attackCooldown = soa.attackCooldown[idx];
   const lastAttack = soa.lastAttackTime[idx];
