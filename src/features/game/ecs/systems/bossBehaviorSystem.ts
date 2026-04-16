@@ -30,6 +30,10 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     return;
   }
 
+  // [버그 수정] 보스는 절대 움직이지 않도록 속도(vx, vy) 강제 리셋
+  soa.vx[bossIdx] = 0;
+  soa.vy[bossIdx] = 0;
+
   // 보스 위치 (중앙 기준)
   const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
   const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
@@ -68,7 +72,10 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   // --- 패턴 1: Flame Shot (모든 페이즈) ---
   const warningLeadTime = 1000; // 공격 1000ms 전부터 전조 표시
   const instanceId = soa.instanceId[bossIdx];
-  const lastPatternTime = bossPatternTimers.get(instanceId) || (now - patternInterval);
+  if (!bossPatternTimers.has(instanceId)) {
+    bossPatternTimers.set(instanceId, now - patternInterval + warningLeadTime); // 조우 후 전조부터 시작
+  }
+  const lastPatternTime = bossPatternTimers.get(instanceId)!;
   const timeSinceLastPattern = now - lastPatternTime;
 
   if (timeSinceLastPattern > patternInterval - warningLeadTime) {
@@ -105,8 +112,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
             soa.attack[idx] = 10 + phase * 5;
             soa.createdAt[idx] = now; // 생성 시간 기록
             soa.lastAttackTime[idx] = 0; // 명시적 초기화 (더 이상 수명에 사용 안 함)
-            soa.width[idx] = 24;
-            soa.height[idx] = 24;
+            soa.width[idx] = 128;
+            soa.height[idx] = 128;
           }
         }
       }
@@ -122,7 +129,10 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     const crossFireInterval = phase === 3 ? 3000 : 4000;
     const crossWarningTime = 1000;
 
-    const lastCrossFireTime = crossFireTimers.get(instanceId) || (now - crossFireInterval);
+    if (!crossFireTimers.has(instanceId)) {
+      crossFireTimers.set(instanceId, now - crossFireInterval + crossWarningTime); // 2페이즈/3페이즈 진입 시 전조부터 시작
+    }
+    const lastCrossFireTime = crossFireTimers.get(instanceId)!;
     const timeSinceCross = now - lastCrossFireTime;
 
     if (timeSinceCross > crossFireInterval - crossWarningTime) {
@@ -149,8 +159,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
             soa.attack[idx] = 15 + phase * 8; // 평타보다 강한 데미지
             soa.createdAt[idx] = now;
             soa.lastAttackTime[idx] = 0;
-            soa.width[idx] = 28;
-            soa.height[idx] = 28;
+            soa.width[idx] = 128;
+            soa.height[idx] = 128;
           }
         }
       }
