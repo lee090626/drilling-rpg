@@ -24,6 +24,11 @@ export function updateMobRenderer(
 
   const body = container.getChildByLabel('body') as PIXI.Sprite;
   if (body) {
+    // [버그 수정] 투사체 풀링 후 재사용 시 남아있는 변환 속성 완전 초기화
+    body.rotation = 0;
+    body.anchor.set(0, 0);
+    body.position.set(0, 0);
+    container.rotation = 0; // 컨테이너 자체 회전도 리셋
     const defIdx = soa.monsterDefIndex[idx];
     const mobDef = MONSTER_DEFINITIONS[defIdx];
 
@@ -40,32 +45,9 @@ export function updateMobRenderer(
     }
   }
 
-  // 보스 특수 애니메이션 (Jump & Fall)
+  // 보스 특수 애니메이션 (기존 로직 제거됨)
   if (type === 2 && body) {
-    const jumpState = soa.state[idx];
-    let yOffset = 0;
-    const cycleTime = 1000;
-    const elapsed = now % cycleTime;
-
-    if (jumpState === 2) yOffset = -(elapsed / cycleTime) * 400;
-    else if (jumpState === 3) yOffset = -400 + (elapsed / cycleTime) * 400;
-
-    body.y = yOffset;
-
-    let shadow = container.getChildByLabel('shadow') as PIXI.Graphics;
-    if (yOffset < -10) {
-      if (!shadow) {
-        shadow = new PIXI.Graphics()
-          .ellipse(ew / 2, eh, ew / 2, eh / 4)
-          .fill({ color: 0x000000, alpha: 0.3 });
-        shadow.label = 'shadow';
-        container.addChildAt(shadow, 0);
-      }
-      shadow.visible = true;
-      shadow.scale.set(1 + yOffset / 800);
-    } else if (shadow) {
-      shadow.visible = false;
-    }
+    body.y = 0;
   }
 
   updateStatusVFX(container, player.stats.activeEffects || [], ew, eh, now);
