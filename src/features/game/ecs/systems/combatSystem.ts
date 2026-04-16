@@ -174,9 +174,14 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
           1.5,
         );
 
-        // 보스 처치 시 진행 처리
+        // 보스 처치 시 진행 처리 및 재생성 타이머 설정
         if (entities.soa.type[i] === 2) {
           handleBossDefeat(world, entities.soa.x[i], entities.soa.y[i]);
+          
+          if (monsterDef.behavior.respawnMs) {
+            if (!player.stats.bossRespawnTimers) player.stats.bossRespawnTimers = {};
+            player.stats.bossRespawnTimers[monsterDef.id] = Date.now() + monsterDef.behavior.respawnMs;
+          }
         }
 
         // [유물] 아스모데우스의 반지 (EXP_BOOST): 경험치 30% 증가
