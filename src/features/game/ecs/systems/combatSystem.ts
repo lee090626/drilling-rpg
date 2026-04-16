@@ -4,7 +4,8 @@ import { MONSTER_LIST } from '@/shared/config/monsterData';
 import { calculateMiningDamage } from '../../lib/miningCalculator';
 import { createFloatingText } from '@/shared/lib/effectUtils';
 import { handleBossDefeat } from './bossSystem';
-import { calculateArtifactBonuses, hasArtifactEffect } from '@/shared/lib/artifactUtils';
+import { calculateArtifactBonuses } from '@/shared/lib/artifactUtils';
+import { modifierManager } from '@/features/game/lib/ModifierManager';
 
 /**
  * 플레이어와 몬스터 간의 전투(대미지 처리, 사망 등)를 담당하는 시스템입니다.
@@ -133,32 +134,10 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
       const monsterDef = MONSTER_LIST[defIdx];
 
       if (monsterDef) {
-        // 보상 지급
-        let multiplier = 1;
-        switch (monsterDef.rarity) {
-          case 'Uncommon':
-            multiplier = 2;
-            break;
-          case 'Rare':
-            multiplier = 3;
-            break;
-          case 'Epic':
-            multiplier = 5;
-            break;
-          case 'Radiant':
-            multiplier = 7;
-            break;
-          case 'Legendary':
-            multiplier = 10;
-            break;
-          case 'Mythic':
-            multiplier = 15;
-            break;
-          case 'Ancient':
-            multiplier = 20;
-            break;
-        }
-        if (entities.soa.type[i] === 2) multiplier *= 5;
+        // ModifierManager: 희귀도 배율 및 보스 배율 계산
+        // 기존 switch(rarity) 블록을 RARITY_MULTIPLIERS 상수 기반으로 대체합니다.
+        const isBoss = entities.soa.type[i] === 2;
+        const multiplier = modifierManager.getRarityMultiplier(monsterDef.rarity, isBoss);
 
         const baseGold = 10;
         const hpBonus = Math.floor(entities.soa.maxHp[i] * 0.1);
@@ -184,32 +163,40 @@ export const combatSystem = (world: GameWorld, deltaTime: number, now: number) =
           }
         }
 
-        // [유물] 아스모데우스의 반지 (EXP_BOOST): 경험치 30% 증가
+        // ModifierManager: 경험치 유물 효과 적용 (EXP_BOOST 등)
         let expAmount = monsterDef.rewards.exp;
-        if (hasArtifactEffect(player.stats, 'EXP_BOOST')) {
-          expAmount = Math.floor(expAmount * 1.3);
-        }
-        // TODO: 플레이어 경험치 시스템이 아직 명시적이지 않다면 로그 또는 추후 구현을 위해 변수화
+        expAmount = modifierManager.applyAll('onKill', 'exp', expAmount, { playerStats: player.stats });
 
-        // [유물] 벨제붑의 독니 (LIFE_STEAL_PERCENT): 처치 시 최대 체력의 5% 회복
-        if (hasArtifactEffect(player.stats, 'LIFE_STEAL_PERCENT')) {
-          const healAmount = Math.floor(player.stats.maxHp * 0.05);
-          player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + healAmount);
-          createFloatingText(
-            world,
-            player.pos.x * TILE_SIZE,
-            player.pos.y * TILE_SIZE - 40,
-            `+${healAmount} HP`,
-            '#4ade80',
-          );
-        }
+        // ModifierManager: onKill 부수 효과 유물 적용 (LIFE_STEAL_PERCENT 등)
+        // sideEffect 콜백을 통해 힐 양 계산 후 실제 HP 회복 및 플로팅 텍스트를 여기서 처리합니다.
+        modifierManager.triggerOnKillSideEffects({
+          playerStats: player.stats,
+          sideEffect: (type, payload) => {
+            if (type === 'HEAL') {
+              const healAmount = payload as number;
+              player.stats.hp = Math.min(player.stats.maxHp, player.stats.hp + healAmount);
+              createFloatingText(
+                world,
+                player.pos.x * TILE_SIZE,
+                player.pos.y * TILE_SIZE - 40,
+                `+${healAmount} HP`,
+                '#4ade80',
+              );
+            }
+          },
+        });
 
         // === [업데이트] 다중 드롭 시스템 (유물 & 전리품) ===
         const artifactBonuses = calculateArtifactBonuses(player.stats);
         const luckBonus = artifactBonuses.luck; // 0.01 = 1% 증가 개념
 
-        // [유물] 아바돈의 부러진 칼날 (LOOT_QUANTITY_BOOST): 전리품 획득량 25% 증가
-        const lootMultiplier = hasArtifactEffect(player.stats, 'LOOT_QUANTITY_BOOST') ? 1.25 : 1.0;
+        // ModifierManager: 드롭 수량 유물 효과 적용 (LOOT_QUANTITY_BOOST 등)
+        const lootMultiplier = modifierManager.applyAll(
+          'onKill',
+          'loot',
+          1.0,
+          { playerStats: player.stats },
+        );
 
         if (monsterDef.rewards.drops) {
           monsterDef.rewards.drops.forEach((drop) => {
