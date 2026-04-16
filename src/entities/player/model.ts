@@ -97,6 +97,7 @@ export const createInitialPlayer = (seed: number): Player => ({
     tileMastery: {},
     unlockedResearchIds: ['root'],
     unlockedMasteryPerks: [],
+    bossRespawnTimers: {},
   },
   pos: { x: 15, y: 8 }, // 보스 센터(x=15) 근처에서 시작
   velocity: { x: 0, y: 0 },
