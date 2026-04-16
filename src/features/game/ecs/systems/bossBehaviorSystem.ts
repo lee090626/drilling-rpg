@@ -102,7 +102,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
             soa.vx[idx] = finalVx;
             soa.vy[idx] = finalVy;
             soa.attack[idx] = 10 + phase * 5;
-            soa.lastAttackTime[idx] = now; // 생성 시간 (performance.now)
+            soa.createdAt[idx] = now; // 생성 시간 기록
+            soa.lastAttackTime[idx] = 0; // 명시적 초기화 (더 이상 수명에 사용 안 함)
             soa.width[idx] = 24;
             soa.height[idx] = 24;
           }
@@ -142,7 +143,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
             soa.vx[idx] = dir.vx;
             soa.vy[idx] = dir.vy;
             soa.attack[idx] = 15 + phase * 8; // 평타보다 강한 데미지
-            soa.lastAttackTime[idx] = now;
+            soa.createdAt[idx] = now;
+            soa.lastAttackTime[idx] = 0;
             soa.width[idx] = 28;
             soa.height[idx] = 28;
           }

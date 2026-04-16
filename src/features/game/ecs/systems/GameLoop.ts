@@ -134,13 +134,16 @@ export class GameLoop {
       // 0. 공간 분할(Spatial Hash) 그리드 업데이트
       this.world.spatialHash.clear();
       for (let i = 0; i < this.world.entities.soa.count; i++) {
-        this.world.spatialHash.insert(
-          i,
-          this.world.entities.soa.x[i],
-          this.world.entities.soa.y[i],
-          this.world.entities.soa.width[i],
-          this.world.entities.soa.height[i]
-        );
+        // [최적화] 투사체(type 5)는 쿼리 대상이 아니므로 해시 그리드에 삽입하지 않음
+        if (this.world.entities.soa.type[i] !== 5) {
+          this.world.spatialHash.insert(
+            i,
+            this.world.entities.soa.x[i],
+            this.world.entities.soa.y[i],
+            this.world.entities.soa.width[i],
+            this.world.entities.soa.height[i]
+          );
+        }
       }
 
       // 1. 게임 시뮬레이션

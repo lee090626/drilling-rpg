@@ -34,6 +34,10 @@ export interface EntitySoA {
   width: Float32Array;
   height: Float32Array;
 
+  // 생명주기 및 시간 데이터
+  createdAt: Float64Array; // 생성 시간 (performance.now)
+
+
   // Sync optimization
   dirtyFlags: Uint8Array; // 0: clean, 1: dirty
 }
@@ -70,6 +74,7 @@ export class EntityManager {
       spriteIndex: new Uint16Array(capacity),
       width: new Float32Array(capacity),
       height: new Float32Array(capacity),
+      createdAt: new Float64Array(capacity),
       dirtyFlags: new Uint8Array(capacity),
     };
   }
@@ -103,6 +108,7 @@ export class EntityManager {
     this.soa.vx[index] = 0;
     this.soa.vy[index] = 0;
     this.soa.state[index] = 0; // Idle
+    this.soa.createdAt[index] = performance.now();
     this.soa.dirtyFlags[index] = 1; // Mark as dirty on creation
 
     return handle;
@@ -142,6 +148,7 @@ export class EntityManager {
       this.soa.spriteIndex[index] = this.soa.spriteIndex[lastIndex];
       this.soa.width[index] = this.soa.width[lastIndex];
       this.soa.height[index] = this.soa.height[lastIndex];
+      this.soa.createdAt[index] = this.soa.createdAt[lastIndex];
       this.soa.dirtyFlags[index] = 1; // Mark as dirty when swapped
     }
   }
@@ -201,6 +208,7 @@ export class EntityManager {
     this.soa.spriteIndex.fill(0);
     this.soa.width.fill(0);
     this.soa.height.fill(0);
+    this.soa.createdAt.fill(0);
     this.soa.dirtyFlags.fill(0);
     this.idMap.clear();
   }
