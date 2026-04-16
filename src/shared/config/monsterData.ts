@@ -2,6 +2,89 @@
  * 게임 내 몬스터 및 보스 데이터 정의입니다.
  * 이 파일은 scripts/genData.js에 의해 자동으로 생성됩니다.
  */
+
+// ============================================================
+// 보스 패턴 타입 시스템 (Data-Driven Boss Pattern System)
+// ============================================================
+
+/**
+ * 보스가 사용할 수 있는 공격 패턴의 종류를 정의합니다.
+ * - shot: 플레이어 방향으로 투사체를 발사합니다.
+ * - cross: 상하좌우 4방향으로 동시에 투사체를 발사합니다.
+ * - lure: 플레이어에게 혼란(CONFUSION) 상태 이상을 부여합니다.
+ * - aoe: 보스 주변 전 방향으로 투사체를 다수 발사합니다(예정).
+ */
+export type BossPatternType = 'shot' | 'cross' | 'lure' | 'aoe';
+
+/**
+ * 보스의 단일 공격 패턴 데이터 정의입니다.
+ * `bossBehaviorSystem`의 `patternRegistry`가 이 형식을 읽어 패턴을 실행합니다.
+ */
+export interface BossPattern {
+  /** 패턴 식별 타입 */
+  type: BossPatternType;
+  /**
+   * 이 패턴의 발동 주기 (밀리초).
+   * 각 패턴은 독립적인 타이머를 가집니다.
+   */
+  cooldown: number;
+  /**
+   * 이 패턴이 활성화되는 최소 페이즈 번호 (1-based).
+   * 예: minPhase=2 이면 Phase 2 이상일 때만 발동합니다.
+   * @default 1
+   */
+  minPhase?: number;
+  /** 발사되는 투사체의 수 (shot 패턴에서 페이즈별로 다를 경우 phaseScale 사용) */
+  projectileCount?: number;
+  /** 투사체 이동 속도 (픽셀/틱) */
+  projectileSpeed?: number;
+  /** 투사체 공격력 */
+  projectilePower?: number;
+  /** 투사체 크기 (px) */
+  projectileSize?: number;
+  /**
+   * 페이즈별 스케일 오버라이드 배열.
+   * 인덱스 0 = Phase 1, 인덱스 1 = Phase 2, ... 순서로 각 값을 해당 페이즈에 추가 배율로 적용합니다.
+   * projectileCount/projectileSpeed 등에 곱해 사용합니다.
+   */
+  phaseOverrides?: Array<{
+    projectileCount?: number;
+    projectileSpeed?: number;
+    projectilePower?: number;
+  }>;
+  /**
+   * lure 패턴 전용: 혼란 효과 지속 시간 (밀리초).
+   * @default 2000
+   */
+  lureDuration?: number;
+  /**
+   * lure 패턴 전용: 혼란 효과 발동을 위한 주기 시작 시간 (밀리초).
+   * ex: 5000이면 5초 주기로 동작합니다.
+   * @default 5000
+   */
+  lureCycle?: number;
+  /**
+   * 공격 전조 표시 시작 시간 (밀리초).
+   * cooldown보다 이 값만큼 먼저 빨리 경고 UI를 표시합니다.
+   * @default 1000
+   */
+  warningLeadTime?: number;
+}
+
+/**
+ * 보스의 특정 페이즈 설정 데이터입니다.
+ * HP 비율에 따라 페이즈가 결정되며, 각 페이즈는 패턴 쿨타임 배율을 조정합니다.
+ */
+export interface BossPhaseConfig {
+  /** 이 페이즈의 번호 (1-based) */
+  phase: number;
+  /**
+   * 이 페이즈로 전환되는 HP 임계값 (%).
+   * 보스의 현재 HP가 이 비율 이하일 때 전환됩니다.
+   * @example hpThreshold: 70 → HP가 70% 이하일 때 2페이즈 진입
+   */
+  hpThreshold: number;
+}
 export interface MonsterDefinition {
   /** 몬스터의 고유 식별자 (예: 'c2_asmodeus') */
   id: string;
@@ -63,6 +146,17 @@ export interface MonsterDefinition {
     /** 재생성 대기 시간 (밀리초, 보스 전용) */
     respawnMs?: number;
   };
+  /**
+   * [보스 전용] 공격 패턴 정의 배열.
+   * `bossBehaviorSystem`의 `patternRegistry`가 이 데이터를 읽어 실행합니다.
+   * 값이 없으면 기존 단일 공격 AI를 따릅니다.
+   */
+  patterns?: BossPattern[];
+  /**
+   * [보스 전용] HP 기반 페이즈 전환 설정 배열.
+   * `hpThreshold`가 높은 순서(= 먼저 도달하는 페이즈)부터 정렬하여 작성하세요.
+   */
+  phases?: BossPhaseConfig[];
 }
 
 export const MONSTER_LIST: MonsterDefinition[] = [
@@ -144,6 +238,59 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       projectileId: 'FireBall',
       respawnMs: 10000,
     },
+    /**
+     * 아스모데우스 공격 패턴 정의.
+     *   - Phase 1: Flame Shot (1발, 5500ms 주기)
+     *   - Phase 2: Flame Shot (3발, 4300ms) + Cross Fire (4방향, 4000ms)
+     *   - Phase 3: Flame Shot (5발, 3200ms) + Cross Fire (4방향, 3000ms) + Lure (혼란, 5초 주기)
+     */
+    patterns: [
+      {
+        type: 'shot',
+        cooldown: 5500,
+        warningLeadTime: 1000,
+        projectileCount: 1,
+        projectileSpeed: 5,
+        projectilePower: 15,
+        projectileSize: 128,
+        // Phase 2: 3발/8속도, Phase 3: 5발/12속도
+        phaseOverrides: [
+          { projectileCount: 1, projectileSpeed: 5,  projectilePower: 15 },
+          { projectileCount: 3, projectileSpeed: 8,  projectilePower: 23 },
+          { projectileCount: 5, projectileSpeed: 12, projectilePower: 31 },
+        ],
+      },
+      {
+        type: 'cross',
+        cooldown: 4000,
+        warningLeadTime: 1000,
+        minPhase: 2,
+        projectileSpeed: 7,
+        projectilePower: 23,
+        projectileSize: 128,
+        // Phase 3: 속도/공격력 상향
+        phaseOverrides: [
+          { projectileSpeed: 7,  projectilePower: 23 },
+          { projectileSpeed: 7,  projectilePower: 23 },
+          { projectileSpeed: 10, projectilePower: 39 },
+        ],
+      },
+      {
+        type: 'lure',
+        cooldown: 5000,
+        minPhase: 3,
+        lureDuration: 2000,
+        lureCycle: 5000,
+      },
+    ],
+    /**
+     * 아스모데우스 페이즈 전환 설정.
+     * HP 비율이 높은 순서(먼저 도달하는 페이즈)부터 정렬합니다.
+     */
+    phases: [
+      { phase: 2, hpThreshold: 70 },
+      { phase: 3, hpThreshold: 40 },
+    ],
   },
   {
     id: 'c3_devourer',
