@@ -257,6 +257,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
         mapSeed: seed,
         discoveredMinerals: [],
         encounteredBossIds: [],
+        bossRespawnTimers: {},
         dimension: 0,
         equipmentStates: {},
         unlockedResearchIds: ['root'],
