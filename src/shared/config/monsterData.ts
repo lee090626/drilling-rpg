@@ -60,6 +60,8 @@ export interface MonsterDefinition {
     aggroRange: number;
     /** 투사체 ID (선택사항, 투사체를 사용하는 몬스터만) */
     projectileId?: string;
+    /** 재생성 대기 시간 (밀리초, 보스 전용) */
+    respawnMs?: number;
   };
 }
 
@@ -135,7 +137,13 @@ export const MONSTER_LIST: MonsterDefinition[] = [
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
       ],
     },
-    behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10, projectileId: 'FireBall' },
+    behavior: {
+      movementType: 'stationary',
+      attackRange: 2.5,
+      aggroRange: 10,
+      projectileId: 'FireBall',
+      respawnMs: 10000,
+    },
   },
   {
     id: 'c3_devourer',
