@@ -13,6 +13,8 @@ import GachaOverlay from './GachaOverlay';
 import MineralSellTab from './MineralSellTab';
 import RuneSummonTab from './RuneSummonTab';
 
+import { useShopTrade } from './useShopTrade';
+
 /**
  * 상점 컴포넌트의 Props 인터페이스입니다.
  */
@@ -29,8 +31,13 @@ interface ShopProps {
  * 플레이어가 자원을 판매하고 장비를 업그레이드하거나 스킬젬을 관리할 수 있는 상점(Forge) 컴포넌트입니다.
  */
 function Shop({ stats, onUpgrade, onSell, onSummonRune, onSynthesizeRunes, onClose }: ShopProps) {
-  const [activeTab, setActiveTab] = useState<'minerals' | 'runes'>('minerals');
-  const [sellAmounts, setSellAmounts] = useState<Record<string, number>>({});
+  const {
+    activeTab,
+    setActiveTab,
+    sellAmounts,
+    updateSellAmount,
+    resetSellAmount,
+  } = useShopTrade(stats);
 
   // 가챠 연출 Hook
   const {
@@ -135,7 +142,7 @@ function Shop({ stats, onUpgrade, onSell, onSummonRune, onSynthesizeRunes, onClo
             <MineralSellTab
               stats={stats}
               sellAmounts={sellAmounts}
-              onUpdateAmount={(res, amt) => setSellAmounts(p => ({ ...p, [res]: amt }))}
+              onUpdateAmount={updateSellAmount}
               onSell={onSell}
             />
           )}
