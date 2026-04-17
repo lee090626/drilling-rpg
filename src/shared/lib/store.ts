@@ -21,15 +21,15 @@ interface GameState {
     showInteractionPrompt: boolean;
     activeInteractionType: string | null;
   };
-  /** 보스 전투 상태 */
-  boss: {
+  /** 다중 보스 전투 상태 (키: instanceId) */
+  boss: Record<string, {
     active: boolean;
     id: string | null;
     name: string | null;
     hp: number;
     maxHp: number;
     phase: number;
-  } | null;
+  }>;
   /** 통계 데이터 업데이트 */
   updateStats: (stats: Partial<PlayerStats>) => void;
   /** UI 상태 업데이트 */
@@ -37,7 +37,7 @@ interface GameState {
   /** 설정 업데이트 */
   updateSettings: (settings: Partial<GameState['settings']>) => void;
   /** 보스 상태 업데이트 */
-  updateBoss: (boss: Partial<GameState['boss']> | null) => void;
+  updateBoss: (boss: Record<string, any>) => void;
   /** 초기 데이터 설정 */
   setStats: (stats: import('../types/game').PlayerStats) => void;
   /** 토스트 추가 */
@@ -56,7 +56,7 @@ export const useGameStore = create<GameState>((set) => ({
     showInteractionPrompt: false,
     activeInteractionType: null,
   },
-  boss: null,
+  boss: {},
 
   updateStats: (newStats) =>
     set((state) => ({
@@ -74,8 +74,8 @@ export const useGameStore = create<GameState>((set) => ({
     })),
 
   updateBoss: (newBoss) =>
-    set((state) => ({
-      boss: newBoss === null ? null : state.boss ? { ...state.boss, ...newBoss } : (newBoss as any),
+    set(() => ({
+      boss: newBoss as any,
     })),
 
   setStats: (stats) => set({ stats }),

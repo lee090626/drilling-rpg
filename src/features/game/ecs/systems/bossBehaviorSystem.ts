@@ -218,149 +218,129 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   const { entities, player } = world;
   const { soa } = entities;
 
-  // --- 1. 보스 엔티티 탐색 (type === 2) ---
-  let bossIdx = -1;
+  // --- 1. 보스 엔티티 모두 탐색 (type === 2) ---
+  const bossIndices: number[] = [];
   for (let i = 0; i < soa.count; i++) {
     if (soa.type[i] === 2) {
-      bossIdx = i;
-      break;
+      bossIndices.push(i);
     }
   }
 
-  // 보스가 없으면 전투 상태 해제 후 조기 종료
-  if (bossIdx === -1) {
-    if (world.bossCombatStatus.active) {
-      world.bossCombatStatus.active = false;
-      world.environmentalForce = { vx: 0, vy: 0 };
+  const currentActiveInstanceIds = new Set<string>();
+
+  // --- 2. 개별 보스 루프 ---
+  for (const bossIdx of bossIndices) {
+    const instanceId = String(soa.instanceId[bossIdx]);
+    
+    // --- 보스 고정 처리 (stationary 보스 속도 강제 리셋) ---
+    soa.vx[bossIdx] = 0;
+    soa.vy[bossIdx] = 0;
+
+    // --- 좌표 계산 ---
+    const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
+    const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
+    const px = player.pos.x * TILE_SIZE + TILE_SIZE / 2;
+    const py = player.pos.y * TILE_SIZE + TILE_SIZE / 2;
+
+    // 플레이어가 너무 멀어지면 전투 해제 (약 20타일)
+    const distToPlayer = Math.sqrt(Math.pow(bx - px, 2) + Math.pow(by - py, 2));
+    if (distToPlayer > TILE_SIZE * 20) {
+      continue; // 이 틱에서는 렌더링/어그로 제외
     }
-    return;
-  }
 
-  // --- 2. 보스 고정 처리 (stationary 보스 속도 강제 리셋) ---
-  soa.vx[bossIdx] = 0;
-  soa.vy[bossIdx] = 0;
+    // 전투 중이므로 set에 추가
+    currentActiveInstanceIds.add(instanceId);
 
-  // --- 3. 좌표 계산 ---
-  const bx = soa.x[bossIdx] + (soa.width[bossIdx] || TILE_SIZE * 5) / 2;
-  const by = soa.y[bossIdx] + (soa.height[bossIdx] || TILE_SIZE * 5) / 2;
-  const px = player.pos.x * TILE_SIZE + TILE_SIZE / 2;
-  const py = player.pos.y * TILE_SIZE + TILE_SIZE / 2;
+    // --- 데이터 조회 ---
+    const defIndex = soa.monsterDefIndex[bossIdx];
+    const bossDef: MonsterDefinition | undefined = MONSTER_LIST[defIndex];
+    if (!bossDef) continue;
 
-  // 플레이어가 너무 멀어지면 전투 해제 (약 20타일)
-  const distToPlayer = Math.sqrt(Math.pow(bx - px, 2) + Math.pow(by - py, 2));
-  if (distToPlayer > TILE_SIZE * 20) {
-    if (world.bossCombatStatus.active) {
-      world.bossCombatStatus.active = false;
-      world.environmentalForce = { vx: 0, vy: 0 };
+    // --- 페이즈 결정 ---
+    const hpPercent = (soa.hp[bossIdx] / soa.maxHp[bossIdx]) * 100;
+    let phase = 1;
+
+    if (bossDef.phases && bossDef.phases.length > 0) {
+      const sortedPhases = [...bossDef.phases].sort(
+        (a, b) => a.hpThreshold - b.hpThreshold,
+      );
+      for (const phaseConfig of sortedPhases) {
+        if (hpPercent <= phaseConfig.hpThreshold) {
+          phase = phaseConfig.phase;
+        }
+      }
+    } else {
+      if (hpPercent <= 40) phase = 3;
+      else if (hpPercent <= 70) phase = 2;
     }
-    return;
-  }
 
-  // --- 4. 데이터 조회: MONSTER_LIST 배열에서 인덱스로 보스 정의를 가져옴 ---
-  const defIndex = soa.monsterDefIndex[bossIdx];
-  const bossDef: MonsterDefinition | undefined = MONSTER_LIST[defIndex];
+    // --- bossCombatStatus UI 동기화 ---
+    world.bossCombatStatus[instanceId] = {
+      active: true,
+      id: bossDef.id,
+      name: bossDef.nameKo ?? bossDef.name,
+      hp: soa.hp[bossIdx],
+      maxHp: soa.maxHp[bossIdx],
+      phase,
+    };
 
-  // 데이터가 없으면 안전하게 조기 종료
-  if (!bossDef) return;
+    // --- 패턴 루프 ---
+    const patterns = bossDef.patterns ?? [];
+    if (patterns.length === 0) continue;
 
-  // --- 5. 페이즈 결정 ---
-  const hpPercent = (soa.hp[bossIdx] / soa.maxHp[bossIdx]) * 100;
-  let phase = 1;
+    let anyWarning = false;
 
-  if (bossDef.phases && bossDef.phases.length > 0) {
-    // 데이터 기반 페이즈: hpThreshold 역순(낮은 HP 먼저)으로 순회하여 현재 페이즈 결정
-    const sortedPhases = [...bossDef.phases].sort(
-      (a, b) => a.hpThreshold - b.hpThreshold,
-    );
-    for (const phaseConfig of sortedPhases) {
-      if (hpPercent <= phaseConfig.hpThreshold) {
-        phase = phaseConfig.phase;
+    for (let pi = 0; pi < patterns.length; pi++) {
+      const pattern = patterns[pi];
+      const minPhase = pattern.minPhase ?? 1;
+      if (phase < minPhase) continue;
+
+      const timerKey = `${instanceId}:${pi}`;
+      const warningLead = pattern.warningLeadTime ?? 1000;
+
+      if (!patternTimers.has(timerKey)) {
+        patternTimers.set(timerKey, now - pattern.cooldown + warningLead);
+      }
+
+      const lastTime = patternTimers.get(timerKey)!;
+      const elapsed = now - lastTime;
+      const inWarning = elapsed > pattern.cooldown - warningLead;
+      const shouldFire = elapsed > pattern.cooldown;
+
+      if (inWarning) anyWarning = true;
+
+      if (shouldFire) {
+        patternTimers.set(timerKey, now);
+
+        const handler = patternRegistry.get(pattern.type);
+        if (handler) {
+          const ctx: PatternContext = {
+            world,
+            entities,
+            bossIdx,
+            phase,
+            bx,
+            by,
+            px,
+            py,
+            now,
+            pattern,
+          };
+          handler(ctx);
+        }
       }
     }
-  } else {
-    // 폴백: 레거시 하드코딩 페이즈 로직
-    if (hpPercent <= 40) phase = 3;
-    else if (hpPercent <= 70) phase = 2;
+
+    soa.state[bossIdx] = anyWarning ? 1 : 0;
   }
 
-  // --- 6. bossCombatStatus UI 동기화 ---
-  world.bossCombatStatus = {
-    active: true,
-    id: bossDef.id,
-    name: bossDef.nameKo ?? bossDef.name,
-    hp: soa.hp[bossIdx],
-    maxHp: soa.maxHp[bossIdx],
-    phase,
-  };
-
-  // --- 7. 패턴 루프 ---
-  const instanceId = soa.instanceId[bossIdx];
-  const patterns = bossDef.patterns ?? [];
-
-  // patterns 데이터가 없으면 로직 종료 (향후 레거시 AI fallback 확장 가능)
-  if (patterns.length === 0) {
-    world.environmentalForce = { vx: 0, vy: 0 };
-    return;
-  }
-
-  /**
-   * 이번 틱에 공격 전조(경고) 상태인 패턴이 하나라도 있으면 bossIdx의 state를 1로 세팅합니다.
-   * 모든 패턴이 쿨타임 안정 상태이면 0으로 복구합니다.
-   */
-  let anyWarning = false;
-
-  for (let pi = 0; pi < patterns.length; pi++) {
-    const pattern = patterns[pi];
-
-    // minPhase 조건 체크: 현재 페이즈가 패턴 최소 요구 페이즈 미만이면 스킵
-    const minPhase = pattern.minPhase ?? 1;
-    if (phase < minPhase) continue;
-
-    // 타이머 키: instanceId + 패턴 인덱스의 복합 키
-    const timerKey = `${instanceId}:${pi}`;
-    const warningLead = pattern.warningLeadTime ?? 1000;
-
-    // 첫 등장 시 타이머 초기화 (즉시 전조부터 시작)
-    if (!patternTimers.has(timerKey)) {
-      patternTimers.set(timerKey, now - pattern.cooldown + warningLead);
-    }
-
-    const lastTime = patternTimers.get(timerKey)!;
-    const elapsed = now - lastTime;
-
-    // 전조 구간 진입 여부
-    const inWarning = elapsed > pattern.cooldown - warningLead;
-    // 실제 발동 조건
-    const shouldFire = elapsed > pattern.cooldown;
-
-    if (inWarning) anyWarning = true;
-
-    if (shouldFire) {
-      // 타이머 갱신
-      patternTimers.set(timerKey, now);
-
-      // patternRegistry에서 핸들러 조회 후 실행
-      const handler = patternRegistry.get(pattern.type);
-      if (handler) {
-        const ctx: PatternContext = {
-          world,
-          entities,
-          bossIdx,
-          phase,
-          bx,
-          by,
-          px,
-          py,
-          now,
-          pattern,
-        };
-        handler(ctx);
-      }
+  // --- 기존에 상태 맵에 있었으나 이번 틱에 범위에서 벗어났거나 제거된 보스들 비활성화 ---
+  for (const [id, status] of Object.entries(world.bossCombatStatus)) {
+    if (!currentActiveInstanceIds.has(id)) {
+      status.active = false;
     }
   }
-
-  // 경고 상태 반영 (렌더러의 느낌표 표시 연동)
-  soa.state[bossIdx] = anyWarning ? 1 : 0;
 
   world.environmentalForce = { vx: 0, vy: 0 };
 };
+
