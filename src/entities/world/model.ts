@@ -182,15 +182,15 @@ export interface GameWorld {
   spawnedCoords: Set<string>;
   /** 환경적인 힘 (보스의 인척력 등) */
   environmentalForce: { vx: number; vy: number };
-  /** 보스 전투 상태 (UI 동기화용) */
-  bossCombatStatus: {
+  /** 보스 전투 상태 (UI 동기화용, 키: entity.instanceId) */
+  bossCombatStatus: Record<string, {
     active: boolean;
     id: string | null;
     name: string | null;
     hp: number;
     maxHp: number;
     phase: number;
-  };
+  }>;
 }
 
 /**
@@ -356,14 +356,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
     spatialHash: new SpatialHash(120),
     spawnedCoords: new Set(),
     environmentalForce: { vx: 0, vy: 0 },
-    bossCombatStatus: {
-      active: false,
-      id: null,
-      name: null,
-      hp: 0,
-      maxHp: 0,
-      phase: 1,
-    },
+    bossCombatStatus: {},
   };
 
   result.particles = result.particlePool.getPool();
