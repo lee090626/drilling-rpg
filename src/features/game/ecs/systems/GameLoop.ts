@@ -16,6 +16,7 @@ import { projectileSystem } from '@/features/game/ecs/systems/projectileSystem';
 import { statsSyncSystem } from '@/features/game/ecs/systems/statsSyncSystem';
 import * as PIXI from 'pixi.js';
 import { TILE_SIZE } from '@/shared/config/constants';
+import { RenderSyncEncoder } from '@/features/game/lib/RenderSyncEncoder';
 
 /**
  * 게임 메인 루프를 관리하는 클래스 (Ticker)
@@ -184,57 +185,7 @@ export class GameLoop {
       if (now - this.lastSyncTime > this.syncInterval && this.bufferPool.length > 0) {
         this.lastSyncTime = now;
         const buffer = this.bufferPool.shift()!;
-        const view = new Float32Array(buffer);
-
-        // Culling (1200px 반경)
-        const visibleIndices = this.world.spatialHash.query(
-          this.world.player.visualPos.x * TILE_SIZE,
-          this.world.player.visualPos.y * TILE_SIZE,
-          1200
-        );
-
-        // Header
-        const HEADER_SIZE = 16;
-        view[0] = visibleIndices.length;
-        view[1] = now;
-        view[2] = this.world.player.visualPos.x;
-        view[3] = this.world.player.visualPos.y;
-        view[4] = this.world.shake;
-        view[5] = this.world.player.stats.hp;
-        view[6] = this.world.player.stats.maxHp;
-
-        // Body 패킹 (Dirty Sync 적용)
-        const ENTITY_STRIDE = 8;
-        let offset = HEADER_SIZE;
-        const { soa } = this.world.entities;
-
-        for (let i = 0; i < visibleIndices.length; i++) {
-          const idx = visibleIndices[i];
-          if (offset + ENTITY_STRIDE > view.length) break;
-
-          // Note: Viewport에 들어오는 것만으로도 Dirty로 간주하여 싱크를 맞출 수도 있지만,
-          // 여기서는 성능을 위해 Simulation 레이어에서 마킹한 dirtyFlags만 사용합니다.
-          if (soa.dirtyFlags[idx] === 0 && offset > HEADER_SIZE) {
-            // Skip if not dirty (but keep player and first entry for stability)
-            // continue;
-          }
-
-          view[offset + 0] = soa.type[idx];
-          view[offset + 1] = soa.state[idx];
-          view[offset + 2] = soa.x[idx];
-          view[offset + 3] = soa.y[idx];
-          view[offset + 4] = soa.hp[idx];
-          view[offset + 5] = soa.maxHp[idx];
-          view[offset + 6] = soa.spriteIndex[idx];
-          view[offset + 7] = soa.width[idx];
-
-          // 동기화 완료 후 Dirty 플래그 클리어 (렌더 틱에서 수행)
-          soa.dirtyFlags[idx] = 0;
-
-          offset += ENTITY_STRIDE;
-        }
-
-        (self as any).postMessage({ type: 'RENDER_SYNC', buffer }, [buffer]);
+        RenderSyncEncoder.encodeAndSend(this.world, buffer, now);
       }
 
       // 5. 자동 저장(10초)
