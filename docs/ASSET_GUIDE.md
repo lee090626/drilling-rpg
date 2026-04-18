@@ -19,7 +19,9 @@
 | `helmets/` | 투구 장비 | `PascalCaseHelmet.png` | **256x256** | PNG (투명) |
 | `armors/` | 갑옷 장비 | `PascalCaseArmor.png` | **256x256** | PNG (투명) |
 | `boots/` | 신발 장비 | `PascalCaseBoots.png` | **256x256** | PNG (투명) |
-| `vfx/` | 투사체/이펙트 | `PascalCase.png` | **256x256** | PNG (투명) |
+| `vfx/` | 투사체/이펙트 | `PascalCaseProjectile.png` | **256x256** | PNG (투명) |
+| `essences/` | 정수 (소모성 유물) | `PascalCaseEssence.png` | **256x256** | PNG (투명) |
+| `relics/` | 성물 (고유 유물) | `PascalCaseRelic.png` | **512x512** | PNG (투명) |
 | `ui/icons/` | UI 시스템 | `PascalCaseIcon.webp` | **1024x1024** | **WebP** |
 
 > [!TIP]
@@ -228,6 +230,8 @@ soa.height[idx] = 24; // 높이 (px)
 | **투구** | `helmets/` | `PascalCaseHelmet.png` | `equipmentData.ts` - `image` |
 | **갑옷** | `armors/` | `PascalCaseArmor.png` | `equipmentData.ts` - `image` |
 | **신발** | `boots/` | `PascalCaseBoots.png` | `equipmentData.ts` - `image` |
+| **정수** | `essences/` | `PascalCaseEssence.png` | `artifactData.ts` - `image` |
+| **성물** | `relics/` | `PascalCaseRelic.png` | `artifactData.ts` - `image` |
 | **룬** | `rune/` | `PascalCaseRune.png` | `runeData.ts` - `image` |
 | **UI 아이콘** | `ui/icons/` | `PascalCaseIcon.webp` | 컴포넌트에서 직접 사용 |
 
@@ -271,6 +275,8 @@ npm run optimize:atlas && npm run update:atlas-map
 | **투구** | `helmets/` | `PascalCaseHelmet.png` | `equipmentData.ts` - `image` |
 | **갑옷** | `armors/` | `PascalCaseArmor.png` | `equipmentData.ts` - `image` |
 | **신발** | `boots/` | `PascalCaseBoots.png` | `equipmentData.ts` - `image` |
+| **정수** | `essences/` | `PascalCaseEssence.png` | `artifactData.ts` - `image` |
+| **성물** | `relics/` | `PascalCaseRelic.png` | `artifactData.ts` - `image` |
 | **룬** | `rune/` | `PascalCaseRune.png` | `runeData.ts` - `image` |
 | **UI 아이콘** | `ui/icons/` | `PascalCaseIcon.webp` | 컴포넌트에서 직접 사용 |
 
