@@ -167,10 +167,10 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'LustfulWhisperer',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 300, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 80, power: 5, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 50,
-      gold: 10,
+      gold: 20,
       drops: [
         { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_whisperer_fragment', chance: 0.25, minAmount: 1, maxAmount: 1 },
@@ -185,7 +185,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'WindTornSoul',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 400, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 250, power: 20, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 60,
       gold: 12,
@@ -203,7 +203,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     type: 'monster',
     imagePath: 'GaleBat',
     description: 'Lust 서클의 하급 영혼입니다.',
-    stats: { maxHp: 250, power: 25, defense: 5, speed: 2, attackCooldown: 1000 },
+    stats: { maxHp: 150, power: 18, defense: 5, speed: 2, attackCooldown: 1000 },
     rewards: {
       exp: 45,
       gold: 9,
