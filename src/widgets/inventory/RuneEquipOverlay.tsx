@@ -70,7 +70,7 @@ function RuneEquipOverlay({
                         size={70}
                       />
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity z-20">
-                        <span className="text-[10px] font-black text-[#eab308] tracking-widest uppercase">
+                        <span className="text-[10px] font-black text-[#eab308] tracking-widest">
                           Replace
                         </span>
                       </div>
@@ -78,7 +78,7 @@ function RuneEquipOverlay({
                   ) : (
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="text-[10px] font-black text-[#eab308] tracking-widest">
-                        EQUIP
+                        Equip
                       </span>
                     </div>
                   )
@@ -94,7 +94,7 @@ function RuneEquipOverlay({
           onClick={onClose}
           className="w-full py-4 bg-zinc-800 text-white rounded-xl font-bold tracking-widest hover:bg-zinc-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50"
         >
-          CANCEL
+          Cancel
         </button>
       </div>
     </div>

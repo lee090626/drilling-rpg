@@ -176,147 +176,133 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 lg:gap-8 overflow-hidden pr-0 lg:pr-2">
-        {activeTab === 'ingredients' || activeTab === 'effects' ? (
+        {activeTab === 'ingredients' ? (
+          <div className="flex-1 overflow-y-auto pr-0 md:pr-4 custom-scrollbar">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3 md:gap-4 pb-10">
+              {ownedMinerals.map((m) => {
+                const count = (stats.inventory as any)[m.key] || 0;
+                const isSelected = selectedKey === m.key;
+
+                return (
+                  <div
+                    key={m.key}
+                    className={`relative aspect-square rounded-xl md:rounded-2xl border transition-all flex flex-col items-center justify-center p-2 md:p-4 group overflow-hidden bg-[#252526] border-zinc-800 hover:border-zinc-700`}
+                  >
+                    <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 group-hover:scale-105 transition-transform flex items-center justify-center">
+                      {m.image ? (
+                        <AtlasIcon name={m.image} size={64} />
+                      ) : (
+                        <span className="text-3xl md:text-5xl">{m.icon}</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="text-[10px] md:text-sm font-bold tabular-nums text-zinc-400">
+                        x{count.toLocaleString()}
+                      </div>
+                      <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest text-center truncate w-full px-1">
+                        {m.name}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : activeTab === 'effects' ? (
           <>
             <div className="flex-1 overflow-y-auto pr-0 md:pr-4 custom-scrollbar">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 pb-10">
-                {activeTab === 'ingredients' ? (
-                  ownedMinerals.map((m) => {
-                    const count = (stats.inventory as any)[m.key] || 0;
-                    const isSelected = selectedKey === m.key;
+                {ownedArtifacts.length > 0 ? (
+                  ownedArtifacts.map((item) => {
+                    const count = stats.collectionHistory?.[item.id] || 0;
+                    const isSelected = selectedKey === item.id;
 
                     return (
                       <button
-                        key={m.key}
-                        onClick={() => setSelectedKey(m.key as any)}
+                        key={item.id}
+                        onClick={() => setSelectedKey(item.id)}
                         className={`relative aspect-square rounded-xl md:rounded-2xl border transition-all flex flex-col items-center justify-center p-2 md:p-4 group overflow-hidden focus:outline-none ${
                           isSelected
-                            ? 'bg-[#252526] shadow-2xl scale-[1.02]'
+                            ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
                             : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
                         }`}
-                        style={{ borderColor: isSelected ? m.color : undefined }}
                       >
-                        <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 group-hover:scale-105 transition-transform flex items-center justify-center">
-                          {m.image ? (
-                            <AtlasIcon name={m.image} size={64} />
-                          ) : (
-                            <span className="text-3xl md:text-5xl">{m.icon}</span>
-                          )}
+                        <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 flex items-center justify-center">
+                          <AtlasIcon name={item.image as any} size={64} />
                         </div>
-                        <div className="flex flex-col items-center gap-1">
-                          <div className={`text-[10px] md:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-zinc-400'}`}>
+                        <div className="flex flex-col items-center gap-1.5">
+                          <div className={`text-[10px] md:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-orange-400'}`}>
                             x{count.toLocaleString()}
                           </div>
-                          <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest text-center truncate w-full px-1 uppercase">
-                            {m.name}
+                          <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest text-center truncate w-full px-1">
+                            {item.name}
                           </div>
                         </div>
                       </button>
-                    );
+                    )
                   })
                 ) : (
-                  ownedArtifacts.length > 0 ? (
-                    ownedArtifacts.map((item) => {
-                      const count = stats.collectionHistory?.[item.id] || 0;
-                      const isSelected = selectedKey === item.id;
-
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => setSelectedKey(item.id)}
-                          className={`relative aspect-square rounded-xl md:rounded-2xl border transition-all flex flex-col items-center justify-center p-2 md:p-4 group overflow-hidden focus:outline-none ${
-                            isSelected
-                              ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
-                              : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
-                          }`}
-                        >
-                          <div className="w-14 h-14 md:w-18 md:h-18 mb-2 md:mb-4 flex items-center justify-center">
-                            <AtlasIcon name={item.image as any} size={64} />
-                          </div>
-                          <div className="flex flex-col items-center gap-1.5">
-                            <div className={`text-[10px] md:text-sm font-bold tabular-nums ${isSelected ? 'text-white' : 'text-orange-400'}`}>
-                              x{count.toLocaleString()}
-                            </div>
-                            <div className="text-[10px] md:text-xs text-zinc-600 font-bold tracking-widest text-center truncate w-full px-1 uppercase">
-                              {item.name}
-                            </div>
-                          </div>
-                        </button>
-                      )
-                    })
-                  ) : (
-                    <div className="col-span-full h-64 flex flex-col items-center justify-center text-center opacity-20">
-                      <div className="text-5xl mb-6">📦</div>
-                      <p className="text-xs font-bold text-zinc-500 tracking-widest uppercase">
-                        No Items Found
-                      </p>
-                    </div>
-                  )
+                  <div className="col-span-full h-64 flex flex-col items-center justify-center text-center opacity-20">
+                    <div className="text-5xl mb-6">📦</div>
+                    <p className="text-xs font-bold text-zinc-500 tracking-widest">
+                      No Items Found
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
 
             <div className="w-full lg:w-[320px] xl:w-[380px] shrink-0 h-auto lg:h-full flex flex-col bg-[#252526] rounded-2xl md:rounded-4xl p-4 md:p-6 lg:p-8 border border-zinc-800 relative shadow-2xl overflow-y-auto custom-scrollbar min-h-0">
-              {activeTab === 'ingredients' && selectedMineral ? (
+              {selectedArtifact ? (
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="flex justify-start mb-8">
-                    <span className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest" style={{ opacity: 0.8, backgroundColor: `${selectedMineral.color}20`, borderColor: selectedMineral.color, color: selectedMineral.color }}>
-                      Mineral
-                    </span>
-                  </div>
-                  <div className="w-40 h-40 md:w-56 md:h-56 bg-zinc-950 rounded-3xl md:rounded-4xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-6 md:mb-10 overflow-hidden">
-                    <AtlasIcon name={(selectedMineral.image && (selectedMineral.image in atlasMap)) ? selectedMineral.image as any : 'GoldIcon'} size={160} />
-                  </div>
-                  <h3 className="text-3xl md:text-5xl font-black text-white text-center mb-4 md:mb-6 tracking-tighter">
-                    {selectedMineral.name}
-                  </h3>
-                  <p className="text-sm md:text-base text-zinc-400 text-center leading-relaxed mb-6 md:mb-12 px-4 italic font-medium">
-                    {selectedMineral.description}
-                  </p>
-                  <div className="mt-auto bg-zinc-950 p-8 rounded-3xl border border-zinc-900">
-                    <div className="text-xs text-zinc-500 font-black mb-4 tracking-widest text-center uppercase">Total Stashed</div>
-                    <div className="text-6xl md:text-8xl font-black text-[#eab308] text-center tabular-nums">
-                      {(stats.inventory as any)[selectedMineral.key] || 0}
-                    </div>
-                  </div>
-                </div>
-              ) : activeTab === 'effects' && selectedArtifact ? (
-                <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
-                  <div className="flex justify-start mb-8">
-                    <span className="text-xs font-black px-4 py-2 rounded-lg border tracking-widest bg-orange-950/20 border-orange-500 text-orange-400 uppercase">
-                      {selectedArtifact.id.startsWith('relic_') ? 'Boss Relic' : 'Monster Essence'}
-                    </span>
-                  </div>
-                  <div className="w-40 h-40 md:w-56 md:h-56 bg-zinc-950 rounded-3xl md:rounded-4xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-6 md:mb-10 overflow-hidden relative">
+                  {/* 이미지 영역 */}
+                  <div className="w-40 h-40 md:w-56 md:h-56 bg-zinc-950 rounded-3xl md:rounded-4xl shadow-inner border border-zinc-800 flex items-center justify-center mx-auto mb-8 md:mb-12 overflow-hidden relative">
                     <AtlasIcon name={(selectedArtifact.image && (selectedArtifact.image in atlasMap)) ? selectedArtifact.image as any : 'GoldIcon'} size={160} />
                     <div className="absolute inset-0 shadow-[inset_0_0_60px_#f9731633] rounded-3xl md:rounded-4xl pointer-events-none" />
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-black text-white text-center mb-4 tracking-tighter">
+
+                  {/* 이름 */}
+                  <h3 className="text-2xl md:text-4xl font-black text-white text-center mb-8 tracking-tighter">
                     {selectedArtifact.name}
                   </h3>
                   
-                  <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl mb-6">
-                    <div className="text-[10px] text-orange-500 font-black tracking-widest uppercase mb-1 text-center">Stack Effect</div>
-                    <div className="text-sm text-white text-center font-bold">
-                      {selectedArtifact.effectDescription}
-                    </div>
-                  </div>
+                  {/* 핵심 효과 설명 */}
+                  <div className="mt-4 bg-orange-500/10 border border-orange-500/20 p-6 rounded-3xl relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-orange-500/50" />
+                    
+                    {/* 동적 능력치 보너스 표시 */}
+                    {selectedArtifact.bonus && (
+                      <div className="text-[10px] text-orange-500 font-black tracking-[0.2em] mb-2">
+                        {(() => {
+                          const statMap: Record<string, string> = {
+                            power: 'Attack Power',
+                            maxHp: 'Max HP',
+                            moveSpeed: 'Move Speed',
+                            luck: 'Luck',
+                            critRate: 'Crit Rate',
+                            critDamage: 'Crit Damage',
+                            defense: 'Defense',
+                            miningSpeed: 'Mining Speed'
+                          };
+                          const stacks = stats.collectionHistory?.[selectedArtifact.id] || 0;
+                          const totalValue = selectedArtifact.bonus.value * stacks;
+                          const isPercent = Math.abs(selectedArtifact.bonus.value) < 1 && !['maxHp', 'defense'].includes(selectedArtifact.bonus.stat);
+                          const formattedValue = isPercent ? `${(totalValue * 100).toFixed(1)}%` : totalValue.toLocaleString();
+                          
+                          return `${statMap[selectedArtifact.bonus.stat] || selectedArtifact.bonus.stat} +${formattedValue}`;
+                        })()}
+                      </div>
+                    )}
 
-                  <p className="text-xs md:text-sm text-zinc-400 text-center leading-relaxed mb-8 px-2 italic font-medium">
-                    {selectedArtifact.description}
-                  </p>
-                  
-                  <div className="mt-auto bg-zinc-950 p-6 rounded-3xl border border-zinc-900">
-                    <div className="text-[10px] text-zinc-500 font-black mb-2 tracking-widest text-center uppercase">Cumulative Stacks</div>
-                    <div className="text-5xl md:text-6xl font-black text-orange-400 text-center tabular-nums italic">
-                      {stats.collectionHistory?.[selectedArtifact.id] || 0}
+                    <div className="text-lg md:text-xl text-white font-black leading-tight">
+                      {selectedArtifact.effectDescription}
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
                   <div className="text-5xl mb-6">📦</div>
-                  <p className="text-xs font-bold text-zinc-500 tracking-widest uppercase">Select an Item</p>
+                  <p className="text-xs font-bold text-zinc-500 tracking-widest">Select an Item</p>
                 </div>
               )}
             </div>
@@ -356,7 +342,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 <div className="h-64 flex flex-col items-center justify-center text-center opacity-20">
                   <div className="text-5xl mb-6">🛡️</div>
                   <p className="text-sm font-bold text-zinc-500 tracking-widest">
-                    No {selectedPart.toUpperCase()} Owned
+                    No {selectedPart} Owned
                   </p>
                 </div>
               )}
@@ -387,7 +373,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                 ) : (
                   <div className="col-span-full h-64 flex flex-col items-center justify-center text-center opacity-20">
                     <div className="text-5xl mb-6">🪨</div>
-                    <p className="text-xs font-bold text-zinc-500 tracking-widest uppercase">
+                    <p className="text-xs font-bold text-zinc-500 tracking-widest">
                       No Runes Owned
                     </p>
                   </div>
@@ -408,14 +394,14 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
                   <h3 className="text-4xl md:text-5xl font-black text-white text-center mb-4 tracking-tighter">
                     {selectedRuneConfig.name}
                   </h3>
-                  <p className="text-sm md:text-base text-zinc-400 text-center leading-relaxed mb-8 px-4 italic font-medium">
+                  <p className="text-sm md:text-base text-zinc-400 text-center leading-relaxed mb-8 px-4 font-medium">
                     {selectedRuneConfig.description}
                   </p>
                   <div className="mt-auto space-y-4">
                     <div className="bg-zinc-950 p-8 rounded-3xl border border-zinc-800">
                       <div className="flex justify-between items-center text-xs md:text-sm font-bold">
                         <span className="text-zinc-500">Type</span>
-                        <span className="text-blue-400 tracking-widest uppercase">
+                        <span className="text-blue-400 tracking-widest">
                           {selectedRuneConfig.effectType}
                         </span>
                       </div>
@@ -431,7 +417,7 @@ function Inventory({ stats, onClose, onEquip, onEquipRune }: InventoryProps) {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
                   <AtlasIcon name="AttackRune" size={96} />
-                  <p className="text-xs font-bold text-zinc-500 tracking-widest mt-6 uppercase">
+                  <p className="text-xs font-bold text-zinc-500 tracking-widest mt-6">
                     Select a Rune
                   </p>
                 </div>
