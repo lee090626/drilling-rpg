@@ -131,11 +131,10 @@ export default function LandingPage() {
                 Progression &amp; Crafting System
               </h3>
               <p className="text-zinc-400 leading-relaxed">
-                Smelt various minerals like iron, gold, and diamonds gathered underground in the
-                Refinery to create higher-tier materials. Use these valuable metals in the Synthesis
-                Altar system to permanently forge sacred relics and upgrade all your stats, from
-                basic attack power and HP to your drill's mining speed. Transform a rusty drill into
-                a powerful special weapon using resources.
+                Slay powerful bosses in the nine circles of Hell to earn unique, stackable
+                relics. These artifacts provide permanent, stacking bonuses to all your core
+                stats, from mining speed and power to critical hit rates, ensuring constant
+                progression as you descend further into the depths.
               </p>
             </div>
 

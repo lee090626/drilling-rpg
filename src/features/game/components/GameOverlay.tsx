@@ -10,7 +10,6 @@ import Settings from '@/widgets/settings/Settings';
 import Elevator from '@/widgets/elevator/Elevator';
 import Encyclopedia from '@/widgets/encyclopedia/Encyclopedia';
 
-import SynthesisAltar from '@/widgets/synthesis/SynthesisAltar';
 import GuideWindow from '@/widgets/guide/GuideWindow';
 import ToastContainer from '@/shared/ui/ToastContainer';
 import BossHealthBar from './BossHealthBar';
@@ -86,7 +85,6 @@ export default function GameOverlay({
           onOpenElevator={() => toggleModal('isElevatorOpen')}
           onOpenSettings={() => toggleModal('isSettingsOpen')}
           onOpenGuide={() => toggleModal('isGuideOpen')}
-          onOpenAltar={() => toggleModal('isLaboratoryOpen')}
         />
       </div>
 
@@ -170,15 +168,6 @@ export default function GameOverlay({
               const code = prompt('Enter save code:');
               if (code) handleImportSave(code);
             }}
-          />
-        </Overlay>
-      )}
-      {world.ui.isLaboratoryOpen && (
-        <Overlay key="altar" onClose={() => handleClose('isLaboratoryOpen')}>
-          <SynthesisAltar
-            stats={currentStats}
-            onSynthesize={handleSynthesizeRelic}
-            onClose={() => handleClose('isLaboratoryOpen')}
           />
         </Overlay>
       )}
