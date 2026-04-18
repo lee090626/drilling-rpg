@@ -144,20 +144,27 @@ export class GameLoop {
         );
       }
 
-      // 1. 게임 시뮬레이션
-      inputSystem(this.world);
-      statusSystem(this.world, now);
-      statsSyncSystem(this.world.player);
-      physicsSystem(this.world, now);
-      miningSystem(this.world, now);
-      interactionSystem(this.world);
-      spawnSystem(this.world);
-      monsterAiSystem(this.world, now);
-      bossBehaviorSystem(this.world, deltaTime, now);
-      projectileSystem(this.world, deltaTime, now);
-      combatSystem(this.world, deltaTime, now);
-      effectSystem(this.world, deltaTime);
-      tutorialSystem(this.world);
+      // 1. 게임 시뮬레이션 (역경직 중에는 스킵)
+      const isHitStopping = now < this.world.hitStopUntil;
+      
+      if (!isHitStopping) {
+        inputSystem(this.world);
+        statusSystem(this.world, now);
+        statsSyncSystem(this.world.player);
+        physicsSystem(this.world, now);
+        miningSystem(this.world, now);
+        interactionSystem(this.world);
+        spawnSystem(this.world);
+        monsterAiSystem(this.world, now);
+        bossBehaviorSystem(this.world, deltaTime, now);
+        projectileSystem(this.world, deltaTime, now);
+        combatSystem(this.world, deltaTime, now);
+        effectSystem(this.world, deltaTime);
+        tutorialSystem(this.world);
+      } else {
+        // 역경직 중에도 효과 시스템(이펙트 가시성)은 업데이트할 수도 있으나, 
+        // 완벽한 멈춤을 위해 일단 모든 로직 시뮬레이션을 건너뜁니다.
+      }
 
       // 2. 렌더링 호출
       if (this.pixiApp && this.layers) {

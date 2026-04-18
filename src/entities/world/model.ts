@@ -191,6 +191,8 @@ export interface GameWorld {
     maxHp: number;
     phase: number;
   }>;
+  /** 역경직(Hit Stop) 종료 타임스탬프 */
+  hitStopUntil: number;
 }
 
 /**
@@ -251,6 +253,31 @@ export const createInitialWorld = (seed: number): GameWorld => {
           glacialite: 0,
           abyssstone: 0,
           stone: 0,
+          // === 몬스터 전리품 및 정수 초기화 ===
+          essence_lust: 0,
+          essence_gluttony: 0,
+          essence_greed: 0,
+          essence_wrath: 0,
+          essence_heresy: 0,
+          essence_violence: 0,
+          essence_fraud: 0,
+          essence_treachery: 0,
+          loot_whisperer_fragment: 0,
+          loot_spectral_breath: 0,
+          loot_devourer_skin: 0,
+          loot_worm_mucus: 0,
+          loot_hoarder_coin: 0,
+          loot_sinner_gold: 0,
+          loot_dweller_eye: 0,
+          loot_fury_flame: 0,
+          loot_priest_seal: 0,
+          loot_flame_soul: 0,
+          loot_malebranche_claw: 0,
+          loot_prophet_tongue: 0,
+          loot_centaur_hoof: 0,
+          loot_guard_blood: 0,
+          loot_sinner_ice: 0,
+          loot_shadow_essence: 0,
         },
         inventoryRunes: [],
         goldCoins: 0,
@@ -357,6 +384,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
     spawnedCoords: new Set(),
     environmentalForce: { vx: 0, vy: 0 },
     bossCombatStatus: {},
+    hitStopUntil: 0,
   };
 
   result.particles = result.particlePool.getPool();
