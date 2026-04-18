@@ -39,15 +39,15 @@ const BossHealthBar: React.FC = () => {
             {/* 보스 이름 및 정보 */}
             <div className="flex justify-between items-end mb-1.5 px-2">
               <div className="flex flex-col">
-                <span className="text-[10px] md:text-xs font-black text-rose-500 tracking-[0.2em] uppercase opacity-80">
+                <span className="text-[10px] md:text-xs font-black text-rose-500 tracking-[0.2em] opacity-80">
                   Abyssal Lord - Circle {circleNumber}
                 </span>
-                <h2 className="text-xl md:text-3xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                <h2 className="text-xl md:text-3xl font-black text-white tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
                   {boss.name}
                 </h2>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-[10px] md:text-xs font-mono font-bold text-white/50 uppercase">
+                <span className="text-[10px] md:text-xs font-mono font-bold text-white/50">
                   Phase {boss.phase}
                 </span>
                 <span className="text-lg md:text-2xl font-mono font-black text-white tracking-tighter">
