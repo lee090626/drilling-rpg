@@ -34,7 +34,7 @@ export const EQUIPMENTS: Record<string, any> = {
     icon: '🦷',
     image: 'CrimsonFangDrill',
     stats: { power: 15 },
-    price: { crimsonstone: 20, goldCoins: 1000 },
+    price: { crimsonstone: 10, goldCoins: 300 },
     maxSkillSlots: 1
   },
   'crimson_veil': {
@@ -46,7 +46,7 @@ export const EQUIPMENTS: Record<string, any> = {
     icon: '🥽',
     image: 'CrimsonVeilHelmet',
     stats: { defense: 5 },
-    price: { crimsonstone: 15, goldCoins: 800 }
+    price: { crimsonstone: 5, goldCoins: 200 }
   },
   'crimson_plate': {
     id: 'crimson_plate',
