@@ -14,9 +14,8 @@ export const handleWorldAction = (world: GameWorld, action: string, data: any) =
       world.player.visualPos = { x: 15, y: 8 };
 
       // 보스 전투 상태 및 환경 물리력 강제 초기화
-      Object.values(world.bossCombatStatus || {}).forEach(status => {
-        status.active = false;
-      });
+      // [Rebase Resolve] bossCombatStatus가 Record로 변경됨에 따라 빈 객체로 초기화
+      world.bossCombatStatus = {};
       world.environmentalForce = { vx: 0, vy: 0 };
       world.shake = 0;
       

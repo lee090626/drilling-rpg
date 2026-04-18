@@ -34,14 +34,16 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     }
   }
 
-  // 보스가 없으면 전투 상태 해제 후 조기 종료
+  // 보스가 없으면 모든 전투 상태 해제 (혹은 개별 해제 로직으로 확장 가능)
   if (bossIdx === -1) {
-    if (world.bossCombatStatus.active) {
-      world.bossCombatStatus.active = false;
+    if (Object.keys(world.bossCombatStatus).length > 0) {
+      world.bossCombatStatus = {};
       world.environmentalForce = { vx: 0, vy: 0 };
     }
     return;
   }
+
+  const instanceId = soa.instanceId[bossIdx].toString();
 
   // --- 2. 데이터 조회 및 보스 고정/이동 처리 ---
   const defIndex = soa.monsterDefIndex[bossIdx];
@@ -61,8 +63,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   // 플레이어가 너무 멀어지면 전투 해제 (약 20타일)
   const distToPlayer = Math.sqrt(Math.pow(bx - px, 2) + Math.pow(by - py, 2));
   if (distToPlayer > TILE_SIZE * 20) {
-    if (world.bossCombatStatus.active) {
-      world.bossCombatStatus.active = false;
+    if (world.bossCombatStatus[instanceId]) {
+      delete world.bossCombatStatus[instanceId];
       world.environmentalForce = { vx: 0, vy: 0 };
     }
     return;
@@ -89,8 +91,8 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
     else if (hpPercent <= 70) phase = 2;
   }
 
-  // --- 6. bossCombatStatus UI 동기화 ---
-  world.bossCombatStatus = {
+  // --- 6. bossCombatStatus UI 동기화 (Multi-Boss Support: instanceId 기반) ---
+  world.bossCombatStatus[instanceId] = {
     active: true,
     id: bossDef.id,
     name: bossDef.nameKo ?? bossDef.name,
@@ -100,7 +102,6 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   };
 
   // --- 7. 패턴 루프 ---
-  const instanceId = soa.instanceId[bossIdx];
   const patterns = bossDef.patterns ?? [];
 
   if (patterns.length === 0) {
