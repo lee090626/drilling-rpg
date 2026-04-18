@@ -33,8 +33,8 @@ export const EQUIPMENTS: Record<string, any> = {
     circle: 2,
     icon: '🦷',
     image: 'CrimsonFangDrill',
-    stats: { power: 15 },
-    price: { crimsonstone: 10, goldCoins: 300 },
+    stats: { power: 25 },
+    price: { crimsonstone: 10, galestone: 5, goldCoins: 500 },
     maxSkillSlots: 1
   },
   'crimson_veil': {
@@ -45,8 +45,8 @@ export const EQUIPMENTS: Record<string, any> = {
     circle: 2,
     icon: '🥽',
     image: 'CrimsonVeilHelmet',
-    stats: { defense: 5 },
-    price: { crimsonstone: 5, goldCoins: 200 }
+    stats: { maxHp: 80, defense: 3 },
+    price: { crimsonstone: 5, galestone: 3, goldCoins: 300 },
   },
   'crimson_plate': {
     id: 'crimson_plate',
@@ -56,8 +56,8 @@ export const EQUIPMENTS: Record<string, any> = {
     circle: 2,
     icon: '🛡️',
     image: 'CrimsonPlateArmor',
-    stats: { maxHp: 100 },
-    price: { crimsonstone: 25, goldCoins: 1200 }
+    stats: { maxHp: 400, defense: 10 },
+    price: { crimsonstone: 25, fervorstone: 10, goldCoins: 1200 },
   },
   'crimson_stride': {
     id: 'crimson_stride',
@@ -67,8 +67,8 @@ export const EQUIPMENTS: Record<string, any> = {
     circle: 2,
     icon: '👢',
     image: 'CrimsonStrideBoots',
-    stats: { moveSpeed: 10, defense: 2, maxHp: 30 },
-    price: { crimsonstone: 15, goldCoins: 900 }
+    stats: { moveSpeed: 15, defense: 2 },
+    price: { galestone: 15, fervorstone: 5, goldCoins: 800 },
   },
 
   // === Circle 3 — Gluttony (탐식) ===

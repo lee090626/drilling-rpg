@@ -66,8 +66,8 @@ export function syncPermanentStats(player: any) {
   const totalMoveSpeedMult = 1.0 + masteryBonuses.moveSpeedMult;
   player.stats.moveSpeed = Math.floor(baseMoveSpeed * totalMoveSpeedMult);
 
-  // 4. 공격력(Power) 동기화: (기본 20 + 장비Power + 숙련도 공격력) + 유물 공격력
-  player.stats.power = 20 + eqPower + (masteryBonuses.miningPower || 0) + (artifactBonuses?.power || 0);
+  // 4. 공격력(Power) 동기화: (기본 10 + 장비Power + 숙련도 공격력) + 유물 공격력
+  player.stats.power = 10 + eqPower + (masteryBonuses.miningPower || 0) + (artifactBonuses?.power || 0);
 
   // 5. 방어력 적용 (장비방어 + 유물방어)
   player.stats.defense = eqDefense + (artifactBonuses?.defense || 0);

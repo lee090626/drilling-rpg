@@ -67,22 +67,7 @@ export type TileType =
   | 'essence_violence'
   | 'essence_fraud'
   | 'essence_treachery'
-  | 'loot_whisperer_fragment'
-  | 'loot_spectral_breath'
-  | 'loot_devourer_skin'
-  | 'loot_worm_mucus'
-  | 'loot_hoarder_coin'
-  | 'loot_sinner_gold'
-  | 'loot_dweller_eye'
-  | 'loot_fury_flame'
-  | 'loot_priest_seal'
-  | 'loot_flame_soul'
-  | 'loot_malebranche_claw'
-  | 'loot_prophet_tongue'
-  | 'loot_centaur_hoof'
-  | 'loot_guard_blood'
-  | 'loot_sinner_ice'
-  | 'loot_shadow_essence';
+  | 'essence_treachery';
 
 /** 타일 타입-ID 매핑 (저장 및 비트 패킹용) */
 export const TILE_TYPE_TO_ID: Record<string, number> = {
@@ -129,22 +114,6 @@ export const TILE_TYPE_TO_ID: Record<string, number> = {
   essence_violence: 105,
   essence_fraud: 106,
   essence_treachery: 107,
-  loot_whisperer_fragment: 150,
-  loot_spectral_breath: 151,
-  loot_devourer_skin: 152,
-  loot_worm_mucus: 153,
-  loot_hoarder_coin: 154,
-  loot_sinner_gold: 155,
-  loot_dweller_eye: 156,
-  loot_fury_flame: 157,
-  loot_priest_seal: 158,
-  loot_flame_soul: 159,
-  loot_malebranche_claw: 160,
-  loot_prophet_tongue: 161,
-  loot_centaur_hoof: 162,
-  loot_guard_blood: 163,
-  loot_sinner_ice: 164,
-  loot_shadow_essence: 165,
 };
 
 /** ID-타일 타입 역매핑 */

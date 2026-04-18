@@ -228,6 +228,23 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     effectDescription: 'Enhances Infinite Growth Effect',
     effectDescriptionKo: '무한 성장 효과 강화',
   },
+  // === 3. 제작 전용 패시브 아이템 (Effect 계열) ===
+  vibrant_heart: {
+    id: 'vibrant_heart',
+    name: 'Vibrant Heart Charm',
+    nameKo: '생명의 부적',
+    type: 'stackable',
+    image: 'LustEssence',
+    description: 'Increases Max HP significantly via intricate crafting.',
+    descriptionKo: '정교한 제작을 통해 최대 체력을 미세하게 증가시킵니다.',
+    bonus: { stat: 'maxHp', value: 20 },
+    requirements: {
+      essence_lust: 10,
+      crimsonstone: 10,
+      galestone: 10,
+      fervorstone: 10,
+    },
+  },
 };
 
 /**
