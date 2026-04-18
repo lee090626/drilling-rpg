@@ -172,8 +172,8 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 50,
       gold: 20,
       drops: [
-        { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
-        { itemId: 'loot_whisperer_fragment', chance: 0.25, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_lust', chance: 1, minAmount: 1, maxAmount: 1 },
+        { itemId: 'loot_whisperer_fragment', chance: 1, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 1.5, aggroRange: 5 },
@@ -190,7 +190,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 60,
       gold: 12,
       drops: [
-        { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_lust', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_spectral_breath', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -208,7 +208,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 45,
       gold: 9,
       drops: [
-        { itemId: 'essence_lust', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_lust', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_bat_wing', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -222,13 +222,14 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     imagePath: 'Asmodeus',
     description:
       '3개의 머리 (황소, 인간, 숫양), 불꽃 날개, 뱀 꼬리. 몸 전체에서 붉은 열기가 뿜어져 나옴',
-    stats: { maxHp: 2500, power: 35, defense: 10, speed: 1.5, attackCooldown: 2000 },
+    stats: { maxHp: 6000, power: 65, defense: 15, speed: 1.5, attackCooldown: 2000 },
     rewards: {
       exp: 7500,
       gold: 1500,
       drops: [
         { itemId: 'essence_lust', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_asmodeus_ring', chance: 1.0, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: {
@@ -304,7 +305,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 150,
       gold: 30,
       drops: [
-        { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_gluttony', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_devourer_skin', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -322,7 +323,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 120,
       gold: 24,
       drops: [
-        { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_gluttony', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_worm_mucus', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -340,7 +341,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 180,
       gold: 36,
       drops: [
-        { itemId: 'essence_gluttony', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_gluttony', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_muddy_soul', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -361,6 +362,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_gluttony', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_beelzebub_needle', chance: 0.5, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -377,7 +379,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 400,
       gold: 80,
       drops: [
-        { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_greed', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_hoarder_coin', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -395,7 +397,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 550,
       gold: 110,
       drops: [
-        { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_greed', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_sinner_gold', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -413,7 +415,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 350,
       gold: 70,
       drops: [
-        { itemId: 'essence_greed', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_greed', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_mimic_tooth', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -433,6 +435,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_greed', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_mammon_coin', chance: 0.4, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -449,7 +452,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 1200,
       gold: 240,
       drops: [
-        { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_wrath', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_dweller_eye', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -467,7 +470,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 1000,
       gold: 200,
       drops: [
-        { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_wrath', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_fury_flame', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -485,7 +488,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 2500,
       gold: 500,
       drops: [
-        { itemId: 'essence_wrath', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_wrath', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_golem_core', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -505,6 +508,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_wrath', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_satan_heart', chance: 0.3, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -521,7 +525,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 3500,
       gold: 700,
       drops: [
-        { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_heresy', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_priest_seal', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -539,7 +543,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 3000,
       gold: 600,
       drops: [
-        { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_heresy', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_flame_soul', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -557,7 +561,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 5000,
       gold: 1000,
       drops: [
-        { itemId: 'essence_heresy', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_heresy', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_fallen_feather', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -578,6 +582,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_heresy', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_belphegor_eye', chance: 0.2, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -594,7 +599,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 12000,
       gold: 2400,
       drops: [
-        { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_violence', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_centaur_hoof', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -612,7 +617,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 18000,
       gold: 3600,
       drops: [
-        { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_violence', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_guard_blood', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -630,7 +635,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 25000,
       gold: 5000,
       drops: [
-        { itemId: 'essence_violence', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_violence', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_spawn_horn', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -650,6 +655,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_violence', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_leviathan_mirror', chance: 0.15, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -666,7 +672,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 60000,
       gold: 12000,
       drops: [
-        { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_fraud', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_malebranche_claw', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -684,7 +690,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 50000,
       gold: 10000,
       drops: [
-        { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_fraud', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_prophet_tongue', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -702,7 +708,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 45000,
       gold: 9000,
       drops: [
-        { itemId: 'essence_fraud', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_fraud', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_illusion_shard', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -722,6 +728,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_fraud', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_abaddon_blade', chance: 0.1, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
@@ -738,7 +745,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 250000,
       gold: 50000,
       drops: [
-        { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_treachery', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_sinner_ice', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -756,7 +763,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 200000,
       gold: 40000,
       drops: [
-        { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_treachery', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_specter_tear', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -774,7 +781,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       exp: 300000,
       gold: 60000,
       drops: [
-        { itemId: 'essence_treachery', chance: 0.02, minAmount: 1, maxAmount: 1 },
+        { itemId: 'essence_treachery', chance: 1, minAmount: 1, maxAmount: 1 },
         { itemId: 'loot_shadow_essence', chance: 0.25, minAmount: 1, maxAmount: 1 },
       ],
     },
@@ -795,6 +802,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
       drops: [
         { itemId: 'essence_treachery', chance: 1.0, minAmount: 5, maxAmount: 10 },
         { itemId: 'boss_core', chance: 1.0, minAmount: 1, maxAmount: 1 },
+        { itemId: 'relic_lucifer_ice', chance: 0.02, minAmount: 1, maxAmount: 1 },
       ],
     },
     behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },

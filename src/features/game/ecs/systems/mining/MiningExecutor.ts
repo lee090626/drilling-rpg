@@ -44,11 +44,17 @@ export const miningExecutor = (
 
   if (finalDamage > 0) {
     player.lastHitTime = now;
-    // 파괴 시 더 강한 흔들림
-    world.shake = Math.max(world.shake, destroyed ? 2.0 : 0.5);
+    // 파괴 시 더 강한 흔들림 (도파민 강화: 2.0 -> 4.0)
+    world.shake = Math.max(world.shake, destroyed ? 4.0 : 0.8);
 
-    // 시각 효과: 파편 및 부동 텍스트
-    createParticles(world, x * TILE_SIZE, y * TILE_SIZE, getTileColor(targetTile.type), 2);
+    // [Juice] 역경직(Hit Stop) 부여: 파괴 시 순간적인 멈춤으로 타격감 극대화
+    if (destroyed) {
+      const isRare = targetTile.type !== 'stone';
+      world.hitStopUntil = now + (isRare ? 100 : 50);
+    }
+
+    // 시각 효과: 파편 및 부동 텍스트 (파편 수 2 -> 4)
+    createParticles(world, x * TILE_SIZE, y * TILE_SIZE, getTileColor(targetTile.type), destroyed ? 8 : 2);
     createFloatingText(
       world,
       x * TILE_SIZE,
