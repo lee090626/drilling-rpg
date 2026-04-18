@@ -145,13 +145,13 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
         // Collect
         const amount = dp.amount[i];
 
-        // 인벤토리 추가
-        if (world.player.stats.inventory[type] !== undefined) {
-          world.player.stats.inventory[type] += amount;
-        }
+        // 인벤토리 추가 (슬롯 누락 시 자동 생성 처리)
+        const currentAmount = world.player.stats.inventory[type] || 0;
+        world.player.stats.inventory[type] = currentAmount + amount;
 
-        // === [내실] 정수 획득 시 누적 기록 업데이트 ===
-        if (type.startsWith('essence_')) {
+        // === [내실] 정수 및 유물 획득 시 누적 기록 업데이트 ===
+        const isArtifact = type.startsWith('essence_') || type.startsWith('relic_');
+        if (isArtifact) {
           if (!world.player.stats.collectionHistory) {
             world.player.stats.collectionHistory = {};
           }
