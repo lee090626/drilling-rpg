@@ -50,7 +50,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Power slightly.',
     descriptionKo: '채굴 위력이 미세하게 증가합니다.',
     image: 'LustEssence',
-    bonus: { stat: 'power', value: 0.05 },
+    bonus: { stat: 'power', value: 0.5 },
   },
   essence_gluttony: {
     id: 'essence_gluttony',
@@ -60,7 +60,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Max HP.',
     descriptionKo: '최대 체력이 증가합니다.',
     image: 'GluttoyEssence',
-    bonus: { stat: 'maxHp', value: 0.5 },
+    bonus: { stat: 'maxHp', value: 5.0 },
   },
   essence_greed: {
     id: 'essence_greed',
@@ -70,7 +70,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Luck slightly.',
     descriptionKo: '행운이 극히 미세하게 증가합니다.',
     image: 'GreedEssence',
-    bonus: { stat: 'luck', value: 0.01 },
+    bonus: { stat: 'luck', value: 0.05 },
   },
   essence_wrath: {
     id: 'essence_wrath',
@@ -80,7 +80,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Critical Damage.',
     descriptionKo: '치명타 피해량이 증가합니다.',
     image: 'WrathEssence',
-    bonus: { stat: 'critDamage', value: 0.001 },
+    bonus: { stat: 'critDamage', value: 0.01 },
   },
   essence_heresy: {
     id: 'essence_heresy',
@@ -90,7 +90,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Mining Speed.',
     descriptionKo: '채굴 속도가 미세하게 증가합니다.',
     image: 'HeresyEssence',
-    bonus: { stat: 'miningSpeed', value: 0.0005 },
+    bonus: { stat: 'miningSpeed', value: 0.005 },
   },
   essence_violence: {
     id: 'essence_violence',
@@ -100,7 +100,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Critical Rate.',
     descriptionKo: '치명타 확률이 미세하게 증가합니다.',
     image: 'ViolenceEssence',
-    bonus: { stat: 'critRate', value: 0.0002 },
+    bonus: { stat: 'critRate', value: 0.001 },
   },
   essence_fraud: {
     id: 'essence_fraud',
@@ -110,7 +110,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Movement Speed.',
     descriptionKo: '이동 속도가 증가합니다.',
     image: 'FraudEssence',
-    bonus: { stat: 'moveSpeed', value: 0.05 },
+    bonus: { stat: 'moveSpeed', value: 0.2 },
   },
   essence_treachery: {
     id: 'essence_treachery',
@@ -120,7 +120,7 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
     description: 'Increases Defense.',
     descriptionKo: '방어력이 증가합니다.',
     image: 'TreacheryEssence',
-    bonus: { stat: 'defense', value: 0.1 },
+    bonus: { stat: 'defense', value: 0.5 },
   },
 
   // === 2. 보스 드롭 유물 (Stackable형으로 통합) ===
