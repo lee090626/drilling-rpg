@@ -6,91 +6,12 @@ import AtlasIcon from '../hud/ui/AtlasIcon';
 
 interface EncyclopediaDetailProps {
   id: string;
-  tab: 'minerals' | 'bosses' | 'artifact';
+  tab: 'minerals' | 'bosses';
   stats: PlayerStats;
   bossesData: any[]; // BOSSES array passed from parent
 }
 
 export function EncyclopediaDetail({ id, tab, stats, bossesData }: EncyclopediaDetailProps) {
-  if (tab === 'artifact') {
-    const item = ARTIFACT_DATA[id];
-    if (!item) return null;
-
-    const isStackable = item.type === 'stackable';
-    const isUnlocked = isStackable
-      ? (stats.collectionHistory?.[item.id] || 0) > 0
-      : stats.unlockedResearchIds?.includes(item.id);
-    const count = isStackable ? stats.collectionHistory?.[item.id] || 0 : 1;
-
-    const bonusValue = isStackable ? count * (item.bonus?.value || 0) : item.bonus?.value || 0;
-
-    return (
-      <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-        <div className="flex justify-between items-start mb-8">
-          <span
-            className={`text-[10px] font-black px-3 py-1.5 rounded-lg border tracking-widest uppercase ${isStackable ? 'bg-orange-900/20 border-orange-500/50 text-orange-400' : 'bg-emerald-900/20 border-emerald-500/50 text-emerald-400'}`}
-          >
-            {isStackable ? 'Stackable Artifact' : 'Unique Artifact'}
-          </span>
-          <span className="text-[9px] font-black text-zinc-600 tracking-widest">
-            {isStackable ? `COLLECTED: ${count}` : isUnlocked ? 'STATE: UNLOCKED' : 'STATE: LOCKED'}
-          </span>
-        </div>
-
-        <div className="w-40 h-40 bg-zinc-950 rounded-3xl shadow-inner border border-zinc-800 flex items-center justify-center text-8xl mx-auto mb-10 relative">
-          <div className={!isUnlocked ? 'filter grayscale opacity-20' : ''}>
-            <span className="text-6xl">💎</span>
-          </div>
-          {!isUnlocked && (
-            <div className="absolute inset-0 flex items-center justify-center text-zinc-800 font-black text-5xl opacity-40">
-              LOCKED
-            </div>
-          )}
-          {isUnlocked && (
-            <div
-              className={`absolute inset-0 rounded-3xl opacity-20 ${isStackable ? 'shadow-[inset_0_0_50px_#f97316]' : 'shadow-[inset_0_0_50px_#10b981]'}`}
-            />
-          )}
-        </div>
-
-        <h3 className="text-3xl font-black text-white text-center mb-2 tracking-tighter">
-          {item.nameKo}
-        </h3>
-        <p className="text-[10px] text-zinc-500 text-center font-bold tracking-widest uppercase mb-8">
-          {item.name}
-        </p>
-
-        {item.bonus && (
-          <div className="bg-zinc-950 p-6 rounded-2xl border border-orange-950/30 mb-4 flex flex-col items-center">
-            <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">
-              Stat Bonus
-            </div>
-            <div className="text-2xl font-black text-orange-400 flex items-center gap-2">
-              <span>+ {bonusValue.toLocaleString()}</span>
-              <span className="text-xs text-zinc-600 tracking-tight">
-                {item.bonus.stat.toUpperCase()}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {!isStackable && item.effectId && (
-          <div className="bg-zinc-950 p-6 rounded-2xl border border-emerald-950/30 mb-4 flex flex-col items-center">
-            <div className="text-[10px] text-zinc-500 font-black tracking-widest uppercase mb-3">
-              Unique Passive
-            </div>
-            <div className="text-sm font-black text-emerald-400 text-center leading-tight">
-              {item.effectDescriptionKo}
-            </div>
-          </div>
-        )}
-
-        <div className="bg-zinc-950/50 p-6 rounded-2xl border border-zinc-800 leading-relaxed text-xs text-zinc-400 text-center italic mt-2">
-          {item.descriptionKo}
-        </div>
-      </div>
-    );
-  }
 
   if (tab === 'minerals') {
     const mineral = MINERALS.find((m) => m.key === id);

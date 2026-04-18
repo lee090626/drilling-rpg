@@ -27,7 +27,7 @@ const BOSSES = MONSTER_LIST.filter((m) => m.type === 'boss').map((m) => {
 });
 
 function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
-  const [activeTab, setActiveTab] = useState<'minerals' | 'bosses' | 'artifact'>('minerals');
+  const [activeTab, setActiveTab] = useState<'minerals' | 'bosses'>('minerals');
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const discoveredCount = stats.discoveredMinerals.length;
@@ -70,15 +70,6 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
               className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'bosses' ? 'bg-zinc-800 text-purple-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
             >
               Bosses
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('artifact');
-                setSelectedId(null);
-              }}
-              className={`flex-1 sm:flex-none px-4 md:px-6 py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs md:text-sm font-black tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${activeTab === 'artifact' ? 'bg-zinc-800 text-orange-400 shadow-lg border border-zinc-700' : 'text-zinc-500 hover:text-zinc-300'}`}
-            >
-              Artifact
             </button>
           </div>
         </div>
@@ -146,8 +137,7 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                     </button>
                   );
                 })
-              : activeTab === 'bosses'
-                ? BOSSES.map((b) => {
+              : BOSSES.map((b) => {
                     const isEncountered = stats.encounteredBossIds.includes(b.id);
                     const isSelected = selectedId === b.id;
 
@@ -178,48 +168,7 @@ function Encyclopedia({ stats, onClose }: EncyclopediaProps) {
                       </button>
                     );
                   })
-                : // Artifact (Unified)
-                  ARTIFACT_LIST.map((item) => {
-                    const isStackable = item.type === 'stackable';
-                    const isUnlocked = isStackable
-                      ? (stats.collectionHistory?.[item.id] || 0) > 0
-                      : stats.unlockedResearchIds?.includes(item.id);
-                    const count = isStackable ? stats.collectionHistory?.[item.id] || 0 : 0;
-                    const isSelected = selectedId === item.id;
-
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setSelectedId(item.id)}
-                        className={`relative aspect-square rounded-2xl border transition-all flex flex-col items-center justify-center p-4 group overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 ${
-                          isSelected
-                            ? 'bg-[#252526] border-orange-400 shadow-2xl scale-[1.02]'
-                            : !isUnlocked
-                              ? 'bg-[#1a1a1b] border-zinc-900 opacity-40'
-                              : 'bg-[#252526] border-zinc-800 hover:border-zinc-700'
-                        }`}
-                      >
-                        <div
-                          className={`w-20 h-20 flex items-center justify-center text-4xl mb-4 transition-all ${!isUnlocked ? 'filter grayscale opacity-50' : ''}`}
-                        >
-                          <span className="text-3xl">💎</span>
-                        </div>
-                        <div className="text-[10px] text-zinc-500 font-bold tracking-widest text-center">
-                          {item.nameKo}
-                        </div>
-                        {isStackable && count > 0 && (
-                          <div className="absolute top-2 right-2 bg-orange-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                            x{count}
-                          </div>
-                        )}
-                        {!isStackable && isUnlocked && (
-                          <div className="absolute top-2 right-2 bg-emerald-500 text-black text-[8px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                            UNIQUE
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
+              }
           </div>
         </div>
 
