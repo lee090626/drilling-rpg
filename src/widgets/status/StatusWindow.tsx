@@ -310,7 +310,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                         <span className="text-3xl">{item?.icon || '🚫'}</span>
                       )}
                     </div>
-                    <div className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{part}</div>
+                    <div className="text-[8px] font-bold text-zinc-500 tracking-widest mb-1">{part}</div>
                     <div className="text-[10px] font-black text-white truncate w-full">{item?.name || 'Barehanded'}</div>
                   </div>
                 );
@@ -350,7 +350,7 @@ function StatusWindow({ stats, onClose, onUnequipRune, onEquipArtifact }: Status
                    });
                  })()
                ) : (
-                 <div className="text-[10px] font-bold text-zinc-600 italic">Equip a drill to use runes</div>
+                 <div className="text-[10px] font-bold text-zinc-600">Equip a drill to use runes</div>
                )}
               </div>
             </div>

@@ -34,7 +34,7 @@ export function StatTooltip({ tooltip }: StatTooltipProps) {
               {tooltip.type === 'stat' ? '📊' : '✨'}
             </span>
           </div>
-          <span className="text-xs font-black text-white tracking-widest uppercase">
+          <span className="text-xs font-black text-white tracking-widest">
             {tooltip.name}
           </span>
         </div>

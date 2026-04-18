@@ -18,7 +18,7 @@ export const WorldInfo: React.FC<WorldInfoProps> = React.memo(({ layerName, dept
       {onOpenElevator && (
         <button 
           onClick={onOpenElevator}
-          className="text-[10px] text-zinc-500 hover:text-white transition-colors uppercase font-black tracking-widest"
+          className="text-[10px] text-zinc-500 hover:text-white transition-colors font-black tracking-widest"
         >
           [ Open Elevator ]
         </button>
