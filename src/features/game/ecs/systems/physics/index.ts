@@ -1,8 +1,8 @@
 import { GameWorld } from '@/entities/world/model';
 import { MOVEMENT_DELAY_MS } from '@/shared/config/constants';
-import { statusEffector, processMovementSideEffects } from './physics/StatusEffector';
-import { environmentalPhysics } from './physics/EnvironmentalPhysics';
-import { playerDynamics } from './physics/PlayerDynamics';
+import { statusEffector, processMovementSideEffects } from './StatusEffector';
+import { environmentalPhysics } from './EnvironmentalPhysics';
+import { playerDynamics } from './PlayerDynamics';
 
 /**
  * 플레이어의 이동, 충돌 체크, 환경 물리 및 보간을 관리하는 메인 시스템(오케스트레이터)입니다.
