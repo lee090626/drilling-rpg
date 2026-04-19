@@ -2,9 +2,9 @@ import { GameWorld } from '@/entities/world/model';
 import { getMasteryBonuses } from '@/shared/lib/masteryUtils';
 import { getTotalRuneStat } from '@/shared/lib/runeUtils';
 import { calculateArtifactBonuses, hasArtifactEffect } from '@/shared/lib/artifactUtils';
-import { miningTargeter } from './mining/MiningTargeter';
-import { miningExecutor } from './mining/MiningExecutor';
-import { masteryService } from './mining/MasteryService';
+import { miningTargeter } from './MiningTargeter';
+import { miningExecutor } from './MiningExecutor';
+import { masteryService } from './MasteryService';
 
 /**
  * 플레이어의 채굴 로직을 관리하는 메인 시스템(오케스트레이터)입니다.
