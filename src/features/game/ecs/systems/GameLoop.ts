@@ -14,6 +14,9 @@ import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
 import { bossBehaviorSystem } from '@/features/game/ecs/systems/bossBehaviorSystem';
 import { projectileSystem } from '@/features/game/ecs/systems/projectileSystem';
 import { statsSyncSystem } from '@/features/game/ecs/systems/statsSyncSystem';
+import { spatialHashUpdateSystem } from '@/features/game/ecs/systems/spatialHashUpdateSystem';
+import { syncUiSystem } from '@/features/game/ecs/systems/syncSystem';
+import { autoSaveSystem } from '@/features/game/ecs/systems/storageSystem';
 import * as PIXI from 'pixi.js';
 import { TILE_SIZE } from '@/shared/config/constants';
 import { RenderSyncEncoder } from '@/features/game/lib/RenderSyncEncoder';
@@ -133,16 +136,7 @@ export class GameLoop {
 
     try {
       // 0. 공간 분할(Spatial Hash) 그리드 업데이트
-      this.world.spatialHash.clear();
-      for (let i = 0; i < this.world.entities.soa.count; i++) {
-        this.world.spatialHash.insert(
-          i,
-          this.world.entities.soa.x[i],
-          this.world.entities.soa.y[i],
-          this.world.entities.soa.width[i],
-          this.world.entities.soa.height[i]
-        );
-      }
+      spatialHashUpdateSystem(this.world);
 
       // 1. 게임 시뮬레이션 (역경직 중에는 스킵)
       const isHitStopping = now < this.world.hitStopUntil;
@@ -172,21 +166,7 @@ export class GameLoop {
       }
 
       // 3. UI 동기화 방출
-      if (now - this.lastUiSyncTime > this.uiSyncInterval) {
-        this.lastUiSyncTime = now;
-        self.postMessage({
-          type: 'SYNC_UI',
-          payload: {
-            stats: this.world.player.stats,
-            ui: this.world.ui,
-            boss: this.world.bossCombatStatus,
-            // Optimization Monitoring
-            metrics: {
-              blockedDrops: this.world.droppedItemPool.blockedDropCount,
-            },
-          },
-        });
-      }
+      this.lastUiSyncTime = syncUiSystem(this.world, this.lastUiSyncTime, now, this.uiSyncInterval);
 
       // 4. 트리플 버퍼 기반 렌더 패킷 방출 (Viewport Culling 적용)
       if (now - this.lastSyncTime > this.syncInterval && this.bufferPool.length > 0) {
@@ -196,25 +176,7 @@ export class GameLoop {
       }
 
       // 5. 자동 저장(10초)
-      if (now - this.lastSaveTime > 10000) {
-        this.lastSaveTime = now;
-        const tileMapBuffer = this.world.tileMap.serializeToBuffer();
-
-        // Use (self as any) to bypass TypeScript WorkerGlobalScope inference issues
-        (self as any).postMessage(
-          {
-            type: 'SAVE',
-            payload: {
-              version: 1,
-              timestamp: Date.now(),
-              stats: this.world.player.stats,
-              position: this.world.player.pos,
-              tileMapBuffer: tileMapBuffer,
-            },
-          },
-          [tileMapBuffer.buffer]
-        );
-      }
+      this.lastSaveTime = autoSaveSystem(this.world, this.lastSaveTime, now);
     } catch (err) {
       console.error('[Worker Loop Error]', err);
     }
