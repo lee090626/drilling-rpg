@@ -14,7 +14,7 @@
  * - lure: 플레이어에게 혼란(CONFUSION) 상태 이상을 부여합니다.
  * - aoe: 보스 주변 전 방향으로 투사체를 다수 발사합니다(예정).
  */
-export type BossPatternType = 'shot' | 'cross' | 'lure' | 'aoe';
+export type BossPatternType = 'shot' | 'cross' | 'lure' | 'aoe' | 'swarm' | 'gravity';
 
 /**
  * 보스의 단일 공격 패턴 데이터 정의입니다.
@@ -359,7 +359,48 @@ export const MONSTER_LIST: MonsterDefinition[] = [
         { itemId: 'relic_beelzebub_needle', chance: 0.5, minAmount: 1, maxAmount: 1 },
       ],
     },
-    behavior: { movementType: 'chase', attackRange: 2.5, aggroRange: 10 },
+    behavior: { movementType: 'stationary', attackRange: 2.5, aggroRange: 10, respawnMs: 15000 },
+    /**
+     * 펜리르 공격 패턴 정의 (탐식 테마)
+     * - Phase 1: Swarm (작은 투사체 세례, 4초 주기)
+     * - Phase 2: Swarm + Gravity (플레이어 흡입, 지속)
+     * - Phase 3: Swarm + Gravity + Aoe (주변 대폭발)
+     */
+    patterns: [
+      {
+        type: 'swarm',
+        cooldown: 4000,
+        warningLeadTime: 1000,
+        projectileCount: 15,
+        projectileSpeed: 4,
+        projectilePower: 25,
+        projectileSize: 64,
+        phaseOverrides: [
+          { projectileCount: 15, projectileSpeed: 4 },
+          { projectileCount: 25, projectileSpeed: 6 },
+          { projectileCount: 40, projectileSpeed: 8 },
+        ],
+      },
+      {
+        type: 'gravity',
+        cooldown: 100, // 지속형 패턴이므로 짧은 쿨타임으로 매 프레임 갱신 보조
+        minPhase: 2,
+      },
+      {
+        type: 'aoe',
+        cooldown: 6000,
+        minPhase: 3,
+        projectileCount: 24,
+        projectileSpeed: 7,
+        projectilePower: 120,
+        projectileSize: 128,
+        warningLeadTime: 1500,
+      },
+    ],
+    phases: [
+      { phase: 2, hpThreshold: 70 },
+      { phase: 3, hpThreshold: 35 },
+    ],
   },
   {
     id: 'c4_hoarder',

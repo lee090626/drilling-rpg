@@ -38,10 +38,13 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   if (bossIdx === -1) {
     if (Object.keys(world.bossCombatStatus).length > 0) {
       world.bossCombatStatus = {};
-      world.environmentalForce = { vx: 0, vy: 0 };
     }
+    world.environmentalForce = { vx: 0, vy: 0 };
     return;
   }
+
+  // 매 프레임 보스에 의한 환경 외력 초기화 (핸들러에서 다시 설정 가능하도록)
+  world.environmentalForce = { vx: 0, vy: 0 };
 
   const instanceId = soa.instanceId[bossIdx].toString();
 
@@ -154,5 +157,4 @@ export const bossBehaviorSystem = (world: GameWorld, deltaTime: number, now: num
   }
 
   soa.state[bossIdx] = anyWarning ? 1 : 0;
-  world.environmentalForce = { vx: 0, vy: 0 };
 };
