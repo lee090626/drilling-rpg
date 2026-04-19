@@ -346,7 +346,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Fenrir',
     nameKo: '펜리르',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description:
       '거대한 파리 형태, 썩은 날개, 복부가 비정상적으로 부풀어있음. 주변에 파리 떼가 항상 들끓음',
     stats: { maxHp: 45000, power: 250, defense: 20, speed: 1.5, attackCooldown: 2000 },
@@ -417,7 +417,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Mammon',
     nameKo: '마몬',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description: '황금 갑옷으로 뒤덮인 거대 인간형, 눈이 황금 동전. 몸에서 금화가 흘러내림',
     stats: { maxHp: 120000, power: 500, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: {
@@ -557,7 +557,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Samael',
     nameKo: '사마엘',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description:
       '검게 물든 천사 날개, 온몸에 독이 흘러내림. 피부는 창백하고 균열이 가득하며 틈에서 보라빛 독액이 흘러나옴. 부러진 후광, 독이 묻은 검',
     stats: { maxHp: 900000, power: 3500, defense: 20, speed: 1.5, attackCooldown: 2000 },
@@ -628,7 +628,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Belial',
     nameKo: '벨리알',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description: '불꽃 전차를 탄 타락천사, 두 개의 검은 날개, 온몸이 불꽃으로 이루어진 형태',
     stats: { maxHp: 3000000, power: 15000, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: {
@@ -698,7 +698,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Abaddon',
     nameKo: '아바돈',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description: '거대한 메뚜기 형태, 전갈 꼬리, 철 갑옷을 두른 날개. 주변에 메뚜기 군단이 들끓음',
     stats: { maxHp: 12000000, power: 45000, defense: 20, speed: 1.5, attackCooldown: 2000 },
     rewards: {
@@ -768,7 +768,7 @@ export const MONSTER_LIST: MonsterDefinition[] = [
     name: 'Lucifer',
     nameKo: '루시퍼',
     type: 'boss',
-    imagePath: 'oros_face',
+    imagePath: 'Asmodeus',
     description:
       '3개의 얼굴, 거대한 얼음에 하반신이 갇혀있음. 6개의 날개는 부러지고 검게 타있음. 눈물이 얼어붙어 있음',
     stats: { maxHp: 100000000, power: 250000, defense: 20, speed: 1.5, attackCooldown: 2000 },
