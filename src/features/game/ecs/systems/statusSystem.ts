@@ -2,7 +2,6 @@ import { GameWorld } from '@/entities/world/model';
 import { ActiveEffect, StatusType } from '@/shared/types/game';
 import { createFloatingText } from '@/shared/lib/effectUtils';
 import { TILE_SIZE } from '@/shared/config/constants';
-import { getCircleConfig } from '@/shared/config/circleData';
 
 /**
  * 캐릭터(플레이어 및 엔티티)의 상태 이상을 관리하는 시스템입니다.
@@ -17,13 +16,12 @@ export const statusSystem = (world: GameWorld, now: number) => {
     player.stats.activeEffects = [];
   }
 
-  // 1. 환경 디버프(Circle Hazards) 체크 및 갱신 (1초마다 수행)
+  // 1. 주기적 효과 체크 및 자연 회복 (1초마다 수행)
   if (!world.timestamp) (world as any).timestamp = {};
-  const lastHazardCheck = (world.timestamp as any).lastHazardCheck || 0;
+  const lastRegenCheck = (world.timestamp as any).lastRegenCheck || 0;
 
-  if (now - lastHazardCheck > 1000) {
-    (world.timestamp as any).lastHazardCheck = now;
-    applyEnvironmentHazards(world, now);
+  if (now - lastRegenCheck > 1000) {
+    (world.timestamp as any).lastRegenCheck = now;
 
     // 자연 회복 (Passive Regen): 매 초당 최대 체력의 1% 회복 (단, 완전 사망 상태가 아닐 때만)
     if (player.stats.hp > 0 && player.stats.hp < player.stats.maxHp) {
@@ -107,48 +105,6 @@ export const statusSystem = (world: GameWorld, now: number) => {
   }
 };
 
-/**
- * 플레이어의 현재 깊이에 따라 환경 상태이상을 부여합니다.
- */
-const applyEnvironmentHazards = (world: GameWorld, now: number) => {
-  const { player } = world;
-  const config = getCircleConfig(player.stats.depth);
-  if (!config) return;
-
-  // 서클별 고유 상태이상 정의 (지속시간 2초로 계속 갱신)
-  let hazardType: StatusType | null = null;
-  let hazardValue = 1;
-
-  switch (config.id) {
-    case 3: // Gluttony
-      hazardType = 'POISON';
-      break;
-    case 4: // Greed
-      hazardType = 'FATIGUE';
-      hazardValue = 0.7; // 채굴 속도 30% 감소
-      break;
-    case 5: // Wrath
-      hazardType = 'ENRAGE';
-      hazardValue = 1.25; // 받는 피해 25% 증가 (공격력도 증가할 수 있음)
-      break;
-    case 6: // Heresy
-      hazardType = 'CURSE';
-      break;
-    case 7: // Violence
-      hazardType = 'BLEED';
-      break;
-    case 8: // Fraud
-      hazardType = 'CONFUSION';
-      break;
-    case 9: // Treachery
-      hazardType = 'FREEZE'; // 여기서는 이동속도 대폭 저하로 작동
-      break;
-  }
-
-  if (hazardType) {
-    applyStatusEffect(world, { type: hazardType, value: hazardValue }, 2000);
-  }
-};
 
 /**
  * 대상에게 상태 이상을 부여하는 유틸리티 함수
