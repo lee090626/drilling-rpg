@@ -71,6 +71,9 @@ export function syncPermanentStats(player: any) {
 
   // 5. 방어력 적용 (장비방어 + 유물방어)
   player.stats.defense = eqDefense + (artifactBonuses?.defense || 0);
+
+  // 6. 행운(Luck) 적용 (장기적으로 장비 행운도 여기 합산)
+  player.stats.luck = (artifactBonuses?.luck || 0);
 }
 
 /**

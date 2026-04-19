@@ -245,6 +245,51 @@ export const ARTIFACT_DATA: Record<string, ArtifactDefinition> = {
       fervorstone: 10,
     },
   },
+  swift_wing_boots: {
+    id: 'swift_wing_boots',
+    name: 'Swift Wing Boots',
+    nameKo: '순풍의 날개 장화',
+    type: 'stackable',
+    image: 'FraudEssence',
+    description: 'Increases movement speed significantly.',
+    descriptionKo: '이동 속도를 크게 증가시킵니다.',
+    bonus: { stat: 'moveSpeed', value: 0.5 },
+    requirements: {
+      essence_fraud: 10,
+      galestone: 15,
+      moldstone: 15,
+    },
+  },
+  heavy_drill_artifact: {
+    id: 'heavy_drill_artifact',
+    name: 'Heavy Drill Engine',
+    nameKo: '중량 드릴 엔진',
+    type: 'stackable',
+    image: 'HeresyEssence',
+    description: 'Increases mining speed significantly.',
+    descriptionKo: '채굴 속도를 크게 증가시킵니다.',
+    bonus: { stat: 'miningSpeed', value: 0.1 },
+    requirements: {
+      essence_gluttony: 10,
+      fervorstone: 15,
+      siltstone: 15,
+    },
+  },
+  lucky_clover: {
+    id: 'lucky_clover',
+    name: 'Gore-stained Clover',
+    nameKo: '피칠갑된 클로버',
+    type: 'stackable',
+    image: 'GreedEssence',
+    description: 'Increases luck significantly.',
+    descriptionKo: '행운을 크게 증가시킵니다.',
+    bonus: { stat: 'luck', value: 0.5 },
+    requirements: {
+      essence_lust: 10,
+      crimsonstone: 15,
+      gorestone: 15,
+    },
+  },
 };
 
 /**
