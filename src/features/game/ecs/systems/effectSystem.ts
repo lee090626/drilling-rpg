@@ -44,45 +44,10 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
   updateParticles(world, deltaTime);
 
 
-  // 2. Floating text update
-  for (let i = 0; i < floatingTexts.length; i++) {
-    const ft = floatingTexts[i];
-    if (!ft.active) continue;
+  // 2. [Specialist] Floating text update
+  const { updateFloatingTexts } = require('./effect/FloatingTextPhysics');
+  updateFloatingTexts(world, deltaTime);
 
-    const dtFactor = deltaTime / 16.6;
-
-    if (ft.vx !== undefined && ft.vy !== undefined) {
-      ft.x += ft.vx * dtFactor;
-      ft.y += ft.vy * dtFactor;
-      ft.vy += 0.25 * dtFactor;
-      ft.vx *= 0.98;
-
-      const isResource = ft.text.includes('G') || ft.text.includes('+');
-      if (isResource && ft.life < 0.7) {
-        const px = world.player.visualPos.x * TILE_SIZE + TILE_SIZE / 2;
-        const py = world.player.visualPos.y * TILE_SIZE + TILE_SIZE / 2;
-
-        const dx = px - ft.x;
-        const dy = py - ft.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist > 5) {
-          const force = 0.15 * dtFactor;
-          ft.vx += (dx / dist) * force;
-          ft.vy += (dy / dist) * force;
-          ft.life -= 0.01 * dtFactor;
-        }
-      }
-    } else {
-      ft.y -= 1 * dtFactor;
-    }
-
-    ft.life -= 0.012 * dtFactor;
-
-    if (ft.life <= 0) {
-      ft.active = false;
-    }
-  }
 
   // 3. Dropped item update (TypedArray Optimization)
   const dp = world.droppedItemPool;
