@@ -39,21 +39,10 @@ export const effectSystem = (world: GameWorld, deltaTime: number) => {
     if (world.shake < 0.1) world.shake = 0;
   }
 
-  // 1. Particle update
-  for (let i = 0; i < particles.length; i++) {
-    const p = particles[i];
-    if (!p.active) continue;
+  // 1. [Specialist] Particle update
+  const { updateParticles } = require('./effect/ParticlePhysics');
+  updateParticles(world, deltaTime);
 
-    const dtFactor = deltaTime / 16.6;
-    p.x += p.vx * dtFactor;
-    p.y += p.vy * dtFactor;
-    p.vy += 0.2 * dtFactor;
-    p.life -= 0.02 * dtFactor;
-
-    if (p.life <= 0) {
-      p.active = false;
-    }
-  }
 
   // 2. Floating text update
   for (let i = 0; i < floatingTexts.length; i++) {
