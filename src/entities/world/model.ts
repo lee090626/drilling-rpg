@@ -182,6 +182,8 @@ export interface GameWorld {
   }>;
   /** 역경직(Hit Stop) 종료 타임스탬프 */
   hitStopUntil: number;
+  /** 아이템 획득 알림 취합용 버퍼 (ID -> 수량) */
+  aggregationBuffer: Record<string, number>;
 }
 
 /**
@@ -355,6 +357,7 @@ export const createInitialWorld = (seed: number): GameWorld => {
     environmentalForce: { vx: 0, vy: 0 },
     bossCombatStatus: {},
     hitStopUntil: 0,
+    aggregationBuffer: {},
   };
 
   result.particles = result.particlePool.getPool();
