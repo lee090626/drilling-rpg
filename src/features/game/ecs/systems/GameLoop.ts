@@ -7,7 +7,7 @@ import { interactionSystem } from '@/features/game/ecs/systems/interactionSystem
 import { spawnSystem } from '@/features/game/ecs/systems/spawn';
 import { monsterAiSystem } from '@/features/game/ecs/systems/combat/monsterAiSystem';
 import { combatSystem } from '@/features/game/ecs/systems/combat';
-import { effectSystem } from '@/features/game/ecs/systems/effectSystem';
+import { effectSystem } from '@/features/game/ecs/systems/effect';
 import { renderSystem } from '@/features/game/ecs/systems/renderSystem';
 import { statusSystem } from '@/features/game/ecs/systems/status';
 import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
