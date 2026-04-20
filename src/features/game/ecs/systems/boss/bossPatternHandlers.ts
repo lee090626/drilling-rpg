@@ -1,6 +1,7 @@
 import { GameWorld } from '@/entities/world/model';
 import { BossPattern, BossPatternType } from '@/shared/config/monsterData';
 import { EntityManager } from '@/shared/lib/ecs/EntityManager';
+import { applyStatusEffect } from '../status';
 
 // ============================================================
 // 내부 타입 정의
@@ -144,18 +145,8 @@ const handleLure: PatternHandler = (ctx) => {
   const cycleTime = now % lureCycle;
 
   if (cycleTime < lureDuration) {
-    const alreadyConfused = player.stats.activeEffects?.some(
-      (e) => e.type === 'CONFUSION',
-    );
-    if (!alreadyConfused) {
-      if (!player.stats.activeEffects) player.stats.activeEffects = [];
-      player.stats.activeEffects.push({
-        type: 'CONFUSION',
-        startTime: now,
-        endTime: now + lureDuration,
-      });
-      return true;
-    }
+    applyStatusEffect(world, { type: 'CONFUSION' }, lureDuration, now);
+    return true;
   }
   return false;
 };

@@ -9,7 +9,7 @@ import { monsterAiSystem } from '@/features/game/ecs/systems/combat/monsterAiSys
 import { combatSystem } from '@/features/game/ecs/systems/combat';
 import { effectSystem } from '@/features/game/ecs/systems/effectSystem';
 import { renderSystem } from '@/features/game/ecs/systems/renderSystem';
-import { statusSystem } from '@/features/game/ecs/systems/statusSystem';
+import { statusSystem } from '@/features/game/ecs/systems/status';
 import { tutorialSystem } from '@/features/game/ecs/systems/tutorialSystem';
 import { bossBehaviorSystem } from '@/features/game/ecs/systems/boss';
 import { projectileSystem } from '@/features/game/ecs/systems/combat/projectileSystem';
